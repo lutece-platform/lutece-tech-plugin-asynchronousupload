@@ -69,9 +69,9 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
      */
     @Override
     public void process( HttpServletRequest request, HttpServletResponse response, JSONObject mainObject,
-            List<FileItem> listFileItemsToUpload )
+        List<FileItem> listFileItemsToUpload )
     {
-        mainObject.clear( );
+        mainObject.clear(  );
 
         String strFieldName = request.getParameter( PARAMETER_FIELD_NAME );
 
@@ -80,9 +80,9 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
             throw new AppException( "id entry is not provided for the current file upload" );
         }
 
-        if ( listFileItemsToUpload != null && !listFileItemsToUpload.isEmpty( ) )
+        if ( ( listFileItemsToUpload != null ) && !listFileItemsToUpload.isEmpty(  ) )
         {
-            String strError = canUploadFiles( request, strFieldName, listFileItemsToUpload, request.getLocale( ) );
+            String strError = canUploadFiles( request, strFieldName, listFileItemsToUpload, request.getLocale(  ) );
 
             if ( strError == null )
             {
@@ -108,19 +108,20 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
     /**
      * Checks the request parameters to see if an upload submit has been
      * called.
-     * 
+     *
      * @param request the HTTP request
      * @return the name of the upload action, if any. Null otherwise.
      */
     public String getUploadAction( HttpServletRequest request )
     {
-        Enumeration<String> enumParamNames = request.getParameterNames( );
+        Enumeration<String> enumParamNames = request.getParameterNames(  );
 
-        while ( enumParamNames.hasMoreElements( ) )
+        while ( enumParamNames.hasMoreElements(  ) )
         {
-            String paramName = enumParamNames.nextElement( );
+            String paramName = enumParamNames.nextElement(  );
 
-            if ( paramName.startsWith( getUploadSubmitPrefix( ) ) || paramName.startsWith( getUploadDeletePrefix( ) ) )
+            if ( paramName.startsWith( getUploadSubmitPrefix(  ) ) ||
+                    paramName.startsWith( getUploadDeletePrefix(  ) ) )
             {
                 return paramName;
             }
@@ -143,20 +144,20 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
             {
                 // Some previously uploaded files were deleted
                 // Build the prefix of the associated checkboxes
-                String strPrefix = getUploadCheckboxPrefix( ) + strFieldName;
+                String strPrefix = getUploadCheckboxPrefix(  ) + strFieldName;
 
                 // Look for the checkboxes in the request
-                Enumeration<String> enumParamNames = request.getParameterNames( );
-                List<Integer> listIndexes = new ArrayList<Integer>( );
+                Enumeration<String> enumParamNames = request.getParameterNames(  );
+                List<Integer> listIndexes = new ArrayList<Integer>(  );
 
-                while ( enumParamNames.hasMoreElements( ) )
+                while ( enumParamNames.hasMoreElements(  ) )
                 {
-                    String strParamName = enumParamNames.nextElement( );
+                    String strParamName = enumParamNames.nextElement(  );
 
                     if ( strParamName.startsWith( strPrefix ) )
                     {
                         // Get the index from the name of the checkbox
-                        listIndexes.add( Integer.parseInt( strParamName.substring( strPrefix.length( ) ) ) );
+                        listIndexes.add( Integer.parseInt( strParamName.substring( strPrefix.length(  ) ) ) );
                     }
                 }
 
@@ -165,7 +166,7 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
 
                 for ( int nIndex : listIndexes )
                 {
-                    removeFileItem( strFieldName, session.getId( ), nIndex );
+                    removeFileItem( strFieldName, session.getId(  ), nIndex );
                 }
             }
         }
@@ -176,27 +177,27 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
      */
     @Override
     public String doRemoveUploadedFile( HttpServletRequest request, String strFieldName,
-            List<Integer> listIndexesFilesToRemove )
+        List<Integer> listIndexesFilesToRemove )
     {
         if ( StringUtils.isBlank( strFieldName ) )
         {
-            return JSONUtils.buildJsonErrorRemovingFile( request ).toString( );
+            return JSONUtils.buildJsonErrorRemovingFile( request ).toString(  );
         }
 
-        if ( listIndexesFilesToRemove != null && listIndexesFilesToRemove.size( ) != 0 )
+        if ( ( listIndexesFilesToRemove != null ) && ( listIndexesFilesToRemove.size(  ) != 0 ) )
         {
             // parse json
             JSON jsonFieldIndexes = JSONSerializer.toJSON( listIndexesFilesToRemove );
 
-            if ( !jsonFieldIndexes.isArray( ) )
+            if ( !jsonFieldIndexes.isArray(  ) )
             {
-                return JSONUtils.buildJsonErrorRemovingFile( request ).toString( );
+                return JSONUtils.buildJsonErrorRemovingFile( request ).toString(  );
             }
 
             JSONArray jsonArrayFieldIndexers = (JSONArray) jsonFieldIndexes;
-            int[] tabFieldIndex = new int[jsonArrayFieldIndexers.size( )];
+            int[] tabFieldIndex = new int[jsonArrayFieldIndexers.size(  )];
 
-            for ( int nIndex = 0; nIndex < jsonArrayFieldIndexers.size( ); nIndex++ )
+            for ( int nIndex = 0; nIndex < jsonArrayFieldIndexers.size(  ); nIndex++ )
             {
                 try
                 {
@@ -204,31 +205,32 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
                 }
                 catch ( NumberFormatException nfe )
                 {
-                    return JSONUtils.buildJsonErrorRemovingFile( request ).toString( );
+                    return JSONUtils.buildJsonErrorRemovingFile( request ).toString(  );
                 }
             }
 
             // inverse order (removing using index - remove greater first to keep order)
             Arrays.sort( tabFieldIndex );
             ArrayUtils.reverse( tabFieldIndex );
+
             List<FileItem> fileItemsSession = getListUploadedFiles( request, strFieldName );
 
-            List<FileItem> listItemsToRemove = new ArrayList<FileItem>( listIndexesFilesToRemove.size( ) );
+            List<FileItem> listItemsToRemove = new ArrayList<FileItem>( listIndexesFilesToRemove.size(  ) );
 
             for ( int nFieldIndex : tabFieldIndex )
             {
                 listItemsToRemove.add( fileItemsSession.get( nFieldIndex ) );
-                removeFileItem( strFieldName, request.getSession( ).getId( ), nFieldIndex );
+                removeFileItem( strFieldName, request.getSession(  ).getId(  ), nFieldIndex );
             }
         }
 
-        JSONObject json = new JSONObject( );
+        JSONObject json = new JSONObject(  );
         json.element( JSONUtils.JSON_KEY_SUCCESS, JSONUtils.JSON_KEY_SUCCESS );
 
         json.accumulateAll( JSONUtils.getUploadedFileJSON( getListUploadedFiles( request, strFieldName ) ) );
         json.element( JSONUtils.JSON_KEY_FIELD_NAME, strFieldName );
 
-        return json.toString( );
+        return json.toString(  );
     }
 
     /**
@@ -237,7 +239,7 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
     @Override
     public boolean hasRemoveFlag( HttpServletRequest request, String strFieldName )
     {
-        return StringUtils.isNotEmpty( request.getParameter( getUploadDeletePrefix( ) + strFieldName ) );
+        return StringUtils.isNotEmpty( request.getParameter( getUploadDeletePrefix(  ) + strFieldName ) );
     }
 
     /**
@@ -246,7 +248,7 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
     @Override
     public boolean isInvoked( HttpServletRequest request )
     {
-        return StringUtils.equals( getHandlerName( ), request.getParameter( PARAMETER_HANDLER ) );
+        return StringUtils.equals( getHandlerName(  ), request.getParameter( PARAMETER_HANDLER ) );
     }
 
     /**
@@ -258,6 +260,6 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
      */
     public boolean hasAddFileFlag( HttpServletRequest request, String strFieldName )
     {
-        return StringUtils.isNotEmpty( request.getParameter( getUploadSubmitPrefix( ) + strFieldName ) );
+        return StringUtils.isNotEmpty( request.getParameter( getUploadSubmitPrefix(  ) + strFieldName ) );
     }
 }

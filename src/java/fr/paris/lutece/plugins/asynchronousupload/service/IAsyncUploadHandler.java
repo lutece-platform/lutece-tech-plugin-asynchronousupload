@@ -53,19 +53,19 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler
      * Get the upload submit prefix
      * @return The upload submit prefix
      */
-    String getUploadSubmitPrefix( );
+    String getUploadSubmitPrefix(  );
 
     /**
      * Get the upload delete prefix
      * @return The upload delete prefix
      */
-    String getUploadDeletePrefix( );
+    String getUploadDeletePrefix(  );
 
     /**
      * Get the upload checkbox prefix
      * @return The upload checkbox prefix
      */
-    String getUploadCheckboxPrefix( );
+    String getUploadCheckboxPrefix(  );
 
     /**
      * Check if the file can be uploaded or not.
@@ -78,7 +78,7 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler
      * @return The error if any, or null if the files can be uploaded.
      */
     String canUploadFiles( HttpServletRequest request, String strFieldName, List<FileItem> listFileItemsToUpload,
-            Locale locale );
+        Locale locale );
 
     /**
      * Get the list of uploaded files for a given field name
@@ -137,7 +137,7 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler
      * @return The result JSON
      */
     public String doRemoveUploadedFile( HttpServletRequest request, String strFieldName,
-            List<Integer> listIndexesFilesToRemove );
+        List<Integer> listIndexesFilesToRemove );
 
     /**
      * Get the name of the handler. The name of the handler must be unique. The
@@ -145,5 +145,5 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler
      * no coma, no #, ...).
      * @return The name of the handler
      */
-    public String getHandlerName( );
+    public String getHandlerName(  );
 }

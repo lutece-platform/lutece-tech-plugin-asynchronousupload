@@ -46,7 +46,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Provides json utility methods for forms
- * 
+ *
  */
 public final class JSONUtils
 {
@@ -61,6 +61,7 @@ public final class JSONUtils
     public static final String JSON_KEY_SUCCESS = "success";
     private static final String JSON_KEY_FILE_NAME = "name";
     private static final String JSON_KEY_FILE_SIZE = "size";
+
     //    private static final String JSON_KEY_IS_NEW = "is_new";
     //    private static final String JSON_KEY_IS_REMOVED = "is_removed";
     private static final String JSON_KEY_FORM_ERROR = "form_error";
@@ -73,7 +74,7 @@ public final class JSONUtils
     /**
      * Empty constructor
      */
-    private JSONUtils( )
+    private JSONUtils(  )
     {
         // nothing
     }
@@ -87,16 +88,16 @@ public final class JSONUtils
      */
     public static JSONObject getUploadedFileJSON( List<FileItem> listFileItem )
     {
-        JSONObject json = new JSONObject( );
+        JSONObject json = new JSONObject(  );
 
         if ( listFileItem != null )
         {
             for ( FileItem fileItem : listFileItem )
             {
-                JSONObject jsonObject = new JSONObject( );
-                jsonObject.element( JSON_KEY_FILE_NAME, fileItem.getName( ) );
-                jsonObject.element( JSON_KEY_FILE_NAME, fileItem.getName( ) );
-                jsonObject.element( JSON_KEY_FILE_SIZE, fileItem.getSize( ) );
+                JSONObject jsonObject = new JSONObject(  );
+                jsonObject.element( JSON_KEY_FILE_NAME, fileItem.getName(  ) );
+                jsonObject.element( JSON_KEY_FILE_NAME, fileItem.getName(  ) );
+                jsonObject.element( JSON_KEY_FILE_SIZE, fileItem.getSize(  ) );
                 //                jsonObject.element( JSON_KEY_IS_NEW,
                 //                        listNewlyUploadedFiles == null ? false : listNewlyUploadedFiles.contains( fileItem ) );
                 //                jsonObject.element( JSON_KEY_IS_REMOVED,
@@ -104,7 +105,7 @@ public final class JSONUtils
                 json.accumulate( JSON_KEY_UPLOADED_FILES, jsonObject );
             }
 
-            json.element( JSON_KEY_FILE_COUNT, listFileItem.size( ) );
+            json.element( JSON_KEY_FILE_COUNT, listFileItem.size(  ) );
         }
         else
         {
@@ -122,10 +123,10 @@ public final class JSONUtils
      */
     public static JSONObject buildJsonErrorRemovingFile( HttpServletRequest request )
     {
-        JSONObject json = new JSONObject( );
+        JSONObject json = new JSONObject(  );
 
         json.element( JSONUtils.JSON_KEY_FORM_ERROR,
-                I18nService.getLocalizedString( PROPERTY_MESSAGE_ERROR_REMOVING_FILE, request.getLocale( ) ) );
+            I18nService.getLocalizedString( PROPERTY_MESSAGE_ERROR_REMOVING_FILE, request.getLocale(  ) ) );
 
         return json;
     }

@@ -58,6 +58,7 @@ import javax.servlet.http.HttpServletRequest;
 public class AsynchronousUploadApp extends MVCApplication
 {
     private static final long serialVersionUID = -2287035947644920508L;
+
     // Marks
     private static final String MARK_BASE_URL = "base_url";
     private static final String MARK_UPLOAD_URL = "upload_url";
@@ -104,6 +105,7 @@ public class AsynchronousUploadApp extends MVCApplication
         IAsyncUploadHandler handler = getHandler( strHandlerName );
 
         int nMaxFileSize;
+
         if ( StringUtils.isNotEmpty( strMaxFileSize ) && StringUtils.isNumeric( strMaxFileSize ) )
         {
             nMaxFileSize = Integer.parseInt( strMaxFileSize );
@@ -113,28 +115,29 @@ public class AsynchronousUploadApp extends MVCApplication
             nMaxFileSize = DEFAULT_MAX_FILE_SIZE;
         }
 
-        String strKey = ( strHandlerName != null ? strHandlerName : StringUtils.EMPTY ) + strBaseUrl
-                + ( strMaxFileSize == null ? StringUtils.EMPTY : strMaxFileSize );
+        String strKey = ( ( strHandlerName != null ) ? strHandlerName : StringUtils.EMPTY ) + strBaseUrl +
+            ( ( strMaxFileSize == null ) ? StringUtils.EMPTY : strMaxFileSize );
 
-        String strContent = (String) UploadCacheService.getInstance( ).getFromCache( strKey );
+        String strContent = (String) UploadCacheService.getInstance(  ).getFromCache( strKey );
 
         if ( strContent == null )
         {
-            Map<String, Object> model = new HashMap<String, Object>( );
+            Map<String, Object> model = new HashMap<String, Object>(  );
 
             model.put( MARK_BASE_URL, strBaseUrl );
             model.put( MARK_UPLOAD_URL, URL_UPLOAD_SERVLET );
             model.put( MARK_HANDLER_NAME, strHandlerName );
             model.put( PARAMETER_MAX_FILE_SIZE, nMaxFileSize );
-            model.put( MARK_SUBMIT_PREFIX, handler.getUploadSubmitPrefix( ) );
-            model.put( MARK_DELETE_PREFIX, handler.getUploadDeletePrefix( ) );
-            model.put( MARK_CHECKBOX_PREFIX, handler.getUploadCheckboxPrefix( ) );
+            model.put( MARK_SUBMIT_PREFIX, handler.getUploadSubmitPrefix(  ) );
+            model.put( MARK_DELETE_PREFIX, handler.getUploadDeletePrefix(  ) );
+            model.put( MARK_CHECKBOX_PREFIX, handler.getUploadCheckboxPrefix(  ) );
 
-            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MAIN_UPLOAD_JS, request.getLocale( ),
+            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MAIN_UPLOAD_JS, request.getLocale(  ),
                     model );
-            strContent = template.getHtml( );
-            UploadCacheService.getInstance( ).putInCache( strKey, strContent );
+            strContent = template.getHtml(  );
+            UploadCacheService.getInstance(  ).putInCache( strKey, strContent );
         }
+
         return strContent;
     }
 
@@ -149,7 +152,7 @@ public class AsynchronousUploadApp extends MVCApplication
 
         String strFieldIndex = request.getParameter( PARAMETER_FIELD_INDEX );
 
-        List<Integer> listIndexesFilesToRemove = new ArrayList<Integer>( );
+        List<Integer> listIndexesFilesToRemove = new ArrayList<Integer>(  );
 
         if ( StringUtils.isNotEmpty( strFieldIndex ) )
         {
@@ -164,8 +167,8 @@ public class AsynchronousUploadApp extends MVCApplication
 
         IAsyncUploadHandler handler = getHandler( request );
 
-        return handler == null ? StringUtils.EMPTY : handler.doRemoveUploadedFile( request, strFieldName,
-                listIndexesFilesToRemove );
+        return ( handler == null ) ? StringUtils.EMPTY
+                                   : handler.doRemoveUploadedFile( request, strFieldName, listIndexesFilesToRemove );
     }
 
     /**
@@ -196,7 +199,7 @@ public class AsynchronousUploadApp extends MVCApplication
     {
         for ( IAsyncUploadHandler handler : SpringContextService.getBeansOfType( IAsyncUploadHandler.class ) )
         {
-            if ( StringUtils.equals( handler.getHandlerName( ), strName ) )
+            if ( StringUtils.equals( handler.getHandlerName(  ), strName ) )
             {
                 return handler;
             }
