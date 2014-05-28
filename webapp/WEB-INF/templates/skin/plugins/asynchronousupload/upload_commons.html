@@ -1,0 +1,71 @@
+<#--
+ # The main macro is addFileInputAndfilesBox. Others macros are private.
+ -->
+
+
+<#macro addFileInput fieldName handlerName submitPrefix cssClass='' multiple=false>
+	<span class="">
+		<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handlerName}" />
+		<button class="btn btn-primary btn-small" name="${submitPrefix}${fieldName}" id="${submitPrefix}${fieldName}" value="${submitPrefix}${fieldName}" type="submit" >
+			#i18n{appointment.action.send.name}
+		</button>
+	</span>
+	<input type="hidden" name="asynchronousupload.handler" value="${handlerName}" />
+	<div id="progress_${fieldName}" class="progress progress-striped progress-success" style="display: none;">
+        <div id="progress-bar_${fieldName}" class="bar progress-bar progress-bar-success">&nbsp;</div>
+    </div>
+</#macro>
+
+<#macro addUploadedFilesBox fieldName checkBoxPrefix deletePrefix listFiles >
+	<#-- file removing -->
+	<#assign has_files = false>
+	<#if listFiles?? && listFiles?has_content>
+		<#assign has_files = true>
+	</#if>
+	
+	<div id="_file_error_box_${fieldName}" >
+	</div>
+	
+	<div class="control-group well" <#if !has_files>style="display:none;"</#if> id="_file_deletion_label_${fieldName}">
+		<label class="control-label">#i18n{appointment.file.uploadedFile}</label>
+		<div id="_file_deletion_${fieldName}">
+			<#assign file_index = 0>
+			<#if has_files>
+				<#assign index = 0 />
+				<#list listFiles as file>
+					<#assign filename = ''>
+					<#if file.name?? && file.name != ''>
+						<#assign filename = file.name >
+					<#else>
+						<#if file.title?? && file.title != ''>
+							<#assign filename = file.title >
+						</#if>
+					</#if>
+					<#if filename != '' >
+						<div class="controls" id="_file_uploaded_${fieldName}${file_index}">
+							<label class="checkbox" for="${checkBoxPrefix}${fieldName}${file_index}">
+							<input type="checkbox" name="${checkBoxPrefix}${fieldName}${file_index}" value="1" />${filename}</label>
+							<#assign file_index = file_index + 1>
+						</div>
+					</#if>
+				</#list>
+			</#if>
+		</div>
+		<br />
+		<div class="controls">
+			<button class="btn btn-primary btn-small" name="${deletePrefix}${fieldName}" value="${deletePrefix}${fieldName}" type="submit" >#i18n{appointment.action.delete.name}</button>
+		</div>
+	</div>
+</#macro>
+
+<#-- Macro to add a file input for asynchronous and synchronous uploads.
+ # @param fieldName The name of the field.
+ # @param handler The name of the associated handler.
+ # @param listUploadedFiles The list of files that have already been uploaded. Files must have a 'title' or a 'name' attribute. 
+ # @param inputCssClass The CSS class to add to the input if any. Default value is an empty string.
+ # @param multiple True to use an HTML5 multiple file input, false otherwise. Default value if false.
+ -->
+<#macro addFileInputAndfilesBox fieldName handler listUploadedFiles inputCssClass='' multiple=false>
+	<@addFileInput fieldName=fieldName handlerName=handler.handlerName submitPrefix=handler.uploadSubmitPrefix cssClass=inputCssClass multiple=multiple />
+	<@addUploadedFilesBox fieldName=fieldName checkBoxPrefix=handler.uploadCheckboxPrefix deletePrefix=handler.uploadDeletePrefix listFiles=listUploadedFiles />
+</#macro>
