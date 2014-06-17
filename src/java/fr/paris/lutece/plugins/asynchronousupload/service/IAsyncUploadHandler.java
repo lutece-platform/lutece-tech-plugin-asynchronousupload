@@ -136,8 +136,7 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler
      * @param listIndexesFilesToRemove The list of indexes of files to remove
      * @return The result JSON
      */
-    public String doRemoveUploadedFile( HttpServletRequest request, String strFieldName,
-        List<Integer> listIndexesFilesToRemove );
+    String doRemoveUploadedFile( HttpServletRequest request, String strFieldName, List<Integer> listIndexesFilesToRemove );
 
     /**
      * Get the name of the handler. The name of the handler must be unique. The
@@ -145,5 +144,5 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler
      * no coma, no #, ...).
      * @return The name of the handler
      */
-    public String getHandlerName(  );
+    String getHandlerName(  );
 }

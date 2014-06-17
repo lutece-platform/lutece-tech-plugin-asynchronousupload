@@ -39,7 +39,7 @@ import fr.paris.lutece.portal.service.cache.AbstractCacheableService;
 /**
  * Cache service for asynchronous upload
  */
-public class UploadCacheService extends AbstractCacheableService
+public final class UploadCacheService extends AbstractCacheableService
 {
     private static final String CACHE_NAME = "asynchronousupload.asynchronousUploadCacheService";
     private static UploadCacheService _instance = new UploadCacheService(  );

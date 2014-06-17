@@ -78,7 +78,7 @@ $(function () {
     	        	$(' #progress_' + fieldName).hide();
     	        }
     	    }).on('fileuploaddone', function (e, data) {
-    	    	formDisplayUploadedFiles( data.result, data.files );
+    	    	formDisplayUploadedFiles( data.result, data.files, '${checkBoxPrefix}' );
     	    }).on('fileuploadfail', function (e, data) {
     	    	var fieldName = data.formData[0].value;
     	    	updateErrorBox( 'Une erreur est survenue lors de l\'upload du fichier', fieldName );
@@ -91,7 +91,7 @@ $(function () {
     	
     	$.getJSON('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
     			function(json) {
-    				formDisplayUploadedFiles(json, null);
+    				formDisplayUploadedFiles(json, null, '${checkBoxPrefix}');
     			}
     		);
     });
@@ -104,7 +104,7 @@ $(function () {
     $('[name^="${deletePrefix}"]').each(function() {
     	$(this).click(function(event) {
     		var fieldName = this.name.match("${deletePrefix}(.*)")[1];
-    		removeFile(fieldName);
+    		removeFile${checkBoxPrefix}(fieldName, '${handler_name}', '${base_url}');
     		event.preventDefault( );
     	});
     });
@@ -115,7 +115,7 @@ $(function () {
  * Sets the files list
  * @param jsonData data
  */
-function formDisplayUploadedFiles( jsonData, files )
+function formDisplayUploadedFiles( jsonData, files, cbPrefix )
 {
 	// create the div
 	var fieldName = jsonData.field_name;
@@ -132,7 +132,7 @@ function formDisplayUploadedFiles( jsonData, files )
 		} else {
 
 			var strContent = "";
-			var checkboxPrefix = '${checkBoxPrefix}' + fieldName;
+			var checkboxPrefix = cbPrefix + fieldName;
 			
 			// jsonData.uploadedFiles.length is str length when file count is 1 so using fileCount instead.
 			// so if jsonData.fileCount == 1, the index should not be used
@@ -167,7 +167,7 @@ function formDisplayUploadedFiles( jsonData, files )
  * Removes a file
  * @param action the action button name
  */
-function removeFile( fieldName ) {
+function removeFile${checkBoxPrefix}( fieldName, handlerName, baseUrl ) {
 	// build indexes to remove
 	var strIndexes = '';
 	
@@ -191,11 +191,11 @@ function removeFile( fieldName ) {
 		return;
 	}
 	
-	var jsonData = {"fieldname":fieldName, "asynchronousupload.handler":"${handler_name}", "field_index": strIndexes};
+	var jsonData = {"fieldname":fieldName, "asynchronousupload.handler":handlerName, "field_index": strIndexes};
 	
-	$.getJSON('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
+	$.getJSON(baseUrl + 'jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
 		function(json) {
-			formDisplayUploadedFiles(json, null);
+			formDisplayUploadedFiles(json, null, '${checkBoxPrefix}');
 		}
 	);
 }

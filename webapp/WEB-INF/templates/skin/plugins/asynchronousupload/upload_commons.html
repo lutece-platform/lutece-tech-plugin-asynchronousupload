@@ -2,6 +2,17 @@
  # The main macro is addFileInputAndfilesBox. Others macros are private.
  -->
 
+<#macro addRequiredJsFiles>
+	<link rel="stylesheet" href="css/plugins/asynchronousupload/jquery.fileupload.css" />
+	<link rel="stylesheet" href="css/plugins/asynchronousupload/jquery.fileupload-ui.css" />
+
+	<script type="text/javascript" src="js/plugins/asynchronousupload/vendor/jquery.ui.widget.js" ></script>
+	<script type="text/javascript" src="js/plugins/asynchronousupload/jquery.iframe-transport.js" ></script>
+	<script type="text/javascript" src="js/plugins/asynchronousupload/jquery.fileupload.js" ></script>
+	<script type="text/javascript" src="js/plugins/asynchronousupload/jquery.fileupload-process.js" ></script>
+	<script type="text/javascript" src="js/plugins/asynchronousupload/jquery.fileupload-validate.js" ></script>
+</#macro>
+
 
 <#macro addFileInput fieldName handlerName submitPrefix cssClass='' multiple=false>
 	<span class="">
