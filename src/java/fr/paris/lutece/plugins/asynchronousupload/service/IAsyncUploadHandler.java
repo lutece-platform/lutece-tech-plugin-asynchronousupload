@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 
 /**
@@ -69,48 +70,42 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler
 
     /**
      * Check if the file can be uploaded or not.
-     * This method will check the size of each file and the number max of files
-     * that can be uploaded.
      * @param request The request
      * @param strFieldName the field name
      * @param listFileItemsToUpload the list of files to upload
      * @param locale the locale
-     * @return The error if any, or null if the files can be uploaded.
+     * @return The error message if any, or null if the files can be uploaded.
      */
     String canUploadFiles( HttpServletRequest request, String strFieldName, List<FileItem> listFileItemsToUpload,
         Locale locale );
 
     /**
-     * Get the list of uploaded files for a given field name
-     * @param request the request
+     * Gets the list of upload files for a given field and a given session. The
+     * order of files in the list must be the upload order. Their index in this
+     * list (from 0 to the list size) will be used to identify them.
      * @param strFieldName the field name
-     * @return The list of uploaded files
+     * @param session The session of the current user
+     * @return the fileItem found, <code>null</code> otherwise.
      */
-    List<FileItem> getListUploadedFiles( HttpServletRequest request, String strFieldName );
+    List<FileItem> getListUploadedFiles( String strFieldName, HttpSession session );
 
     /**
      * Remove file Item
      * @param strFieldName the field name
-     * @param strSessionId The id of the session of the current user
-     * @param nIndex the index
+     * @param session The session of the current user
+     * @param nIndex the index of the file to remove (from 0 to n). The index is
+     *            the index of the file in the uploaded file list given by the
+     *            method {@link #getListUploadedFiles(String, HttpSession) }
      */
-    void removeFileItem( String strFieldName, String strSessionId, int nIndex );
+    void removeFileItem( String strFieldName, HttpSession session, int nIndex );
 
     /**
-     * Gets the fileItem for the entry and the given session.
-     * @param strFieldName the field name
-     * @param strSessionId The id of the session of the current user
-     * @return the fileItem found, <code>null</code> otherwise.
-     */
-    List<FileItem> getFileItems( String strFieldName, String strSessionId );
-
-    /**
-     * Add file item to the list of uploaded files
+     * Add a file item to the list of uploaded files
      * @param fileItem the file item
-     * @param strIdEntry the id entry
+     * @param strFieldName the field name
      * @param request the request
      */
-    void addFileItemToUploadedFile( FileItem fileItem, String strIdEntry, HttpServletRequest request );
+    void addFileItemToUploadedFilesList( FileItem fileItem, String strFieldName, HttpServletRequest request );
 
     /**
      * Check if the request has a remove flag for a given entry.

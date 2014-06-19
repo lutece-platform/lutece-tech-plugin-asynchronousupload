@@ -86,9 +86,8 @@ public class AsynchronousUploadApp extends MVCApplication
     /**
      * Get the main upload JavaScript file. Available HTTP parameters are :
      * <ul>
-     * <li><b>plugin</b> : Name of the underlying plugin. The upload handler
-     * should accept uploads that have the page parameter set to the plugin
-     * name. Default value is an empty string.</li>
+     * <li><b>handler</b> : Name of the handler that will manage the
+     * asynchronous upload.</li>
      * <li><b>maxFileSize</b> : The maximum size (in bytes) of uploaded files.
      * Default value is 2097152</li>
      * </ul>

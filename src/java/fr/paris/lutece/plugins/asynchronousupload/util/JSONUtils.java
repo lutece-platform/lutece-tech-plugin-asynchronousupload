@@ -98,10 +98,6 @@ public final class JSONUtils
                 jsonObject.element( JSON_KEY_FILE_NAME, fileItem.getName(  ) );
                 jsonObject.element( JSON_KEY_FILE_NAME, fileItem.getName(  ) );
                 jsonObject.element( JSON_KEY_FILE_SIZE, fileItem.getSize(  ) );
-                //                jsonObject.element( JSON_KEY_IS_NEW,
-                //                        listNewlyUploadedFiles == null ? false : listNewlyUploadedFiles.contains( fileItem ) );
-                //                jsonObject.element( JSON_KEY_IS_REMOVED,
-                //                        listRemovedFiles == null ? false : listRemovedFiles.contains( fileItem ) );
                 json.accumulate( JSON_KEY_UPLOADED_FILES, jsonObject );
             }
 

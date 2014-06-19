@@ -1,7 +1,12 @@
 <#--
- # The main macro is addFileInputAndfilesBox. Others macros are private.
+ # The main macro is addFileInputAndfilesBox. The macro addRequiredJsFiles is used to include required JavaScript and CSS files.
+ # Others macros are private.
  -->
 
+<#--
+ # Add required CSS and JavaScript files to use asynchronous uploads.
+ # This is only needed in Back Office or in FO page not served by the portal service.
+ -->
 <#macro addRequiredJsFiles>
 	<link rel="stylesheet" href="css/plugins/asynchronousupload/jquery.fileupload.css" />
 	<link rel="stylesheet" href="css/plugins/asynchronousupload/jquery.fileupload-ui.css" />
@@ -14,20 +19,20 @@
 </#macro>
 
 
-<#macro addFileInput fieldName handlerName submitPrefix cssClass='' multiple=false>
+<#macro addFileInput fieldName handler cssClass='' multiple=false>
 	<span class="">
 		<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handlerName}" />
-		<button class="btn btn-primary btn-small" name="${submitPrefix}${fieldName}" id="${submitPrefix}${fieldName}" value="${submitPrefix}${fieldName}" type="submit" >
+		<button class="btn btn-primary btn-small" name="${handler.uploadSubmitPrefix}${fieldName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
 			#i18n{appointment.action.send.name}
 		</button>
 	</span>
-	<input type="hidden" name="asynchronousupload.handler" value="${handlerName}" />
+	<input type="hidden" name="asynchronousupload.handler" value="${handler.handlerName}" />
 	<div id="progress_${fieldName}" class="progress progress-striped progress-success" style="display: none;">
         <div id="progress-bar_${fieldName}" class="bar progress-bar progress-bar-success">&nbsp;</div>
     </div>
 </#macro>
 
-<#macro addUploadedFilesBox fieldName checkBoxPrefix deletePrefix listFiles >
+<#macro addUploadedFilesBox fieldName handler listFiles >
 	<#-- file removing -->
 	<#assign has_files = false>
 	<#if listFiles?? && listFiles?has_content>
@@ -54,8 +59,8 @@
 					</#if>
 					<#if filename != '' >
 						<div class="controls" id="_file_uploaded_${fieldName}${file_index}">
-							<label class="checkbox" for="${checkBoxPrefix}${fieldName}${file_index}">
-							<input type="checkbox" name="${checkBoxPrefix}${fieldName}${file_index}" value="1" />${filename}</label>
+							<label class="checkbox" for="${handler.uploadCheckBoxPrefix}${fieldName}${file_index}">
+							<input type="checkbox" name="${handler.uploadCheckBoxPrefix}${fieldName}${file_index}" value="1" />${filename}</label>
 							<#assign file_index = file_index + 1>
 						</div>
 					</#if>
@@ -64,19 +69,19 @@
 		</div>
 		<br />
 		<div class="controls">
-			<button class="btn btn-primary btn-small" name="${deletePrefix}${fieldName}" value="${deletePrefix}${fieldName}" type="submit" >#i18n{appointment.action.delete.name}</button>
+			<button class="btn btn-primary btn-small" name="${handler.uploadDeletePrefix}${fieldName}" value="${handler.uploadDeletePrefix}${fieldName}" type="submit" >#i18n{appointment.action.delete.name}</button>
 		</div>
 	</div>
 </#macro>
 
 <#-- Macro to add a file input for asynchronous and synchronous uploads.
  # @param fieldName The name of the field.
- # @param handler The name of the associated handler.
+ # @param handler The associated handler service.
  # @param listUploadedFiles The list of files that have already been uploaded. Files must have a 'title' or a 'name' attribute. 
  # @param inputCssClass The CSS class to add to the input if any. Default value is an empty string.
  # @param multiple True to use an HTML5 multiple file input, false otherwise. Default value if false.
  -->
 <#macro addFileInputAndfilesBox fieldName handler listUploadedFiles inputCssClass='' multiple=false>
-	<@addFileInput fieldName=fieldName handlerName=handler.handlerName submitPrefix=handler.uploadSubmitPrefix cssClass=inputCssClass multiple=multiple />
-	<@addUploadedFilesBox fieldName=fieldName checkBoxPrefix=handler.uploadCheckboxPrefix deletePrefix=handler.uploadDeletePrefix listFiles=listUploadedFiles />
+	<@addFileInput fieldName=fieldName handler=handler cssClass=inputCssClass multiple=multiple />
+	<@addUploadedFilesBox fieldName=fieldName handler=handler listFiles=listUploadedFiles />
 </#macro>
