@@ -21,7 +21,7 @@
 
 <#macro addFileInput fieldName handler cssClass='' multiple=false>
 	<span class="">
-		<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handlerName}" />
+		<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
 		<button class="btn btn-primary btn-small" name="${handler.uploadSubmitPrefix}${fieldName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
 			#i18n{appointment.action.send.name}
 		</button>
@@ -59,8 +59,8 @@
 					</#if>
 					<#if filename != '' >
 						<div class="controls" id="_file_uploaded_${fieldName}${file_index}">
-							<label class="checkbox" for="${handler.uploadCheckBoxPrefix}${fieldName}${file_index}">
-							<input type="checkbox" name="${handler.uploadCheckBoxPrefix}${fieldName}${file_index}" value="1" />${filename}</label>
+							<label class="checkbox" for="${handler.uploadCheckboxPrefix}${fieldName}${file_index}">
+							<input type="checkbox" name="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" value="1" />${filename}</label>
 							<#assign file_index = file_index + 1>
 						</div>
 					</#if>

@@ -63,6 +63,9 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
 {
     private static final String PARAMETER_FIELD_NAME = "fieldname";
     private static final String PARAMETER_HANDLER = "asynchronousupload.handler";
+    private static final String UPLOAD_SUBMIT_PREFIX = "_upload_submit_";
+    private static final String UPLOAD_DELETE_PREFIX = "_upload_delete_";
+    private static final String UPLOAD_CHECKBOX_PREFIX = "_upload_checkbox_";
 
     /**
      * {@inheritDoc}
@@ -88,7 +91,7 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
             {
                 for ( FileItem fileItem : listFileItemsToUpload )
                 {
-                    addFileItemToUploadedFile( fileItem, strFieldName, request );
+                    addFileItemToUploadedFilesList( fileItem, strFieldName, request );
                 }
             }
             else
@@ -97,7 +100,7 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
             }
         }
 
-        List<FileItem> fileItemsSession = getListUploadedFiles( request, strFieldName );
+        List<FileItem> fileItemsSession = getListUploadedFiles( strFieldName, request.getSession(  ) );
 
         JSONObject jsonListFileItems = JSONUtils.getUploadedFileJSON( fileItemsSession );
         mainObject.accumulateAll( jsonListFileItems );
@@ -166,7 +169,7 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
 
                 for ( int nIndex : listIndexes )
                 {
-                    removeFileItem( strFieldName, session.getId(  ), nIndex );
+                    removeFileItem( strFieldName, session, nIndex );
                 }
             }
         }
@@ -213,21 +216,21 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
             Arrays.sort( tabFieldIndex );
             ArrayUtils.reverse( tabFieldIndex );
 
-            List<FileItem> fileItemsSession = getListUploadedFiles( request, strFieldName );
+            List<FileItem> fileItemsSession = getListUploadedFiles( strFieldName, request.getSession(  ) );
 
             List<FileItem> listItemsToRemove = new ArrayList<FileItem>( listIndexesFilesToRemove.size(  ) );
 
             for ( int nFieldIndex : tabFieldIndex )
             {
                 listItemsToRemove.add( fileItemsSession.get( nFieldIndex ) );
-                removeFileItem( strFieldName, request.getSession(  ).getId(  ), nFieldIndex );
+                removeFileItem( strFieldName, request.getSession(  ), nFieldIndex );
             }
         }
 
         JSONObject json = new JSONObject(  );
         json.element( JSONUtils.JSON_KEY_SUCCESS, JSONUtils.JSON_KEY_SUCCESS );
 
-        json.accumulateAll( JSONUtils.getUploadedFileJSON( getListUploadedFiles( request, strFieldName ) ) );
+        json.accumulateAll( JSONUtils.getUploadedFileJSON( getListUploadedFiles( strFieldName, request.getSession(  ) ) ) );
         json.element( JSONUtils.JSON_KEY_FIELD_NAME, strFieldName );
 
         return json.toString(  );
@@ -261,5 +264,32 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
     public boolean hasAddFileFlag( HttpServletRequest request, String strFieldName )
     {
         return StringUtils.isNotEmpty( request.getParameter( getUploadSubmitPrefix(  ) + strFieldName ) );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getUploadSubmitPrefix(  )
+    {
+        return getHandlerName(  ) + UPLOAD_SUBMIT_PREFIX;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getUploadDeletePrefix(  )
+    {
+        return getHandlerName(  ) + UPLOAD_DELETE_PREFIX;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getUploadCheckboxPrefix(  )
+    {
+        return getHandlerName(  ) + UPLOAD_CHECKBOX_PREFIX;
     }
 }
