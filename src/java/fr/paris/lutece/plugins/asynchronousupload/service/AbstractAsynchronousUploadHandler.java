@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.asynchronousupload.service;
 
 import fr.paris.lutece.plugins.asynchronousupload.util.JSONUtils;
 import fr.paris.lutece.portal.service.util.AppException;
+import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
@@ -255,15 +256,36 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
     }
 
     /**
-     * Check if the request has the flag to submit a file without submitting the
-     * form.
-     * @param request The request
-     * @param strFieldName The id of the entry
-     * @return True if the flag is present in the request, false otherwise
+     * {@inheritDoc}
      */
+    @Override
     public boolean hasAddFileFlag( HttpServletRequest request, String strFieldName )
     {
         return StringUtils.isNotEmpty( request.getParameter( getUploadSubmitPrefix(  ) + strFieldName ) );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addFilesUploadedSynchronously( HttpServletRequest request, String strFieldName )
+    {
+        if ( request instanceof MultipartHttpServletRequest && hasAddFileFlag( request, strFieldName ) )
+        {
+            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+            List<FileItem> listFileItem = multipartRequest.getFileList( strFieldName );
+
+            if ( ( listFileItem != null ) && ( listFileItem.size(  ) > 0 ) )
+            {
+                for ( FileItem fileItem : listFileItem )
+                {
+                    if ( ( fileItem.getSize(  ) > 0L ) && StringUtils.isNotEmpty( fileItem.getName(  ) ) )
+                    {
+                        addFileItemToUploadedFilesList( fileItem, strFieldName, request );
+                    }
+                }
+            }
+        }
     }
 
     /**

@@ -134,6 +134,22 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler
     String doRemoveUploadedFile( HttpServletRequest request, String strFieldName, List<Integer> listIndexesFilesToRemove );
 
     /**
+     * Check if the request has the flag to submit a file without submitting the
+     * form.
+     * @param request The request
+     * @param strFieldName The id of the entry
+     * @return True if the flag is present in the request, false otherwise
+     */
+    boolean hasAddFileFlag( HttpServletRequest request, String strFieldName );
+
+    /**
+     * Add files uploaded synchronously for a given field
+     * @param request The request
+     * @param strFieldName The name of the field to add files of
+     */
+    void addFilesUploadedSynchronously( HttpServletRequest request, String strFieldName );
+
+    /**
      * Get the name of the handler. The name of the handler must be unique. The
      * handler name must only contain alphabetic characters (no point, no space,
      * no coma, no #, ...).
