@@ -36,15 +36,15 @@
 		<dependency>
 	    	<groupId>fr.paris.lutece</groupId>
 	    	<artifactId>lutece-core</artifactId>
-	    	<version>[4.3.0,)</version>
+	    	<version>[4.4.1,)</version>
 	    	<type>lutece-core</type>
 	  	</dependency>
 	</dependencies>
 
 	<properties>
 		<componentName>asynchronousupload</componentName>
-		<jiraProjectName></jiraProjectName>
-		<jiraComponentId></jiraComponentId>
+		<jiraProjectName>ASYNCUP</jiraProjectName>
+		<jiraComponentId>12358</jiraComponentId>
 	</properties>
 
     <scm>
