@@ -69,11 +69,10 @@ $(function () {
     	        var bar = $(' #progress-bar_' + fieldName);
     	        bar.html( progress + '%'  );
     	        bar.css( 'width', progress + '%' );
-    	        if ( progress < 100 )
-    	        {
-    	        	$(' #progress_' + fieldName).show( );
-    	        }
-    	        else
+    	         	        
+    	        $(' #progress_' + fieldName).show( );
+    	        
+    	        if ( progress >= 100 )
     	        {
     	        	$(' #progress_' + fieldName).hide();
     	        }
