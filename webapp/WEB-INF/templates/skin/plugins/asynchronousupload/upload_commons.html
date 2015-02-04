@@ -10,16 +10,22 @@
 <#macro addRequiredJsFiles>
 	<link rel="stylesheet" href="css/plugins/asynchronousupload/jquery.fileupload.css" />
 	<link rel="stylesheet" href="css/plugins/asynchronousupload/jquery.fileupload-ui.css" />
-
+	
+	<script type="text/javascript" src="js/plugins/asynchronousupload/load-image.min.js" ></script>
 	<script type="text/javascript" src="js/plugins/asynchronousupload/vendor/jquery.ui.widget.js" ></script>
 	<script type="text/javascript" src="js/plugins/asynchronousupload/jquery.iframe-transport.js" ></script>
 	<script type="text/javascript" src="js/plugins/asynchronousupload/jquery.fileupload.js" ></script>
 	<script type="text/javascript" src="js/plugins/asynchronousupload/jquery.fileupload-process.js" ></script>
+	
+    
+	<script type="text/javascript" src="js/plugins/asynchronousupload/jquery.fileupload-image.js" ></script>
+    
+	
 	<script type="text/javascript" src="js/plugins/asynchronousupload/jquery.fileupload-validate.js" ></script>
 </#macro>
 
 
-<#macro addFileInput fieldName handler cssClass='' multiple=false>
+<#macro addFileInput fieldName handler cssClass multiple=false>
 	<span class="">
 		<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
 		<button class="btn btn-primary btn-small" name="${handler.uploadSubmitPrefix}${fieldName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
@@ -33,6 +39,7 @@
 </#macro>
 
 <#macro addUploadedFilesBox fieldName handler listFiles >
+	
 	<#-- file removing -->
 	<#assign has_files = false>
 	<#if listFiles?? && listFiles?has_content>
@@ -45,6 +52,7 @@
 	<div class="control-group well" <#if !has_files>style="display:none;"</#if> id="_file_deletion_label_${fieldName}">
 		<label class="control-label">#i18n{asynchronousupload.file.uploadedFile}</label>
 		<div id="_file_deletion_${fieldName}">
+		
 			<#assign file_index = 0>
 			<#if has_files>
 				<#assign index = 0 />

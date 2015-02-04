@@ -72,6 +72,8 @@ public class AsynchronousUploadApp extends MVCApplication
     private static final String PARAMETER_FIELD_NAME = "fieldname";
     private static final String PARAMETER_FIELD_INDEX = "field_index";
     private static final String PARAMETER_MAX_FILE_SIZE = "maxFileSize";
+    private static final String PARAMETER_IMAGE_MAX_WIDTH = "imageMaxWidth";
+    private static final String PARAMETER_IMAGE_MAX_HEIGHT = "imageMaxHeight";
 
     // Templates
     private static final String TEMPLATE_MAIN_UPLOAD_JS = "skin/plugins/asynchronousupload/main.js";
@@ -82,6 +84,8 @@ public class AsynchronousUploadApp extends MVCApplication
     // Constants
     private static final int DEFAULT_MAX_FILE_SIZE = 2097152;
     private static final String CONSTANT_COMA = ",";
+    private static final int DEFAULT_IMAGE_MAX_HEIGHT = 800;
+    private static final int DEFAULT_IMAGE_MAX_WIDTH = 800;
 
     /**
      * Get the main upload JavaScript file. Available HTTP parameters are :
@@ -100,10 +104,12 @@ public class AsynchronousUploadApp extends MVCApplication
 
         String strHandlerName = request.getParameter( PARAMETER_HANDLER );
         String strMaxFileSize = request.getParameter( PARAMETER_MAX_FILE_SIZE );
+        String strImageMaxWidth = request.getParameter( PARAMETER_IMAGE_MAX_WIDTH );
+        String strImageMaxHeight = request.getParameter( PARAMETER_IMAGE_MAX_HEIGHT );
 
         IAsyncUploadHandler handler = getHandler( strHandlerName );
 
-        int nMaxFileSize;
+        int nMaxFileSize,nImageMaxHeight, nImageMaxWidth ;
 
         if ( StringUtils.isNotEmpty( strMaxFileSize ) && StringUtils.isNumeric( strMaxFileSize ) )
         {
@@ -114,8 +120,29 @@ public class AsynchronousUploadApp extends MVCApplication
             nMaxFileSize = DEFAULT_MAX_FILE_SIZE;
         }
 
+        if ( StringUtils.isNotEmpty( strImageMaxHeight ) && StringUtils.isNumeric( strImageMaxHeight ) )
+        {
+        	nImageMaxHeight = Integer.parseInt( strImageMaxHeight );
+        }
+        else
+        {
+        	nImageMaxHeight = DEFAULT_IMAGE_MAX_HEIGHT;
+        }
+        
+
+        if ( StringUtils.isNotEmpty( strImageMaxWidth ) && StringUtils.isNumeric( strImageMaxWidth ) )
+        {
+        	nImageMaxWidth = Integer.parseInt( strImageMaxWidth );
+        }
+        else
+        {
+        	nImageMaxWidth = DEFAULT_IMAGE_MAX_WIDTH;
+        }
+
         String strKey = ( ( strHandlerName != null ) ? strHandlerName : StringUtils.EMPTY ) + strBaseUrl +
-            ( ( strMaxFileSize == null ) ? StringUtils.EMPTY : strMaxFileSize );
+            ( ( strMaxFileSize == null ) ? StringUtils.EMPTY : strMaxFileSize ) 
+            + ( ( strImageMaxWidth == null ) ? StringUtils.EMPTY : strImageMaxWidth )
+            +( ( strImageMaxHeight == null ) ? StringUtils.EMPTY : strImageMaxHeight );
 
         String strContent = (String) UploadCacheService.getInstance(  ).getFromCache( strKey );
 
@@ -127,6 +154,8 @@ public class AsynchronousUploadApp extends MVCApplication
             model.put( MARK_UPLOAD_URL, URL_UPLOAD_SERVLET );
             model.put( MARK_HANDLER_NAME, strHandlerName );
             model.put( PARAMETER_MAX_FILE_SIZE, nMaxFileSize );
+            model.put( PARAMETER_IMAGE_MAX_WIDTH, nImageMaxWidth );
+            model.put( PARAMETER_IMAGE_MAX_HEIGHT, nImageMaxHeight );
             model.put( MARK_SUBMIT_PREFIX, handler.getUploadSubmitPrefix(  ) );
             model.put( MARK_DELETE_PREFIX, handler.getUploadDeletePrefix(  ) );
             model.put( MARK_CHECKBOX_PREFIX, handler.getUploadCheckboxPrefix(  ) );

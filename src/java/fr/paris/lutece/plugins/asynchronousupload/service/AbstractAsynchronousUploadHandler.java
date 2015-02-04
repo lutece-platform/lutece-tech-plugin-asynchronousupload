@@ -222,7 +222,10 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
             List<FileItem> listItemsToRemove = new ArrayList<FileItem>( listIndexesFilesToRemove.size(  ) );
 
             for ( int nFieldIndex : tabFieldIndex )
-            {
+            {	
+            	if(fileItemsSession.size() == 1 && nFieldIndex > 0){
+            		nFieldIndex= nFieldIndex - 1;
+            	}
                 listItemsToRemove.add( fileItemsSession.get( nFieldIndex ) );
                 removeFileItem( strFieldName, request.getSession(  ), nFieldIndex );
             }

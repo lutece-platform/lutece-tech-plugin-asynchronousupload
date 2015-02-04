@@ -3,7 +3,7 @@
     <!-- Plugin Informations -->
     <name>asynchronous-upload</name>
     <class>fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation</class>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <documentation/>
     <installation/>
     <changes/>
@@ -29,10 +29,10 @@
         <javascript-files-scope>portal</javascript-files-scope>
         <javascript-file>asynchronousupload/vendor/jquery.ui.widget.js</javascript-file>
         <javascript-file>asynchronousupload/jquery.iframe-transport.js</javascript-file>
-<!--         <javascript-file>asynchronousupload/load-image.min.js</javascript-file> -->
+         <javascript-file>asynchronousupload/load-image.min.js</javascript-file> 
         <javascript-file>asynchronousupload/jquery.fileupload.js</javascript-file>
         <javascript-file>asynchronousupload/jquery.fileupload-process.js</javascript-file>
-<!--         <javascript-file>asynchronousupload/jquery.fileupload-image.js</javascript-file> -->
+        <javascript-file>asynchronousupload/jquery.fileupload-image.js</javascript-file>
 <!--         <javascript-file>asynchronousupload/jquery.fileupload-audio.js</javascript-file> -->
 <!--         <javascript-file>asynchronousupload/jquery.fileupload-video.js</javascript-file> -->
         <javascript-file>asynchronousupload/jquery.fileupload-validate.js</javascript-file>
