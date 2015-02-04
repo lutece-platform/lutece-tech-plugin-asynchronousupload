@@ -44,6 +44,8 @@ $(function () {
         		.test(window.navigator && navigator.userAgent),
     			imageMaxWidth: ${imageMaxWidth},
     			imageMaxHeight: ${imageMaxHeight},
+    			previewMaxWidth: ${previewMaxWidth},
+    			previewMaxHeight: ${previewMaxHeight},
     			imageCrop: true, // Force cropped images
     			dropZone: $(this),
     			maxFileSize: ${maxFileSize},

@@ -74,7 +74,8 @@ public class AsynchronousUploadApp extends MVCApplication
     private static final String PARAMETER_MAX_FILE_SIZE = "maxFileSize";
     private static final String PARAMETER_IMAGE_MAX_WIDTH = "imageMaxWidth";
     private static final String PARAMETER_IMAGE_MAX_HEIGHT = "imageMaxHeight";
-
+    private static final String PARAMETER_PREVIEW_MAX_WIDTH = "previewMaxWidth";
+    private static final String PARAMETER_PREVIEW_MAX_HEIGHT = "previewMaxHeight";
     // Templates
     private static final String TEMPLATE_MAIN_UPLOAD_JS = "skin/plugins/asynchronousupload/main.js";
 
@@ -84,8 +85,14 @@ public class AsynchronousUploadApp extends MVCApplication
     // Constants
     private static final int DEFAULT_MAX_FILE_SIZE = 2097152;
     private static final String CONSTANT_COMA = ",";
-    private static final int DEFAULT_IMAGE_MAX_HEIGHT = 800;
-    private static final int DEFAULT_IMAGE_MAX_WIDTH = 800;
+    // The maximum height of resized images:
+    private static final int DEFAULT_IMAGE_MAX_HEIGHT = 1080;
+    // The maximum width of resized images:
+    private static final int DEFAULT_IMAGE_MAX_WIDTH = 1920;
+    // The maximum height of preview images:
+    private static final int DEFAULT_PREVIEW_MAX_HEIGHT = 80;
+    // The maximum width of preview images:
+    private static final int DEFAULT_PREVIEW_MAX_WIDTH = 80;
 
     /**
      * Get the main upload JavaScript file. Available HTTP parameters are :
@@ -106,10 +113,12 @@ public class AsynchronousUploadApp extends MVCApplication
         String strMaxFileSize = request.getParameter( PARAMETER_MAX_FILE_SIZE );
         String strImageMaxWidth = request.getParameter( PARAMETER_IMAGE_MAX_WIDTH );
         String strImageMaxHeight = request.getParameter( PARAMETER_IMAGE_MAX_HEIGHT );
+        String strPreviewMaxWidth = request.getParameter( PARAMETER_IMAGE_MAX_WIDTH );
+        String strPreviewMaxHeight = request.getParameter( PARAMETER_IMAGE_MAX_HEIGHT );
 
         IAsyncUploadHandler handler = getHandler( strHandlerName );
 
-        int nMaxFileSize,nImageMaxHeight, nImageMaxWidth ;
+        int nMaxFileSize,nImageMaxHeight, nImageMaxWidth, nPreviewMaxWidth, nPreviewMaxHeight ;
 
         if ( StringUtils.isNotEmpty( strMaxFileSize ) && StringUtils.isNumeric( strMaxFileSize ) )
         {
@@ -138,11 +147,30 @@ public class AsynchronousUploadApp extends MVCApplication
         {
         	nImageMaxWidth = DEFAULT_IMAGE_MAX_WIDTH;
         }
+        if ( StringUtils.isNotEmpty( strPreviewMaxWidth ) && StringUtils.isNumeric( strPreviewMaxWidth ) )
+        {
+        	nPreviewMaxWidth = Integer.parseInt( strPreviewMaxWidth );
+        }
+        else
+        {
+        	nPreviewMaxWidth = DEFAULT_PREVIEW_MAX_HEIGHT;
+        }
+        
 
+        if ( StringUtils.isNotEmpty( strPreviewMaxHeight ) && StringUtils.isNumeric( strPreviewMaxHeight ) )
+        {
+        	nPreviewMaxHeight = Integer.parseInt( strPreviewMaxHeight );
+        }
+        else
+        {
+        	nPreviewMaxHeight = DEFAULT_PREVIEW_MAX_WIDTH;
+        }
         String strKey = ( ( strHandlerName != null ) ? strHandlerName : StringUtils.EMPTY ) + strBaseUrl +
             ( ( strMaxFileSize == null ) ? StringUtils.EMPTY : strMaxFileSize ) 
             + ( ( strImageMaxWidth == null ) ? StringUtils.EMPTY : strImageMaxWidth )
-            +( ( strImageMaxHeight == null ) ? StringUtils.EMPTY : strImageMaxHeight );
+            + ( ( strImageMaxHeight == null ) ? StringUtils.EMPTY : strImageMaxHeight )
+            + ( ( strPreviewMaxWidth == null ) ? StringUtils.EMPTY : strPreviewMaxWidth )
+            + ( ( strPreviewMaxHeight == null ) ? StringUtils.EMPTY : strPreviewMaxHeight )	;
 
         String strContent = (String) UploadCacheService.getInstance(  ).getFromCache( strKey );
 
@@ -156,6 +184,8 @@ public class AsynchronousUploadApp extends MVCApplication
             model.put( PARAMETER_MAX_FILE_SIZE, nMaxFileSize );
             model.put( PARAMETER_IMAGE_MAX_WIDTH, nImageMaxWidth );
             model.put( PARAMETER_IMAGE_MAX_HEIGHT, nImageMaxHeight );
+            model.put( PARAMETER_PREVIEW_MAX_WIDTH, nPreviewMaxWidth );
+            model.put( PARAMETER_PREVIEW_MAX_HEIGHT, nPreviewMaxHeight );  
             model.put( MARK_SUBMIT_PREFIX, handler.getUploadSubmitPrefix(  ) );
             model.put( MARK_DELETE_PREFIX, handler.getUploadDeletePrefix(  ) );
             model.put( MARK_CHECKBOX_PREFIX, handler.getUploadCheckboxPrefix(  ) );
