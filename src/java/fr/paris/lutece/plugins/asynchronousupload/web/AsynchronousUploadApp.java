@@ -88,7 +88,7 @@ public class AsynchronousUploadApp extends MVCApplication
     // The maximum height of resized images:
     private static final int DEFAULT_IMAGE_MAX_HEIGHT = 1080;
     // The maximum width of resized images:
-    private static final int DEFAULT_IMAGE_MAX_WIDTH = 1920;
+    private static final int DEFAULT_IMAGE_MAX_WIDTH = 1080;
     // The maximum height of preview images:
     private static final int DEFAULT_PREVIEW_MAX_HEIGHT = 80;
     // The maximum width of preview images:
