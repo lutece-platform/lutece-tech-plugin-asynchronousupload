@@ -34,7 +34,7 @@ $(function () {
     });
     
     // Initialize the jQuery File Upload widget:
-    $('.${handler_name}').each( function() {
+    $('.${handler_name}${fieldname}').each( function() {
     	$(this).fileupload({
     			// Uncomment the following to send cross-domain cookies:
     			//xhrFields: {withCredentials: true},

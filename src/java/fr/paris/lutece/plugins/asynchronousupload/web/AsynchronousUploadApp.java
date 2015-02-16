@@ -66,7 +66,7 @@ public class AsynchronousUploadApp extends MVCApplication
     private static final String MARK_SUBMIT_PREFIX = "submitPrefix";
     private static final String MARK_DELETE_PREFIX = "deletePrefix";
     private static final String MARK_CHECKBOX_PREFIX = "checkBoxPrefix";
-
+ 
     // Parameters
     private static final String PARAMETER_HANDLER = "handler";
     private static final String PARAMETER_FIELD_NAME = "fieldname";
@@ -93,7 +93,8 @@ public class AsynchronousUploadApp extends MVCApplication
     private static final int DEFAULT_PREVIEW_MAX_HEIGHT = 80;
     // The maximum width of preview images:
     private static final int DEFAULT_PREVIEW_MAX_WIDTH = 80;
-
+    //filed name
+    private static final String   DEFAULT_FIELD_NAME = StringUtils.EMPTY;
     /**
      * Get the main upload JavaScript file. Available HTTP parameters are :
      * <ul>
@@ -115,6 +116,7 @@ public class AsynchronousUploadApp extends MVCApplication
         String strImageMaxHeight = request.getParameter( PARAMETER_IMAGE_MAX_HEIGHT );
         String strPreviewMaxWidth = request.getParameter( PARAMETER_IMAGE_MAX_WIDTH );
         String strPreviewMaxHeight = request.getParameter( PARAMETER_IMAGE_MAX_HEIGHT );
+        String strFieldName = request.getParameter( PARAMETER_FIELD_NAME );
 
         IAsyncUploadHandler handler = getHandler( strHandlerName );
 
@@ -165,12 +167,19 @@ public class AsynchronousUploadApp extends MVCApplication
         {
         	nPreviewMaxHeight = DEFAULT_PREVIEW_MAX_WIDTH;
         }
+        
+        if ( !StringUtils.isNotEmpty( strFieldName )  )
+        {
+        	strFieldName = DEFAULT_FIELD_NAME;
+        }
+        
         String strKey = ( ( strHandlerName != null ) ? strHandlerName : StringUtils.EMPTY ) + strBaseUrl +
             ( ( strMaxFileSize == null ) ? StringUtils.EMPTY : strMaxFileSize ) 
             + ( ( strImageMaxWidth == null ) ? StringUtils.EMPTY : strImageMaxWidth )
             + ( ( strImageMaxHeight == null ) ? StringUtils.EMPTY : strImageMaxHeight )
             + ( ( strPreviewMaxWidth == null ) ? StringUtils.EMPTY : strPreviewMaxWidth )
-            + ( ( strPreviewMaxHeight == null ) ? StringUtils.EMPTY : strPreviewMaxHeight )	;
+            + ( ( strPreviewMaxHeight == null ) ? StringUtils.EMPTY : strPreviewMaxHeight )	
+            +( ( strFieldName == null ) ? StringUtils.EMPTY : strFieldName );
 
         String strContent = (String) UploadCacheService.getInstance(  ).getFromCache( strKey );
 
@@ -189,6 +198,7 @@ public class AsynchronousUploadApp extends MVCApplication
             model.put( MARK_SUBMIT_PREFIX, handler.getUploadSubmitPrefix(  ) );
             model.put( MARK_DELETE_PREFIX, handler.getUploadDeletePrefix(  ) );
             model.put( MARK_CHECKBOX_PREFIX, handler.getUploadCheckboxPrefix(  ) );
+            model.put( PARAMETER_FIELD_NAME, strFieldName );
 
             HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MAIN_UPLOAD_JS, request.getLocale(  ),
                     model );
