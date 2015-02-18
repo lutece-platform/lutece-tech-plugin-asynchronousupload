@@ -114,8 +114,8 @@ public class AsynchronousUploadApp extends MVCApplication
         String strMaxFileSize = request.getParameter( PARAMETER_MAX_FILE_SIZE );
         String strImageMaxWidth = request.getParameter( PARAMETER_IMAGE_MAX_WIDTH );
         String strImageMaxHeight = request.getParameter( PARAMETER_IMAGE_MAX_HEIGHT );
-        String strPreviewMaxWidth = request.getParameter( PARAMETER_IMAGE_MAX_WIDTH );
-        String strPreviewMaxHeight = request.getParameter( PARAMETER_IMAGE_MAX_HEIGHT );
+        String strPreviewMaxWidth = request.getParameter( PARAMETER_PREVIEW_MAX_WIDTH );
+        String strPreviewMaxHeight = request.getParameter( PARAMETER_PREVIEW_MAX_HEIGHT );
         String strFieldName = request.getParameter( PARAMETER_FIELD_NAME );
 
         IAsyncUploadHandler handler = getHandler( strHandlerName );
