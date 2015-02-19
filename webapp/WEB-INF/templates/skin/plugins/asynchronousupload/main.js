@@ -147,7 +147,7 @@ function formDisplayUploadedFiles( jsonData, files, cbPrefix )
 //				if ( jsonData.files[index].is_new )
 //				{
 					index=jsonData.fileCount-1;
-					strContent =$("<div class=\"controls\" id=\"_file_uploaded_" + fieldName + index + "\"><label class=\"checkbox\">  \
+					strContent =$("<div class=\"checkbox\" id=\"_file_uploaded_" + fieldName + index + "\"><label>  \
 								<input type=\"checkbox\"  \
 									name=\"" + checkboxPrefix + index + "\"  \
 									id=\"" + checkboxPrefix + index + "\"  \
@@ -222,7 +222,7 @@ function updateErrorBox( errorMessage, fieldName )
 {
 	if ( errorMessage != null && errorMessage != '' )
 	{
-		var strContent = '<span class="controls text-danger">' + errorMessage + '</span>'
+		var strContent = '<span class="text-danger">' + errorMessage + '</span>'
 		$( '#_file_error_box_' + fieldName ).html( strContent );
 		$( '#_file_error_box_' + fieldName ).show( );
 	}
