@@ -158,6 +158,5 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler
     String getHandlerName(  );
     
    
-    List<FileItem>  resiezeImage( HttpServletRequest request, String strFieldName, List<FileItem> listFileItemsToUpload,
-            Locale locale );
+   
 }
