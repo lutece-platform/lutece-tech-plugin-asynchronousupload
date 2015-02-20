@@ -79,8 +79,8 @@
 					<#if filename != '' >
 						<div class="" id="_file_uploaded_${fieldName}${file_index}">
 							<label class="checkbox" for="${handler.uploadCheckboxPrefix}${fieldName}${file_index}">
-							<input type="checkbox" name="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" value="1" />${filename}</label>
-							<#assign file_index = file_index + 1>
+							<input type="checkbox" name="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" value="1" />${filename}</label>				
+                     		<#assign file_index = file_index + 1>
 						</div>
 					</#if>
 				</#list>
@@ -105,6 +105,13 @@
 	<@addUploadedFilesBox fieldName=fieldName handler=handler listFiles=listUploadedFiles />
 </#macro>
 
+<#-- Macro to add a file image input for asynchronous and synchronous uploads.
+ # @param fieldName The name of the field.
+ # @param handler The associated handler service.
+ # @param listUploadedFiles The list of files that have already been uploaded. Files must have a 'title' or a 'name' attribute. 
+ # @param inputCssClass The CSS class to add to the input if any. Default value is an empty string.
+ # @param multiple True to use an HTML5 multiple file input, false otherwise. Default value if false.
+ -->
 
 <#macro addFileInputImageAndfilesBox fieldName handler listUploadedFiles inputCssClass='' multiple=false>
 	<@addFileInputImage fieldName=fieldName handler=handler cssClass=inputCssClass multiple=multiple />

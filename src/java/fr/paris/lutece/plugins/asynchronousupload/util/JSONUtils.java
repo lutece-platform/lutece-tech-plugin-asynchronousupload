@@ -33,15 +33,19 @@
  */
 package fr.paris.lutece.plugins.asynchronousupload.util;
 
+import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-
+import fr.paris.lutece.util.file.FileUtil;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.DatatypeConverter;
 
 
 /**
@@ -61,7 +65,7 @@ public final class JSONUtils
     public static final String JSON_KEY_SUCCESS = "success";
     private static final String JSON_KEY_FILE_NAME = "name";
     private static final String JSON_KEY_FILE_SIZE = "size";
-
+    private static final String JSON_KEY_FILE_PREVIEW = "preview";
     //    private static final String JSON_KEY_IS_NEW = "is_new";
     //    private static final String JSON_KEY_IS_REMOVED = "is_removed";
     private static final String JSON_KEY_FORM_ERROR = "form_error";
@@ -96,7 +100,12 @@ public final class JSONUtils
             {
                 JSONObject jsonObject = new JSONObject(  );
                 jsonObject.element( JSON_KEY_FILE_NAME, fileItem.getName(  ) );
-                jsonObject.element( JSON_KEY_FILE_NAME, fileItem.getName(  ) );
+                try {
+					jsonObject.element( JSON_KEY_FILE_PREVIEW, getPreviewImage(fileItem) );
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+				}
                 jsonObject.element( JSON_KEY_FILE_SIZE, fileItem.getSize(  ) );
                 json.accumulate( JSON_KEY_UPLOADED_FILES, jsonObject );
             }
@@ -139,4 +148,15 @@ public final class JSONUtils
             json.accumulate( JSON_KEY_FORM_ERROR, strMessage );
         }
     }
+    
+	 private static String getPreviewImage( FileItem fileItem ) throws IOException{
+	    	
+	    	if(FileUtil.hasImageExtension( fileItem.getName( ) ) ){	
+	    		String	preview= "data:image/png;base64," + DatatypeConverter.printBase64Binary( fileItem.get( ) );
+	    	
+	    		return preview;
+	    	}	
+	    	
+	    	return StringUtils.EMPTY;
+	    }
 }

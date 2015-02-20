@@ -52,6 +52,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 
+
 /**
  * Upload application
  */
@@ -66,6 +67,7 @@ public class AsynchronousUploadApp extends MVCApplication
     private static final String MARK_SUBMIT_PREFIX = "submitPrefix";
     private static final String MARK_DELETE_PREFIX = "deletePrefix";
     private static final String MARK_CHECKBOX_PREFIX = "checkBoxPrefix";
+    
  
     // Parameters
     private static final String PARAMETER_HANDLER = "handler";
@@ -76,6 +78,7 @@ public class AsynchronousUploadApp extends MVCApplication
     private static final String PARAMETER_IMAGE_MAX_HEIGHT = "imageMaxHeight";
     private static final String PARAMETER_PREVIEW_MAX_WIDTH = "previewMaxWidth";
     private static final String PARAMETER_PREVIEW_MAX_HEIGHT = "previewMaxHeight";
+   
     // Templates
     private static final String TEMPLATE_MAIN_UPLOAD_JS = "skin/plugins/asynchronousupload/main.js";
 
@@ -219,6 +222,7 @@ public class AsynchronousUploadApp extends MVCApplication
         String strFieldName = request.getParameter( PARAMETER_FIELD_NAME );
 
         String strFieldIndex = request.getParameter( PARAMETER_FIELD_INDEX );
+        
 
         List<Integer> listIndexesFilesToRemove = new ArrayList<Integer>(  );
 
@@ -238,6 +242,7 @@ public class AsynchronousUploadApp extends MVCApplication
         return ( handler == null ) ? StringUtils.EMPTY
                                    : handler.doRemoveUploadedFile( request, strFieldName, listIndexesFilesToRemove );
     }
+    
 
     /**
      * Gets the handler
