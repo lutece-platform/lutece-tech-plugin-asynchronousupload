@@ -77,8 +77,8 @@
 						</#if>
 					</#if>
 					<#if filename != '' >
-						<div class="" id="_file_uploaded_${fieldName}${file_index}">
-							<label class="checkbox" for="${handler.uploadCheckboxPrefix}${fieldName}${file_index}">
+						<div class="checkbox" id="_file_uploaded_${fieldName}${file_index}">
+							<label class="col-xs-12 col-sm-12 col-md-12 col-lg-12" for="${handler.uploadCheckboxPrefix}${fieldName}${file_index}">
 							<input type="checkbox" name="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" value="1" />${filename}</label>				
                      		<#assign file_index = file_index + 1>
 						</div>
