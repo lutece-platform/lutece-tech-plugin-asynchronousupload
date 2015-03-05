@@ -148,7 +148,7 @@ function formDisplayUploadedFiles${fieldname}( jsonData, files, cbPrefix )
 //				if ( jsonData.files[index].is_new )
 //				{
 
-					strContent = strContent + "<div class=\"controls\" id=\"_file_uploaded_" + fieldName + index + "\"><label class=\"checkbox\">  \
+					strContent = strContent + "<div class=\"checkbox\" id=\"_file_uploaded_" + fieldName + index + "\"><label class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">  \
 								<input type=\"checkbox\"  \
 									name=\"" + checkboxPrefix + index + "\"  \
 									id=\"" + checkboxPrefix + index + "\"  \
