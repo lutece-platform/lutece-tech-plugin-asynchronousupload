@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.asynchronousupload.util;
 
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.file.FileUtil;
 import net.sf.json.JSONObject;
 
@@ -101,10 +102,12 @@ public final class JSONUtils
                 JSONObject jsonObject = new JSONObject(  );
                 jsonObject.element( JSON_KEY_FILE_NAME, fileItem.getName(  ) );
                 try {
+                	
 					jsonObject.element( JSON_KEY_FILE_PREVIEW, getPreviewImage(fileItem) );
+					
 				} catch (IOException e) {
 					
-					e.printStackTrace();
+					 AppLogService.error( e );
 				}
                 jsonObject.element( JSON_KEY_FILE_SIZE, fileItem.getSize(  ) );
                 json.accumulate( JSON_KEY_UPLOADED_FILES, jsonObject );
@@ -152,6 +155,7 @@ public final class JSONUtils
 	 private static String getPreviewImage( FileItem fileItem ) throws IOException{
 	    	
 	    	if(FileUtil.hasImageExtension( fileItem.getName( ) ) ){	
+	    		
 	    		String	preview= "data:image/png;base64," + DatatypeConverter.printBase64Binary( fileItem.get( ) );
 	    	
 	    		return preview;

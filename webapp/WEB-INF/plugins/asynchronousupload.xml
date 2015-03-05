@@ -33,6 +33,7 @@
         <javascript-file>asynchronousupload/jquery.fileupload.js</javascript-file>
         <javascript-file>asynchronousupload/jquery.fileupload-process.js</javascript-file>
         <javascript-file>asynchronousupload/jquery.fileupload-image.js</javascript-file>
+        <javascript-file>asynchronousupload/canvas-to-blob.min.js</javascript-file>
 <!--         <javascript-file>asynchronousupload/jquery.fileupload-audio.js</javascript-file> -->
 <!--         <javascript-file>asynchronousupload/jquery.fileupload-video.js</javascript-file> -->
         <javascript-file>asynchronousupload/jquery.fileupload-validate.js</javascript-file>
