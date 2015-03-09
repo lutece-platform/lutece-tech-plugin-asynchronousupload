@@ -154,7 +154,7 @@ function formDisplayUploadedFiles${fieldname}( jsonData, files, cbPrefix )
 									id=\"" + checkboxPrefix + index + "\"  \
 								/>  \
 								&#160;" + ( (jsonData.fileCount == 1) ? jsonData.files.name : jsonData.files[index].name ) + 
-							"</label></div><div class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\""+" <img src="+"'"+ ( (jsonData.fileCount == 1) ? jsonData.files.preview : jsonData.files[index].preview )+"'"+"alt='' "+" width='${previewMaxWidth}' height='${previewMaxHeight}'/></div>";
+							"</label></div><div class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">"+" <img src="+"'"+ ( (jsonData.fileCount == 1) ? jsonData.files.preview : jsonData.files[index].preview )+"'"+"alt='' "+" width='${previewMaxWidth}' height='${previewMaxHeight}'/></div>";
 //				}
 //				else if ( jsonData.files[index].is_removed )
 //				{
