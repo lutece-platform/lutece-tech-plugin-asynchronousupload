@@ -26,7 +26,7 @@
 
 
 <#macro addFileInput fieldName handler cssClass multiple=false>
-	<span class="">
+	<span class="fileinput-button">
 		<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
 		<button class="btn btn-primary btn-sm" name="${handler.uploadSubmitPrefix}${fieldName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
 			#i18n{asynchronousupload.action.send.name}
@@ -38,7 +38,7 @@
     </div>
 </#macro>
 <#macro addFileInputImage fieldName handler cssClass multiple=false>
-	<span class="">
+	<span class="fileinput-button">
 		<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}${fieldName}" />
 		<button class="btn btn-primary btn-sm" name="${handler.uploadSubmitPrefix}${fieldName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
 			#i18n{asynchronousupload.action.send.name}
