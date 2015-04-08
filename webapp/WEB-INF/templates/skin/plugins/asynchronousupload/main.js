@@ -46,7 +46,7 @@ $(function () {
     			imageMaxHeight: ${imageMaxHeight},
     			previewMaxWidth: ${previewMaxWidth},
     			previewMaxHeight: ${previewMaxHeight},
-    			imageCrop: true, // Force cropped images
+    			imageCrop: false, // Force cropped images
     			dropZone: $(this),
     			maxFileSize: ${maxFileSize},
     			formData: [{name:'fieldname',value:$(this)[0].name}, {name:'asynchronousupload.handler', value:'${handler_name}'}],
