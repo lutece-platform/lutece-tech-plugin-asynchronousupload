@@ -26,11 +26,11 @@
 
 
 <#macro addFileInput fieldName handler cssClass multiple=false>
-	<span class="fileinput-button">
+	<span class="file-input btn btn-primary btn-file">
 		<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
-		<button class="btn btn-primary btn-sm" name="${handler.uploadSubmitPrefix}${fieldName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
+		<!-- <button class="btn btn-primary btn-sm" name="${handler.uploadSubmitPrefix}${fieldName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
 			#i18n{asynchronousupload.action.send.name}
-		</button>
+		</button>-->
 	</span>
 	<input type="hidden" name="asynchronousupload.handler" value="${handler.handlerName}" />
 	<div id="progress_${fieldName}" class="progress" style="display:none;">
@@ -38,11 +38,11 @@
     </div>
 </#macro>
 <#macro addFileInputImage fieldName handler cssClass multiple=false>
-	<span class="fileinput-button">
+	<span class="file-input btn btn-primary btn-file">
 		<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}${fieldName}" />
-		<button class="btn btn-primary btn-sm" name="${handler.uploadSubmitPrefix}${fieldName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
+		<!-- <button class="btn btn-primary btn-sm" name="${handler.uploadSubmitPrefix}${fieldName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
 			#i18n{asynchronousupload.action.send.name}
-		</button>
+		</button>-->
 	</span>
 	<input type="hidden" name="asynchronousupload.handler" value="${handler.handlerName}" />
 	<div id="progress_${fieldName}" class="progress" style="display: none;">
