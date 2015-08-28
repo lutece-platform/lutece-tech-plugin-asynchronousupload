@@ -86,7 +86,7 @@ public class AsynchronousUploadApp extends MVCApplication
     private static final String URL_UPLOAD_SERVLET = "jsp/site/upload";
 
     // Constants
-    private static final int DEFAULT_MAX_FILE_SIZE = 2097152;
+    private static final int DEFAULT_MAX_FILE_SIZE = 209715200;
     private static final String CONSTANT_COMA = ",";
     // The maximum height of resized images:
     private static final int DEFAULT_IMAGE_MAX_HEIGHT = 1080;
