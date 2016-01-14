@@ -107,13 +107,11 @@ $(function () {
 		event.preventDefault( );
 	});
 
-    // prevent user from quitting the page before his upload ended.
-    $('[name^="${deletePrefix}"]').each(function() {
-    	$(this).click(function(event) {
-    		var fieldName = this.name.match("${deletePrefix}(.*)")[1];
-    		removeFile${checkBoxPrefix}(fieldName, '${handler_name}', '${base_url}');
-    		event.preventDefault( );
-    	});
+    // prevent user from quitting the page before his upload ended.    
+    $(document).on('click','[name^="${deletePrefix}"]', {} ,function() {
+        var fieldName = this.name.match("${deletePrefix}(.*)")[1];
+    	removeFile${checkBoxPrefix}(fieldName, '${handler_name}', '${base_url}');
+    	event.preventDefault( );
     });
     
 });
