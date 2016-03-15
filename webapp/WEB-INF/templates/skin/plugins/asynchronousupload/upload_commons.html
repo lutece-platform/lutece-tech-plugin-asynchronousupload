@@ -26,11 +26,13 @@
 
 
 <#macro addFileInput fieldName handler cssClass multiple=false>
-	<span class="file-input btn btn-primary btn-file">
-		<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
-		<!-- <button class="btn btn-primary btn-sm" name="${handler.uploadSubmitPrefix}${fieldName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
-			#i18n{asynchronousupload.action.send.name}
-		</button>-->
+	<span class="form-inline file-input">
+		<input type="file" style="display:inline-block;" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
+		<button class="btn btn-primary btn-sm" name="${handler.uploadSubmitPrefix}${fieldName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
+			<i class="fa fa-upload"></i>
+			<span class="file-input-text-noscript">#i18n{asynchronousupload.action.send.name}</span>
+			<span class="file-input-text-js" style="display:none;">#i18n{asynchronousupload.action.browse.name}</span>
+		</button>
 	</span>
 	<input type="hidden" name="asynchronousupload.handler" value="${handler.handlerName}" />
 	<div id="progress_${fieldName}" class="progress" style="display:none;">
@@ -38,11 +40,13 @@
     </div>
 </#macro>
 <#macro addFileInputImage fieldName handler cssClass multiple=false>
-	<span class="file-input btn btn-primary btn-file">
-		<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}${fieldName}" />
-		<!-- <button class="btn btn-primary btn-sm" name="${handler.uploadSubmitPrefix}${fieldName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
-			#i18n{asynchronousupload.action.send.name}
-		</button>-->
+	<span class="form-inline file-input">
+		<input type="file" style="display:inline-block;" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
+		<button class="btn btn-primary btn-sm" name="${handler.uploadSubmitPrefix}${fieldName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
+			<i class="fa fa-upload"></i>
+			<span class="file-input-text-noscript">#i18n{asynchronousupload.action.send.name}</span>
+			<span class="file-input-text-js" style="display:none;">#i18n{asynchronousupload.action.browse.name}</span>
+		</button>
 	</span>
 	<input type="hidden" name="asynchronousupload.handler" value="${handler.handlerName}" />
 	<div id="progress_${fieldName}" class="progress" style="display: none;">
