@@ -38,4 +38,19 @@
 <!--         <javascript-file>asynchronousupload/jquery.fileupload-video.js</javascript-file> -->
         <javascript-file>asynchronousupload/jquery.fileupload-validate.js</javascript-file>
     </javascript-files>
+	
+	<admin-javascript-files>
+        <admin-javascript-file>js/plugins/asynchronousupload/vendor/jquery.ui.widget.js</admin-javascript-file>
+        <admin-javascript-file>js/plugins/asynchronousupload/jquery.iframe-transport.js</admin-javascript-file>
+        <admin-javascript-file>js/plugins/asynchronousupload/load-image.min.js</admin-javascript-file> 
+        <admin-javascript-file>js/plugins/asynchronousupload/jquery.fileupload.js</admin-javascript-file>
+        <admin-javascript-file>js/plugins/asynchronousupload/jquery.fileupload-process.js</admin-javascript-file>
+        <admin-javascript-file>js/plugins/asynchronousupload/jquery.fileupload-image.js</admin-javascript-file>
+        <admin-javascript-file>js/plugins/asynchronousupload/canvas-to-blob.min.js</admin-javascript-file>
+<!--         <admin-javascript-file>js/plugins/asynchronousupload/jquery.fileupload-audio.js</admin-javascript-file> -->
+<!--         <admin-javascript-file>js/plugins/asynchronousupload/jquery.fileupload-video.js</admin-javascript-file> -->
+	<admin-javascript-file>js/plugins/asynchronousupload/jquery.fileupload-validate.js</admin-javascript-file>
+    </admin-javascript-files>
+	
+    
 </plug-in>
