@@ -10,111 +10,118 @@
  */
 
 /* global $, window */
-
-$(function () {
-    'use strict';
-
-    var uploadButton = $('<button/>')
-    .addClass('btn btn-primary')
-    .prop('disabled', true)
-    .text('Processing...')
-    .on('click', function () {
-        var $this = $(this),
-            data = $this.data();
-        $this
-            .off('click')
-            .text('Abort')
-            .on('click', function () {
-                $this.remove();
-                data.abort();
-            });
-        data.submit().always(function () {
-            $this.remove();
-        });
-    });
+Array.prototype.contains = function (object){
     
-    // Initialize the jQuery File Upload widget:
-	$(document).on('click','.${handler_name}${fieldname}', {} ,function() {
-    	$(this).fileupload({
-    			// Uncomment the following to send cross-domain cookies:
-    			//xhrFields: {withCredentials: true},
-    			dataType: 'json',
-    			url: '${base_url}${upload_url}',
-    			disableImageResize: /Android(?!.*Chrome)|Opera/
-        		.test(window.navigator && navigator.userAgent),
-    			imageMaxWidth: ${imageMaxWidth},
-    			imageMaxHeight: ${imageMaxHeight},
-    			previewMaxWidth: ${previewMaxWidth},
-    			previewMaxHeight: ${previewMaxHeight},
-    			imageCrop: false, // Force cropped images
-    			dropZone: $(this),
-    			maxFileSize: ${maxFileSize},
-    			formData: [{name:'fieldname',value:$(this)[0].name}, {name:'asynchronousupload.handler', value:'${handler_name}'}],
-    			messages: {
-    		        maxFileSize: "#i18n{asynchronousupload.error.fileTooLarge}",
-			
-    		    }
-    	    }).on('fileuploadprocessalways', function (e, data) {
-    	        var index = data.index,
-    	            file = data.files[index],
-    	            fieldName = data.formData[0].value;
+  for(i in this){
+      if(this[i] == object){
+          return true;
+      }
+  }
+  return false;
+}
+if(typeof(handlerList)==='undefined'){
+handlerList=[]    
+}
+
+if (!handlerList.contains('${handler_name}')){
+    
+    handlerList.push('${handler_name}');
+    
+$(function () {
+'use strict';
+        var uploadButton = $('<button/>')
+        .addClass('btn btn-primary')
+        .prop('disabled', true)
+        .text('Processing...')
+        .on('click', function () {
+        var $this = $(this),
+                data = $this.data();
+                $this
+                .off('click')
+                .text('Abort')
+                .on('click', function () {
+                $this.remove();
+                        data.abort();
+                });
+                data.submit().always(function () {
+        $this.remove();
+        });
+        });
+        // Initialize the jQuery File Upload widget:
+        $(document).on('click', '.${handler_name}${fieldname}', {}, function() {
+$(this).fileupload({
+// Uncomment the following to send cross-domain cookies:
+//xhrFields: {withCredentials: true},
+dataType: 'json',
+        url: '${base_url}${upload_url}',
+        disableImageResize: /Android(?!.*Chrome)|Opera/
+        .test(window.navigator && navigator.userAgent),
+        imageMaxWidth: ${imageMaxWidth},
+        imageMaxHeight: ${imageMaxHeight},
+        previewMaxWidth: ${previewMaxWidth},
+        previewMaxHeight: ${previewMaxHeight},
+        imageCrop: false, // Force cropped images
+        dropZone: $(this),
+        maxFileSize: ${maxFileSize},
+        formData: [{name:'fieldname', value:$(this)[0].name}, {name:'asynchronousupload.handler', value:'${handler_name}'}],
+        messages: {
+        maxFileSize: "#i18n{asynchronousupload.error.fileTooLarge}",
+        }
+}).on('fileuploadprocessalways', function (e, data) {
+var index = data.index,
+        file = data.files[index],
+        fieldName = data.formData[0].value;
 //    	        if (file.preview) {
 //    	            node
 //    	                .prepend('<br>')
 //    	                .prepend(file.preview);
 //    	        }
-    	        if (file.error) {
-    	        	updateErrorBox( file.error, fieldName )
-    	        }
+        if (file.error) {
+updateErrorBox(file.error, fieldName)
+}
 //    	        if (index + 1 === data.files.length) {
 //    	            data.context.find('button')
 //    	                .text('Upload')
 //    	                .prop('disabled', !!data.files.error);
 //    	        }
-    	    }).on('fileuploadprogressall', function (e, data) {
-    	        var progress = parseInt(data.loaded / data.total * 100, 10);
-    	        var fieldName = this.name;
-    	        var bar = $(' #progress-bar_' + fieldName);
-    	        bar.html( progress + '%'  );
-    	        bar.css( 'width', progress + '%' );
-    	         	        
-    	        $(' #progress_' + fieldName).show( );
-    	        
-    	        if ( progress >= 100 )
-    	        {
-    	        	$(' #progress_' + fieldName).hide();
-    	        }
-    	    }).on('fileuploaddone', function (e, data) {
-    	    	formDisplayUploadedFiles${fieldname}( data.result, data.files, '${checkBoxPrefix}' );
-    	    }).on('fileuploadfail', function (e, data) {
-    	    	var fieldName = data.formData[0].value;
-    	    	updateErrorBox( 'Une erreur est survenue lors de l\'upload du fichier', fieldName );
-    	    	$(' #progress_' + fieldName).hide();
-    	    }).prop('disabled', !$.support.fileInput)
-    	        .parent().addClass($.support.fileInput ? undefined : 'disabled');
-    	this.parentNode.className=this.parentNode.className + ' fileinput-button';
-    	
-    	var jsonData = {"fieldname":this.name, "asynchronousupload.handler":"${handler_name}"};
-    	
-    	$.getJSON('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
-    			function(json) {
-    				formDisplayUploadedFiles${fieldname}(json, null, '${checkBoxPrefix}');
-    			}
-    		);
-    });
-    
-    $('[name^="${submitPrefix}"]').click(function(event) {
-		event.preventDefault( );
-	});
-
-    // prevent user from quitting the page before his upload ended.    
-    $(document).on('click','[name^="${deletePrefix}"]', {} ,function() {
-        var fieldName = this.name.match("${deletePrefix}(.*)")[1];
-    	removeFile${checkBoxPrefix}(fieldName, '${handler_name}', '${base_url}');
-    	event.preventDefault( );
-    });
-    
+}).on('fileuploadprogressall', function (e, data) {
+var progress = parseInt(data.loaded / data.total * 100, 10);
+        var fieldName = this.name;
+        var bar = $(' #progress-bar_' + fieldName);
+        bar.html(progress + '%');
+        bar.css('width', progress + '%');
+        $(' #progress_' + fieldName).show();
+        if (progress >= 100)
+{
+$(' #progress_' + fieldName).hide();
+}
+}).on('fileuploaddone', function (e, data) {
+formDisplayUploadedFiles${fieldname}(data.result, data.files, '${checkBoxPrefix}');
+}).on('fileuploadfail', function (e, data) {
+var fieldName = data.formData[0].value;
+        updateErrorBox('Une erreur est survenue lors de l\'upload du fichier', fieldName);
+        $(' #progress_' + fieldName).hide();
+}).prop('disabled', !$.support.fileInput)
+        .parent().addClass($.support.fileInput ? undefined : 'disabled');
+        this.parentNode.className = this.parentNode.className + ' fileinput-button';
+        var jsonData = {"fieldname":this.name, "asynchronousupload.handler":"${handler_name}"};
+        $.getJSON('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
+                function(json) {
+                formDisplayUploadedFiles${fieldname}(json, null, '${checkBoxPrefix}');
+                }
+        );
 });
+        $('[name^="${submitPrefix}"]').click(function(event) {
+event.preventDefault();
+});
+        // prevent user from quitting the page before his upload ended.    
+        $(document).on('click', '[name^="${deletePrefix}"]', {}, function() {
+var fieldName = this.name.match("${deletePrefix}(.*)")[1];
+        removeFile${checkBoxPrefix}(fieldName, '${handler_name}', '${base_url}');
+        event.preventDefault();
+});
+    });
+        }
 
 /**
  * Sets the files list
