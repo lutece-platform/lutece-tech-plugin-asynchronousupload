@@ -27,7 +27,7 @@
 
 <#macro addFileInput fieldName handler cssClass multiple=false>
 	<span class="form-inline file-input">
-		<input type="file" style="display:inline-block;" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
+		<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
 		<button class="btn btn-primary btn-sm" name="${handler.uploadSubmitPrefix}${fieldName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
 			<i class="fa fa-upload"></i>
 			<span class="file-input-text-noscript">#i18n{asynchronousupload.action.send.name}</span>
@@ -64,9 +64,9 @@
 	<div id="_file_error_box_${fieldName}" >
 	</div>
 	
-	<div class="form-group well" <#if !has_files>style="display:none;"</#if> id="_file_deletion_label_${fieldName}">
-		<label class="control-label">#i18n{asynchronousupload.file.uploadedFile}</label>
-		<div id="_file_deletion_${fieldName}">
+	<div class="form-group" <#if !has_files>style="display:none;"</#if> id="_file_deletion_label_${fieldName}">
+		<label class="col-xs-12 col-sm-12">#i18n{asynchronousupload.file.uploadedFile}</label>
+		<div id="_file_deletion_${fieldName}" class="col-md-12">
 		
 			<#assign file_index = 0>
 			<#if has_files>
@@ -82,7 +82,7 @@
 					</#if>
 					<#if filename != '' >
 						<div class="checkbox" id="_file_uploaded_${fieldName}${file_index}">
-							<label class="col-xs-12 col-sm-12 col-md-12 col-lg-12" for="${handler.uploadCheckboxPrefix}${fieldName}${file_index}">
+							<label class="col-xs-12 col-sm-12" for="${handler.uploadCheckboxPrefix}${fieldName}${file_index}">
 							<input type="checkbox" name="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" value="1" />${filename}</label>				
                      		<#assign file_index = file_index + 1>
 						</div>
@@ -91,7 +91,7 @@
 			</#if>
 		</div>
 		<br />
-		<div class="">
+		<div class="col-xs-12 col-sm-12">
 			<button class="btn btn-danger btn-sm" name="${handler.uploadDeletePrefix}${fieldName}" value="${handler.uploadDeletePrefix}${fieldName}" type="submit" >#i18n{asynchronousupload.action.delete.name}</button>
 		</div>
 	</div>
