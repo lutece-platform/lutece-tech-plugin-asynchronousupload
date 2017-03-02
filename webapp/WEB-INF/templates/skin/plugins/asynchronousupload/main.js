@@ -148,13 +148,18 @@ function formDisplayUploadedFiles${fieldname}( jsonData, files, cbPrefix )
 //				if ( jsonData.files[index].is_new )
 //				{
 
+					var imgContent = ( (jsonData.fileCount == 1) ? jsonData.files.preview : jsonData.files[index].preview );
+					var imgTag = "";
+					if (typeof(imgContent) == "string" && imgContent.length > 0) {
+						imgTag = " <img src="+"'"+ imgContent +"'"+"alt='' "+" width='${previewMaxWidth}' height='${previewMaxHeight}'/>";
+					}
 					strContent = strContent + "<div class=\"checkbox\" id=\"_file_uploaded_" + fieldName + index + "\"><label class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">  \
 								<input type=\"checkbox\"  \
 									name=\"" + checkboxPrefix + index + "\"  \
 									id=\"" + checkboxPrefix + index + "\"  \
 								/>  \
 								&#160;" + ( (jsonData.fileCount == 1) ? jsonData.files.name : jsonData.files[index].name ) + 
-							"</label></div><div class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">"+" <img src="+"'"+ ( (jsonData.fileCount == 1) ? jsonData.files.preview : jsonData.files[index].preview )+"'"+"alt='' "+" width='${previewMaxWidth}' height='${previewMaxHeight}'/></div>";
+							"</label></div><div class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">"+imgTag+"</div>";
 //				}
 //				else if ( jsonData.files[index].is_removed )
 //				{
