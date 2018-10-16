@@ -80,10 +80,22 @@
 							<#assign filename = file.title >
 						</#if>
 					</#if>
+                    <#if file.size??>
+                        <#if file.size < 1024 >
+                            <#assign octetUnit="o">
+                            <#assign octetNumber=file.size>
+                        <#elseif file.size < 1024 * 1024 >
+                            <#assign octetUnit="Ko">
+                            <#assign octetNumber=file.size/1024>
+                        <#else >
+                            <#assign octetUnit="Mo">
+                            <#assign octetNumber=file.size/(1024*1024)>
+                        </#if>
+                    </#if>
 					<#if filename != '' >
 						<div class="checkbox" id="_file_uploaded_${fieldName}${file_index}">
 							<label class="col-xs-12 col-sm-12" for="${handler.uploadCheckboxPrefix}${fieldName}${file_index}">
-							<input type="checkbox" name="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" value="1" />${filename}</label>				
+							<input type="checkbox" name="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" value="1" />${filename}<#if file.size?has_content> (${octetNumber?string["0"]} ${octetUnit})</#if></label>
                      		<#assign file_index = file_index + 1>
 						</div>
 					</#if>
