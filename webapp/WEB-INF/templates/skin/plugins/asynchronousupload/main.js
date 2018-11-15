@@ -61,7 +61,8 @@ $(function () {
             messages: {
                 maxFileSize: "#i18n{asynchronousupload.error.fileTooLarge}",
 
-            }
+            },
+            singleFileUploads:false
         }).on('fileuploadprocessalways', function (e, data) {
             var index = data.index,
                 file = data.files[index],
