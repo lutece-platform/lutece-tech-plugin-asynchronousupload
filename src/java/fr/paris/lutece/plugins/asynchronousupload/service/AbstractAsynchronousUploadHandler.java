@@ -157,11 +157,12 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
                 while ( enumParamNames.hasMoreElements(  ) )
                 {
                     String strParamName = enumParamNames.nextElement(  );
+                    String strParamValue = request.getParameter(strParamName);
 
-                    if ( strParamName.startsWith( strPrefix ) )
+                    if ( strParamValue.startsWith( strPrefix ) )
                     {
                         // Get the index from the name of the checkbox
-                        listIndexes.add( Integer.parseInt( strParamName.substring( strPrefix.length(  ) ) ) );
+                        listIndexes.add( Integer.parseInt( strParamValue.substring( strPrefix.length(  ) ) ) );
                     }
                 }
 

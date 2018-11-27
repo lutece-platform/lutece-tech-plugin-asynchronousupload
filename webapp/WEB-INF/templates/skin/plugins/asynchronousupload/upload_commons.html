@@ -93,20 +93,18 @@
                         </#if>
                     </#if>
 					<#if filename != '' >
-						<div class="checkbox" id="_file_uploaded_${fieldName}${file_index}">
-							<label class="col-xs-12 col-sm-12" for="${handler.uploadCheckboxPrefix}${fieldName}${file_index}">
-							<input type="checkbox" name="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" value="1" />
-								<a	href="jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?asynchronousupload.handler=${handler.handlerName}&fieldname=${fieldName}&field_index=${file_index}" download="${filename}">${filename}<#if file.size?has_content> (${octetNumber?string["0"]} ${octetUnit})</#if></a>
-							</label>
-                     		<#assign file_index = file_index + 1>
-						</div>
+					<div class="col-xs-12 col-sm-3" id="_file_uploaded_${fieldName}${file_index}">
+						<label style="padding:0">
+							<span class="glyphicon glyphicon-file"></span>
+							<a	href="jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?asynchronousupload.handler=${handler.handlerName}&fieldname=${fieldName}&field_index=${file_index}" download="${filename}">${filename}<#if file.size?has_content> (${octetNumber?string["0"]} ${octetUnit})</a>
+							<button name="${handler.uploadDeletePrefix}${fieldName}" value="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" type="submit" style="padding: 0;border: none;background: none;" ><span class="glyphicon glyphicon-remove"></span></button>
+						</label>
+					</#if>
+					<#assign file_index = file_index + 1>
+					</div>
 					</#if>
 				</#list>
 			</#if>
-		</div>
-		<br />
-		<div class="col-xs-12 col-sm-12">
-			<button class="btn btn-danger btn-sm" name="${handler.uploadDeletePrefix}${fieldName}" value="${handler.uploadDeletePrefix}${fieldName}" type="submit" >#i18n{asynchronousupload.action.delete.name}</button>
 		</div>
 	</div>
 </#macro>

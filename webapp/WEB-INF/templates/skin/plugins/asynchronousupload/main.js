@@ -170,15 +170,11 @@ function formDisplayUploadedFiles${fieldname}( jsonData, files, cbPrefix )
                     sizeDisplay = " (" + Math.floor(octetNumber) + " " + octetUnit + ")";
                     fileName = (jsonData.fileCount == 1) ? jsonData.files.name : jsonData.files[index].name;
                 }
-
-                strContent = strContent + "<div class=\"checkbox\" id=\"_file_uploaded_" + fieldName + index + "\"><label class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">  \
-								<input type=\"checkbox\"  \
-									name=\"" + checkboxPrefix + index + "\"  \
-									id=\"" + checkboxPrefix + index + "\"  \
-								/>  \
-								&#160;<a	href=\"${base_url}jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?asynchronousupload.handler=${handler_name}&fieldname="+fieldName+"&field_index="+index+"\" download=\"" + fileName + "\">" + fileName + sizeDisplay + "</a> \
-                    </label></div><div class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">"+imgTag+"</div>";
-
+                strContent = strContent + "<div class=\"col-xs-12 col-sm-3 col-md-3 col-lg-3\" id=\"_file_uploaded_" + fieldName + index + "\"><label style=\"padding:0\">  \
+                <span class=\"glyphicon glyphicon-file\"></span>&nbsp; \
+                <a	href=\"${base_url}jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?asynchronousupload.handler=${handler_name}&fieldname="+fieldName+"&field_index="+index+"\" download=\"" + fileName + "\">" + fileName + sizeDisplay + "</a> \
+                <a class=\"removeFileLink\" href=\"javascript:removeFile('" + fieldName + "','${handler_name}', '${base_url}','"+index+"');\"><span class=\"glyphicon glyphicon-remove\"></span></a> \
+                </label></div>";
             }
 
             $("#_file_deletion_" + fieldName ).html( strContent );
@@ -223,6 +219,16 @@ function removeFile${checkBoxPrefix}( fieldName, handlerName, baseUrl ) {
             formDisplayUploadedFiles${fieldname}(json, null, '${checkBoxPrefix}');
         }
     );
+}
+
+function removeFile( fieldName, handlerName, baseUrl, strIndexe ) {
+    var jsonData = {"fieldname":fieldName, "asynchronousupload.handler":handlerName, "field_index": strIndexe};
+
+	$.getJSON(baseUrl + 'jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
+		function(json) {
+			formDisplayUploadedFiles${fieldname}(json, null, '${checkBoxPrefix}');
+		}
+	);
 }
 
 function updateErrorBox( errorMessage, fieldName )
