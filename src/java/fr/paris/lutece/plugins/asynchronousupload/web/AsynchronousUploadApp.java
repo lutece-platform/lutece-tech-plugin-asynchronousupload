@@ -37,11 +37,14 @@ import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
 import fr.paris.lutece.plugins.asynchronousupload.service.UploadCacheService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.web.upload.IAsynchronousUploadHandler;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
@@ -279,5 +282,37 @@ public class AsynchronousUploadApp extends MVCApplication
         }
 
         return null;
+    }
+
+
+
+    /**
+     * Download the uploaded fileItem.
+     * @param request the request
+     * @param response the response
+     */
+    public void doDownloadAsynchronousUploadedFile( HttpServletRequest request,  HttpServletResponse response ) {
+        String strFieldName = request.getParameter( PARAMETER_FIELD_NAME );
+
+        String strFieldIndex = request.getParameter( PARAMETER_FIELD_INDEX );
+
+        Integer intFieldIndex = null;
+
+        if ( StringUtils.isNotEmpty( strFieldIndex ) &&  StringUtils.isNumeric( strFieldIndex ) )
+        {
+
+            intFieldIndex = Integer.parseInt(request.getParameter( PARAMETER_FIELD_INDEX ));
+        }
+        IAsyncUploadHandler handler = getHandler( request );
+        byte[] data = handler.doDownloadUploadedFile( request, strFieldName, intFieldIndex );
+
+        response.setHeader("Content-length", Integer.toString(data.length));
+        response.setHeader("Content-Disposition", "attachment");
+        try {
+            response.getOutputStream().write(data, 0, data.length);
+            response.getOutputStream().flush();
+        } catch (IOException e) {
+            AppLogService.error( e );
+        }
     }
 }

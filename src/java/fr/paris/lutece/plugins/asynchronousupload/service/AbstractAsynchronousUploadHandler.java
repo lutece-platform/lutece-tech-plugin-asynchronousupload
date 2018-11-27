@@ -317,4 +317,22 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
     {
         return getHandlerName(  ) + UPLOAD_CHECKBOX_PREFIX;
     }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] doDownloadUploadedFile( HttpServletRequest request, String strFieldName,
+                                          Integer indexFileToDownload )
+    {
+        FileItem itemToDownload = null;
+
+        if ( ( indexFileToDownload != null ) ) {
+            List<FileItem> fileItemsSession = getListUploadedFiles(strFieldName, request.getSession());
+            itemToDownload = fileItemsSession.get(indexFileToDownload);
+        }
+
+        return itemToDownload.get();
+    }
 }

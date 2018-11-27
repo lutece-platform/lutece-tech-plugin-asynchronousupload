@@ -150,6 +150,7 @@ function formDisplayUploadedFiles${fieldname}( jsonData, files, cbPrefix )
                 var sizeTemp;
                 var octetUnit;
                 var octetNumber;
+                var fileName;
                 if ((typeof jsonData.files[index] != 'undefined' && jsonData.files[index].size != 'undefined' ) || (jsonData.files.size != 'undefined' )) {
 
                     sizeTemp = (jsonData.fileCount == 1) ? jsonData.files.size : jsonData.files[index].size;
@@ -167,6 +168,7 @@ function formDisplayUploadedFiles${fieldname}( jsonData, files, cbPrefix )
                         octetNumber = sizeTemp/(1024*1024);
                     }
                     sizeDisplay = " (" + Math.floor(octetNumber) + " " + octetUnit + ")";
+                    fileName = (jsonData.fileCount == 1) ? jsonData.files.name : jsonData.files[index].name;
                 }
 
                 strContent = strContent + "<div class=\"checkbox\" id=\"_file_uploaded_" + fieldName + index + "\"><label class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">  \
@@ -174,8 +176,8 @@ function formDisplayUploadedFiles${fieldname}( jsonData, files, cbPrefix )
 									name=\"" + checkboxPrefix + index + "\"  \
 									id=\"" + checkboxPrefix + index + "\"  \
 								/>  \
-								&#160;" + ( (jsonData.fileCount == 1) ? jsonData.files.name : jsonData.files[index].name ) + sizeDisplay +
-                    "</label></div><div class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">"+imgTag+"</div>";
+								&#160;<a	href=\"${base_url}jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?asynchronousupload.handler=${handler_name}&fieldname="+fieldName+"&field_index="+index+"\" download=\"" + fileName + "\">" + fileName + sizeDisplay + "</a> \
+                    </label></div><div class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">"+imgTag+"</div>";
 
             }
 
