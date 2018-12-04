@@ -41,6 +41,7 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.web.upload.IAsynchronousUploadHandler;
+import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import java.io.IOException;
@@ -287,25 +288,14 @@ public class AsynchronousUploadApp extends MVCApplication
 
 
     /**
-     * Download the uploaded fileItem.
+     * Get the uploaded fileItem.
      * @param request the request
      * @param response the response
      */
-    public void doDownloadAsynchronousUploadedFile( HttpServletRequest request,  HttpServletResponse response ) {
-        String strFieldName = request.getParameter( PARAMETER_FIELD_NAME );
-
-        String strFieldIndex = request.getParameter( PARAMETER_FIELD_INDEX );
-
-        Integer intFieldIndex = null;
-
-        if ( StringUtils.isNotEmpty( strFieldIndex ) &&  StringUtils.isNumeric( strFieldIndex ) )
-        {
-
-            intFieldIndex = Integer.parseInt(request.getParameter( PARAMETER_FIELD_INDEX ));
-        }
+    public void doRetrieveAsynchronousUploadedFile(HttpServletRequest request, HttpServletResponse response )
+    {
         IAsyncUploadHandler handler = getHandler( request );
-        byte[] data = handler.doDownloadUploadedFile( request, strFieldName, intFieldIndex );
-
+        byte[] data = handler.doRetrieveUploadedFile(request);
         response.setHeader("Content-length", Integer.toString(data.length));
         response.setHeader("Content-Disposition", "attachment");
         try {

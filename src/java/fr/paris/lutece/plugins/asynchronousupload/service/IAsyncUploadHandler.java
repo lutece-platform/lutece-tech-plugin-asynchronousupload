@@ -159,12 +159,10 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler
 
 
     /**
-     * Do download a file from uploaded files.
+     * Do retrieve a file from uploaded files.
      * @param request The request
-     * @param strFieldName The field name of the files to remove
-     * @param indexFile The index of file to download
      * @return The file
      */
-    byte[] doDownloadUploadedFile( HttpServletRequest request, String strFieldName, Integer indexFile );
+    byte[] doRetrieveUploadedFile( HttpServletRequest request );
    
 }
