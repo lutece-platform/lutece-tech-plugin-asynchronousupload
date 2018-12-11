@@ -57,7 +57,7 @@ $(function () {
             imageCrop: false, // Force cropped images
             dropZone: $(this),
             maxFileSize: ${maxFileSize},
-            formData: [{name:'fieldname',value:$('.${handler_name}')[0].name}, {name:'asynchronousupload.handler', value:'${handler_name}'}],
+            formData: [{name:'fieldname',value:$(this)[0].name}, {name:'asynchronousupload.handler', value:'${handler_name}'}],
             messages: {
                 maxFileSize: "#i18n{asynchronousupload.error.fileTooLarge}",
 
@@ -91,10 +91,9 @@ $(function () {
             $(' #progress_' + fieldName).hide();
         }).prop('disabled', !$.support.fileInput)
             .parent().addClass($.support.fileInput ? undefined : 'disabled');
-        $('.${handler_name}'.parentNode).className=$('.${handler_name}'.parentNode).className + ' fileinput-button';
+        this.parentNode.className=this.parentNode.className + ' fileinput-button';
 
-        var jsonData = {"fieldname":$('.${handler_name}').attr("name"), "asynchronousupload.handler":"${handler_name}"};
-
+        var jsonData = {"fieldname":this.name, "asynchronousupload.handler":"${handler_name}"};
         $.getJSON('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
             function(json) {
                 formDisplayUploadedFiles${fieldname}(json, null, '${checkBoxPrefix}');
