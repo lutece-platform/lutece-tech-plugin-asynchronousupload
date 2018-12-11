@@ -93,8 +93,7 @@ $(function () {
             .parent().addClass($.support.fileInput ? undefined : 'disabled');
         this.parentNode.className=this.parentNode.className + ' fileinput-button';
 
-        var jsonData = {"fieldname":$('.${handler_name}').attr("name"), "asynchronousupload.handler":"${handler_name}"};
-
+        var jsonData = {"fieldname":this.name, "asynchronousupload.handler":"${handler_name}"};
         $.getJSON('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
             function(json) {
                 formDisplayUploadedFiles${fieldname}(json, null, '${checkBoxPrefix}');
