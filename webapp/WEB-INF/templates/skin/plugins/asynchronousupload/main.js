@@ -35,7 +35,14 @@ $(function () {
 
     // Initialize the jQuery File Upload widget:
     $(document).ready(function(){
-        handlerDisplayImages();
+        $('.${handler_name}').each(function(index){
+            var jsonData = {"fieldname":$(this).attr("name"), "asynchronousupload.handler":"${handler_name}"};
+            $.getJSON('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
+               function(json) {
+                   formDisplayUploadedFiles${fieldname}(json, null, '${checkBoxPrefix}');
+               }
+            );
+        });
     });
 
     $(document).on('click','.${handler_name}${fieldname}', {} ,handlerDisplayImages);
