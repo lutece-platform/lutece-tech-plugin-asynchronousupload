@@ -38,6 +38,7 @@ import fr.paris.lutece.plugins.asynchronousupload.service.UploadCacheService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.web.upload.IAsynchronousUploadHandler;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -70,6 +71,7 @@ public class AsynchronousUploadApp extends MVCApplication
     
  
     // Parameters
+    private static final String PROPERTY_KEY_PREFIX = "asynchronous.upload.config."; 
     private static final String PARAMETER_HANDLER = "handler";
     private static final String PARAMETER_FIELD_NAME = "fieldname";
     private static final String PARAMETER_FIELD_INDEX = "field_index";
@@ -86,18 +88,9 @@ public class AsynchronousUploadApp extends MVCApplication
     private static final String URL_UPLOAD_SERVLET = "jsp/site/upload";
 
     // Constants
-    private static final int DEFAULT_MAX_FILE_SIZE = 209715200;
     private static final String CONSTANT_COMA = ",";
-    // The maximum height of resized images:
-    private static final int DEFAULT_IMAGE_MAX_HEIGHT = 1080;
-    // The maximum width of resized images:
-    private static final int DEFAULT_IMAGE_MAX_WIDTH = 1080;
-    // The maximum height of preview images:
-    private static final int DEFAULT_PREVIEW_MAX_HEIGHT = 80;
-    // The maximum width of preview images:
-    private static final int DEFAULT_PREVIEW_MAX_WIDTH = 80;
     //filed name
-    private static final String   DEFAULT_FIELD_NAME = StringUtils.EMPTY;
+    private static final String DEFAULT_FIELD_NAME = StringUtils.EMPTY;
     /**
      * Get the main upload JavaScript file. Available HTTP parameters are :
      * <ul>
@@ -131,7 +124,7 @@ public class AsynchronousUploadApp extends MVCApplication
         }
         else
         {
-            nMaxFileSize = DEFAULT_MAX_FILE_SIZE;
+            nMaxFileSize = Integer.valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_MAX_FILE_SIZE ) );
         }
 
         if ( StringUtils.isNotEmpty( strImageMaxHeight ) && StringUtils.isNumeric( strImageMaxHeight ) )
@@ -140,7 +133,7 @@ public class AsynchronousUploadApp extends MVCApplication
         }
         else
         {
-        	nImageMaxHeight = DEFAULT_IMAGE_MAX_HEIGHT;
+        	nImageMaxHeight = Integer.valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_IMAGE_MAX_HEIGHT ) );
         }
         
 
@@ -150,7 +143,7 @@ public class AsynchronousUploadApp extends MVCApplication
         }
         else
         {
-        	nImageMaxWidth = DEFAULT_IMAGE_MAX_WIDTH;
+        	nImageMaxWidth = Integer.valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_IMAGE_MAX_WIDTH ) );
         }
         if ( StringUtils.isNotEmpty( strPreviewMaxWidth ) && StringUtils.isNumeric( strPreviewMaxWidth ) )
         {
@@ -158,7 +151,7 @@ public class AsynchronousUploadApp extends MVCApplication
         }
         else
         {
-        	nPreviewMaxWidth = DEFAULT_PREVIEW_MAX_HEIGHT;
+        	nPreviewMaxWidth = Integer.valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_PREVIEW_MAX_WIDTH ) );
         }
         
 
@@ -168,7 +161,7 @@ public class AsynchronousUploadApp extends MVCApplication
         }
         else
         {
-        	nPreviewMaxHeight = DEFAULT_PREVIEW_MAX_WIDTH;
+        	nPreviewMaxHeight = Integer.valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_PREVIEW_MAX_HEIGHT ) );
         }
         
         if ( !StringUtils.isNotEmpty( strFieldName )  )
