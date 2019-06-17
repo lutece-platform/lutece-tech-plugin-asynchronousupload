@@ -33,16 +33,21 @@ $(function () {
             });
         });
 
-    // Initialize the jQuery File Upload widget:
+    // Initialize the jQuery File Upload widget & show add file(s) button(s):
     $(document).ready(function(){
-        handlerDisplayImages();
+        $(".file-input-text-noscript").hide();
+        $(".file-input-text-js").show();
+        $('.${handler_name}').each(handlerDisplayImages)
+    });
+
+   // Add file(s) button(s) onclick event listener.
+    $(document).on('click','.file-input-text-js', function(){
+        $(this).parents().find('input[type=file]').trigger('click');
     });
 
     $(document).on('click','.${handler_name}${fieldname}', {} ,handlerDisplayImages);
 
     function handlerDisplayImages(){
-        $(this).parent().find(".file-input-text-noscript").hide();
-        $(this).parent().find(".file-input-text-js").show();
         $(this).fileupload({
             // Uncomment the following to send cross-domain cookies:
             //xhrFields: {withCredentials: true},

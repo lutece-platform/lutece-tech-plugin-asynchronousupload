@@ -22,8 +22,7 @@ function getTemplateUploadedFile(fieldName, index, checkboxPrefix, jsonData, img
          }
          sizeDisplay = " (" + Math.floor(octetNumber) + " " + octetUnit + ")";
      }
-	return 
-	"<div class=\"checkbox\" id=\"_file_uploaded_" + fieldName + index + "\"><label class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">  \
+	return "<div class=\"checkbox\" id=\"_file_uploaded_" + fieldName + index + "\"><label class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">  \
 	<input type=\"checkbox\"  \
 		name=\"" + checkboxPrefix + index + "\"  \
 		id=\"" + checkboxPrefix + index + "\"  \
