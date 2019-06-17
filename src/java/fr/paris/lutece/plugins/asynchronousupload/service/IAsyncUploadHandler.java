@@ -157,6 +157,11 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler
      */
     String getHandlerName(  );
     
-   
+    /**
+     * Do retrieve a file from uploaded files.
+     * @param request The request
+     * @return The file
+     */
+    byte[] doRetrieveUploadedFile( HttpServletRequest request );
    
 }

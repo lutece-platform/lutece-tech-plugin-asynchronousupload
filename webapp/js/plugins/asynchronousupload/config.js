@@ -1,12 +1,14 @@
-function getTemplateUploadedFile(fieldName, index, checkboxPrefix, jsonData, imgTag) {
+function getTemplateUploadedFile(fieldName, index, checkboxPrefix, jsonData, imgTag, handler, baseUrl) {
 	
 	 var sizeDisplay = "";
      var sizeTemp;
      var octetUnit;
      var octetNumber;
+     var fileName;
      if ((typeof jsonData.files[index] != 'undefined' && jsonData.files[index].size != 'undefined' ) || (jsonData.files.size != 'undefined' )) {
 
          sizeTemp = (jsonData.fileCount == 1) ? jsonData.files.size : jsonData.files[index].size;
+         fileName = (jsonData.fileCount == 1) ? jsonData.files.name : jsonData.files[index].name;
 
          if (sizeTemp < 1024) {
              octetUnit = "o";
@@ -27,6 +29,6 @@ function getTemplateUploadedFile(fieldName, index, checkboxPrefix, jsonData, img
 		name=\"" + checkboxPrefix + index + "\"  \
 		id=\"" + checkboxPrefix + index + "\"  \
 	/>  \
-	&#160;" + ( (jsonData.fileCount == 1) ? jsonData.files.name : jsonData.files[index].name ) + sizeDisplay +
-	"</label></div><div class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">"+imgTag+"</div>";
+    <a href=\""+ baseUrl +"jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?fieldname="+ fieldName +"&field_index="+ index +"&fileName="+ fileName +"&asynchronousupload.handler="+ handler +"\">" + fileName + sizeDisplay +
+	"</a></label></div><div class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">"+ imgTag +"</div>";
 }

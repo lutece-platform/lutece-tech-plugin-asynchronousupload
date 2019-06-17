@@ -150,7 +150,7 @@ function formDisplayUploadedFiles${fieldname}( jsonData, files, cbPrefix )
                     imgTag = " <img src="+"'"+ imgContent +"'"+"alt='' "+" width='${previewMaxWidth}' height='${previewMaxHeight}'/>";
                 }
 
-                strContent = strContent + getTemplateUploadedFile(fieldName, index, checkboxPrefix, jsonData, imgTag);
+                strContent = strContent + getTemplateUploadedFile(fieldName, index, checkboxPrefix, jsonData, imgTag, '${handler_name}', '${base_url}');
 
             }
 

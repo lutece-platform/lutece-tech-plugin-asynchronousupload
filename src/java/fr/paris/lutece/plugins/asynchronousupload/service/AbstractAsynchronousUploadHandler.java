@@ -63,6 +63,7 @@ import javax.servlet.http.HttpSession;
 public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadHandler
 {
     private static final String PARAMETER_FIELD_NAME = "fieldname";
+    private static final String PARAMETER_FIELD_INDEX = "field_index";
     private static final String PARAMETER_HANDLER = "asynchronousupload.handler";
     private static final String UPLOAD_SUBMIT_PREFIX = "_upload_submit_";
     private static final String UPLOAD_DELETE_PREFIX = "_upload_delete_";
@@ -157,11 +158,12 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
                 while ( enumParamNames.hasMoreElements(  ) )
                 {
                     String strParamName = enumParamNames.nextElement(  );
+                    String strParamValue = request.getParameter( strParamName );
 
-                    if ( strParamName.startsWith( strPrefix ) )
+                    if ( strParamValue.startsWith( strPrefix ) )
                     {
                         // Get the index from the name of the checkbox
-                        listIndexes.add( Integer.parseInt( strParamName.substring( strPrefix.length(  ) ) ) );
+                        listIndexes.add( Integer.parseInt( strParamValue.substring( strPrefix.length(  ) ) ) );
                     }
                 }
 
@@ -317,4 +319,23 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
     {
         return getHandlerName(  ) + UPLOAD_CHECKBOX_PREFIX;
     }
+
+     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] doRetrieveUploadedFile( HttpServletRequest request )
+    {
+        String strFieldName = request.getParameter( PARAMETER_FIELD_NAME );
+        String strFieldIndex = request.getParameter( PARAMETER_FIELD_INDEX );
+        int intFieldIndex;
+        FileItem itemToDownload = null;
+        if ( StringUtils.isNotEmpty( strFieldIndex ) &&  StringUtils.isNumeric( strFieldIndex ) )
+        {
+            intFieldIndex = Integer.parseInt( request.getParameter( PARAMETER_FIELD_INDEX ) );
+            List<FileItem> fileItemsSession = getListUploadedFiles( strFieldName, request.getSession( ) );
+            itemToDownload = fileItemsSession.get( intFieldIndex );
+        }
+        return itemToDownload.get();
+    }  
 }

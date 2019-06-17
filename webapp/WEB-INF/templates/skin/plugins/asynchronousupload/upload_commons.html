@@ -94,7 +94,11 @@
 					<#if filename != '' >
 						<div class="checkbox" id="_file_uploaded_${fieldName}${file_index}">
 							<label class="col-xs-12 col-sm-12" for="${handler.uploadCheckboxPrefix}${fieldName}${file_index}">
-							<input type="checkbox" name="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" value="1" />${filename}<#if file.size?has_content> (${octetNumber?string["0"]} ${octetUnit})</#if></label>
+							<input type="checkbox" name="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" value="1" />
+							<a	href="jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?asynchronousupload.handler=${handler.handlerName}&fieldname=${fieldName}&field_index=${file_index}&filename=${filename}" download="${filename}">
+							${filename}<#if file.size?has_content> (${octetNumber?string["0"]} ${octetUnit})</#if>
+							</a>
+						</label>
                      		<#assign file_index = file_index + 1>
 						</div>
 					</#if>
