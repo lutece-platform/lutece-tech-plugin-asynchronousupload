@@ -41,8 +41,9 @@ $(function () {
     });
 
    // Add file(s) button(s) onclick event listener.
-    $(document).on('click','.file-input-text-js', function(){
-        $(this).parents().find('input[type=file]').trigger('click');
+    $(document).on('click','.file-input-text-js', function(e){
+        e.stopImmediatePropagation();
+        $(this).closest("div").find('input[type=file]').trigger('click');
     });
 
     $(document).on('click','.${handler_name}${fieldname}', {} ,handlerDisplayImages);
