@@ -107,15 +107,17 @@ $(function () {
         );
     };
 
-    $('[name^="${submitPrefix}"]').click(function(event) {
+    $('[value^="${submitPrefix}"]').click(function(event) {
         event.preventDefault( );
     });
 
     // prevent user from quitting the page before his upload ended.
-    $(document).on('click','[name^="${deletePrefix}"]', {} ,function(event) {
-        var fieldName = this.name.match("${deletePrefix}(.*)")[1];
+    $(document).on('click','[value^="${deletePrefix}"]', {} ,function(event) {
+        if(this.getAttribute("nojs") === null) {
+        var fieldName = this.value.match("${deletePrefix}(.*)")[1];
         removeFile${checkBoxPrefix}(fieldName, '${handler_name}', '${base_url}');
         event.preventDefault( );
+        }
     });
 
 });
