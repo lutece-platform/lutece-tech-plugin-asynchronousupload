@@ -107,7 +107,7 @@ $(function () {
         );
     };
 
-    $('[value^="${submitPrefix}"]').click(function(event) {
+    $('[id^="${submitPrefix}"]').click(function(event) {
         event.preventDefault( );
     });
 

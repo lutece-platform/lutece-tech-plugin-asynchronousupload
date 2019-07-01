@@ -27,7 +27,6 @@
 <#macro addFileInput fieldName handler cssClass multiple=false submitBtnName="${handler.uploadSubmitPrefix}${fieldName}">
 	<span class="form-inline file-input">
 		<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
-		<input type="hidden" name="${uploadHandler.uploadSubmitPrefix}${fieldName}" value="${uploadHandler.uploadSubmitPrefix}${fieldName}">
 		<button class="btn btn-primary btn-sm" name="${submitBtnName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
 			<i class="fa fa-upload"></i>
 			<span class="file-input-text-noscript">#i18n{asynchronousupload.action.send.name}</span>
@@ -94,7 +93,7 @@
 					<#if filename != '' >
 						<div class="checkbox" id="_file_uploaded_${fieldName}${file_index}">
 							<label class="col-xs-12 col-sm-12" for="${handler.uploadCheckboxPrefix}${fieldName}${file_index}">
-							<input type="checkbox" id="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" name="${handler.uploadDeletePrefix}${fieldName}" value="${uploadHandler.uploadCheckboxPrefix}${fieldName}${file_index}" />
+							<input type="checkbox" id="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" name="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" value="${uploadHandler.uploadCheckboxPrefix}${fieldName}${file_index}" />
 							<a	href="jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?asynchronousupload.handler=${handler.handlerName}&fieldname=${fieldName}&field_index=${file_index}&fileName=${filename}" download="${filename}">
 								${filename}
 							</a>
