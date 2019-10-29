@@ -172,7 +172,7 @@ public class AsynchronousUploadApp extends MVCApplication
                     .valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_PREVIEW_MAX_HEIGHT ) );
         }
 
-        if ( !StringUtils.isNotEmpty( strFieldName ) )
+        if ( StringUtils.isEmpty( strFieldName ) )
         {
             strFieldName = DEFAULT_FIELD_NAME;
         }
@@ -183,7 +183,7 @@ public class AsynchronousUploadApp extends MVCApplication
                 + ( ( strImageMaxHeight == null ) ? StringUtils.EMPTY : strImageMaxHeight )
                 + ( ( strPreviewMaxWidth == null ) ? StringUtils.EMPTY : strPreviewMaxWidth )
                 + ( ( strPreviewMaxHeight == null ) ? StringUtils.EMPTY : strPreviewMaxHeight )
-                + ( ( strFieldName == null ) ? StringUtils.EMPTY : strFieldName );
+                + strFieldName;
 
         String strContent = (String) UploadCacheService.getInstance( ).getFromCache( strKey );
 
