@@ -51,6 +51,6 @@
         <connection>scm:git:https://github.com/lutece-platform/lutece-tech-plugin-asynchronousupload.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-platform/lutece-tech-plugin-asynchronousupload.git</developerConnection>
         <url>https://github.com/lutece-platform/lutece-tech-plugin-asynchronousupload.git</url>
-      <tag>lutece-tech-plugin-asynchronousupload-1.0.5</tag>
-  </scm>
+        <tag>lutece-tech-plugin-asynchronousupload-1.0.5</tag>
+    </scm>
 </project>

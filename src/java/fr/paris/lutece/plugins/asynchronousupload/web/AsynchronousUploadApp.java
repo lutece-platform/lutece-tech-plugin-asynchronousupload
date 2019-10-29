@@ -33,6 +33,17 @@
  */
 package fr.paris.lutece.plugins.asynchronousupload.web;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
 import fr.paris.lutece.plugins.asynchronousupload.service.UploadCacheService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -41,20 +52,7 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
-import fr.paris.lutece.portal.web.upload.IAsynchronousUploadHandler;
-import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
-import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringUtils;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Upload application
@@ -119,7 +117,11 @@ public class AsynchronousUploadApp extends MVCApplication
 
         IAsyncUploadHandler handler = getHandler( strHandlerName );
 
-        int nMaxFileSize, nImageMaxHeight, nImageMaxWidth, nPreviewMaxWidth, nPreviewMaxHeight;
+        int nMaxFileSize;
+        int nImageMaxHeight;
+        int nImageMaxWidth;
+        int nPreviewMaxWidth;
+        int nPreviewMaxHeight;
 
         if ( StringUtils.isNotEmpty( strMaxFileSize ) && StringUtils.isNumeric( strMaxFileSize ) )
         {
@@ -187,7 +189,7 @@ public class AsynchronousUploadApp extends MVCApplication
 
         if ( strContent == null )
         {
-            Map<String, Object> model = new HashMap<String, Object>( );
+            Map<String, Object> model = new HashMap<>( );
 
             model.put( MARK_BASE_URL, strBaseUrl );
             model.put( MARK_UPLOAD_URL, URL_UPLOAD_SERVLET );
@@ -223,7 +225,7 @@ public class AsynchronousUploadApp extends MVCApplication
 
         String strFieldIndex = request.getParameter( PARAMETER_FIELD_INDEX );
 
-        List<Integer> listIndexesFilesToRemove = new ArrayList<Integer>( );
+        List<Integer> listIndexesFilesToRemove = new ArrayList<>( );
 
         if ( StringUtils.isNotEmpty( strFieldIndex ) )
         {
