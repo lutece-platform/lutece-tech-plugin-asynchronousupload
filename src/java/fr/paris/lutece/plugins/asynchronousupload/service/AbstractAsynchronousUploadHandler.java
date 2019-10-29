@@ -42,6 +42,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -50,7 +51,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,27 +71,27 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
     private static final String UPLOAD_SUBMIT_PREFIX = "_upload_submit_";
     private static final String UPLOAD_DELETE_PREFIX = "_upload_delete_";
     private static final String UPLOAD_CHECKBOX_PREFIX = "_upload_checkbox_";
+    private static final String KEY_FORM_ERROR = "form_error";
+    private static final String KEY_FILE_SIZE = "fileSize";
+    private static final String KEY_FILE_NAME = "fileName";
+    private static final String KEY_FIELD_NAME = "field_name";
+    private static final String KEY_FILES = "files";
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void process( HttpServletRequest request, HttpServletResponse response, JSONObject mainObject,
-        List<FileItem> listFileItemsToUpload )
+    public void process( HttpServletRequest request, HttpServletResponse response, Map<String, Object> map,
+            List<FileItem> listFileItemsToUpload )
     {
-        mainObject.clear(  );
-
+        map.clear( );
         String strFieldName = request.getParameter( PARAMETER_FIELD_NAME );
 
         if ( StringUtils.isBlank( strFieldName ) )
         {
             throw new AppException( "id entry is not provided for the current file upload" );
         }
-
-        if ( ( listFileItemsToUpload != null ) && !listFileItemsToUpload.isEmpty(  ) )
+        
+        if ( CollectionUtils.isNotEmpty( listFileItemsToUpload ) )
         {
             String strError = canUploadFiles( request, strFieldName, listFileItemsToUpload, request.getLocale(  ) );
-
             if ( strError == null )
             {
                 for ( FileItem fileItem : listFileItemsToUpload )
@@ -98,18 +101,25 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
             }
             else
             {
-                JSONUtils.buildJsonError( mainObject, strError );
+                map.put( KEY_FORM_ERROR, strError );
             }
         }
-
+        map.put( KEY_FIELD_NAME, strFieldName );
+        
         List<FileItem> fileItemsSession = getListUploadedFiles( strFieldName, request.getSession(  ) );
-
-        JSONObject jsonListFileItems = JSONUtils.getUploadedFileJSON( fileItemsSession );
-        mainObject.accumulateAll( jsonListFileItems );
-        // add entry id to json
-        mainObject.element( JSONUtils.JSON_KEY_FIELD_NAME, strFieldName );
+        List<Map<String, Object>> listJsonFileMap = new ArrayList<>( );
+        map.put( KEY_FILES, listJsonFileMap );
+        
+        for ( FileItem fileItem : fileItemsSession )
+        {
+            Map<String, Object> jsonFileMap = new HashMap<>( );
+            jsonFileMap.put( KEY_FILE_NAME, fileItem.getName( ) );
+            jsonFileMap.put( KEY_FILE_SIZE, fileItem.getSize( ) );
+            listJsonFileMap.add( jsonFileMap );
+        }
+        
     }
-
+    
     /**
      * Checks the request parameters to see if an upload submit has been
      * called.
