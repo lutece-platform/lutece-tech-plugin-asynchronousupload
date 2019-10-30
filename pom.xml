@@ -3,7 +3,7 @@
     <parent>
         <artifactId>lutece-global-pom</artifactId>
         <groupId>fr.paris.lutece.tools</groupId>
-        <version>3.0.11</version>
+        <version>4.0.6</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -51,6 +51,6 @@
         <connection>scm:git:https://github.com/lutece-platform/lutece-tech-plugin-asynchronousupload.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-platform/lutece-tech-plugin-asynchronousupload.git</developerConnection>
         <url>https://github.com/lutece-platform/lutece-tech-plugin-asynchronousupload.git</url>
-      <tag>lutece-tech-plugin-asynchronousupload-1.0.5</tag>
-  </scm>
+        <tag>lutece-tech-plugin-asynchronousupload-1.0.5</tag>
+    </scm>
 </project>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2019, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,21 +33,17 @@
  */
 package fr.paris.lutece.plugins.asynchronousupload.util;
 
-import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
-import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.util.AppLogService;
-import fr.paris.lutece.util.file.FileUtil;
-import net.sf.json.JSONObject;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringUtils;
-
-import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
+
+import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.util.file.FileUtil;
+import net.sf.json.JSONObject;
 
 /**
  * Provides json utility methods for forms
@@ -67,8 +63,6 @@ public final class JSONUtils
     private static final String JSON_KEY_FILE_NAME = "name";
     private static final String JSON_KEY_FILE_SIZE = "size";
     private static final String JSON_KEY_FILE_PREVIEW = "preview";
-    //    private static final String JSON_KEY_IS_NEW = "is_new";
-    //    private static final String JSON_KEY_IS_REMOVED = "is_removed";
     private static final String JSON_KEY_FORM_ERROR = "form_error";
     private static final String JSON_KEY_UPLOADED_FILES = "files";
     private static final String JSON_KEY_FILE_COUNT = "fileCount";
@@ -79,41 +73,34 @@ public final class JSONUtils
     /**
      * Empty constructor
      */
-    private JSONUtils(  )
+    private JSONUtils( )
     {
         // nothing
     }
 
     /**
-     * Builds a json object for the file item list.
-     * Key is {@link #JSON_KEY_UPLOADED_FILES}, value is the array of uploaded
-     * file.
+     * Builds a json object for the file item list. Key is
+     * {@link #JSON_KEY_UPLOADED_FILES}, value is the array of uploaded file.
+     * 
      * @param listFileItem the fileItem list
      * @return the json
      */
     public static JSONObject getUploadedFileJSON( List<FileItem> listFileItem )
     {
-        JSONObject json = new JSONObject(  );
+        JSONObject json = new JSONObject( );
 
         if ( listFileItem != null )
         {
             for ( FileItem fileItem : listFileItem )
             {
-                JSONObject jsonObject = new JSONObject(  );
-                jsonObject.element( JSON_KEY_FILE_NAME, fileItem.getName(  ) );
-                try {
-                	
-					jsonObject.element( JSON_KEY_FILE_PREVIEW, getPreviewImage(fileItem) );
-					
-				} catch (IOException e) {
-					
-					 AppLogService.error( e );
-				}
-                jsonObject.element( JSON_KEY_FILE_SIZE, fileItem.getSize(  ) );
+                JSONObject jsonObject = new JSONObject( );
+                jsonObject.element( JSON_KEY_FILE_NAME, fileItem.getName( ) );
+                jsonObject.element( JSON_KEY_FILE_PREVIEW, getPreviewImage( fileItem ) );
+                jsonObject.element( JSON_KEY_FILE_SIZE, fileItem.getSize( ) );
                 json.accumulate( JSON_KEY_UPLOADED_FILES, jsonObject );
             }
 
-            json.element( JSON_KEY_FILE_COUNT, listFileItem.size(  ) );
+            json.element( JSON_KEY_FILE_COUNT, listFileItem.size( ) );
         }
         else
         {
@@ -126,22 +113,24 @@ public final class JSONUtils
 
     /**
      * Builds a json object with the error message.
+     * 
      * @param request the request
      * @return the json object.
      */
     public static JSONObject buildJsonErrorRemovingFile( HttpServletRequest request )
     {
-        JSONObject json = new JSONObject(  );
+        JSONObject json = new JSONObject( );
 
-        json.element( JSONUtils.JSON_KEY_FORM_ERROR,
-            I18nService.getLocalizedString( PROPERTY_MESSAGE_ERROR_REMOVING_FILE, request.getLocale(  ) ) );
+        json.element( JSON_KEY_FORM_ERROR,
+                I18nService.getLocalizedString( PROPERTY_MESSAGE_ERROR_REMOVING_FILE, request.getLocale( ) ) );
 
         return json;
     }
 
     /**
      * Builds a json object with the error message.
-     * @param json the JSON
+     * 
+     * @param json       the JSON
      * @param strMessage the error message
      */
     public static void buildJsonError( JSONObject json, String strMessage )
@@ -151,16 +140,16 @@ public final class JSONUtils
             json.accumulate( JSON_KEY_FORM_ERROR, strMessage );
         }
     }
-    
-	 private static String getPreviewImage( FileItem fileItem ) throws IOException{
-	    	
-	    	if(FileUtil.hasImageExtension( fileItem.getName( ) ) ){	
-	    		
-	    		String	preview= "data:image/png;base64," + DatatypeConverter.printBase64Binary( fileItem.get( ) );
-	    	
-	    		return preview;
-	    	}	
-	    	
-	    	return StringUtils.EMPTY;
-	    }
+
+    private static String getPreviewImage( FileItem fileItem )
+    {
+
+        if ( FileUtil.hasImageExtension( fileItem.getName( ) ) )
+        {
+
+            return "data:image/png;base64," + DatatypeConverter.printBase64Binary( fileItem.get( ) );
+        }
+
+        return StringUtils.EMPTY;
+    }
 }

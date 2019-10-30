@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2019, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.asynchronousupload.service;
 
-import fr.paris.lutece.portal.web.upload.IAsynchronousUploadHandler;
+import fr.paris.lutece.portal.web.upload.IAsynchronousUploadHandler2;
 
 import org.apache.commons.fileupload.FileItem;
 
@@ -48,7 +48,7 @@ import javax.servlet.http.HttpSession;
  * Interface for asynchronous upload handlers used by entries of type upload.
  * Handler must be declared as Spring beans.
  */
-public interface IAsyncUploadHandler extends IAsynchronousUploadHandler
+public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
 {
     /**
      * Get the upload submit prefix

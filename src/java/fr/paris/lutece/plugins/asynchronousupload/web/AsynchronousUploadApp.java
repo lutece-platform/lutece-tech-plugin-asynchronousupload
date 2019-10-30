@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2019, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,17 @@
  */
 package fr.paris.lutece.plugins.asynchronousupload.web;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
 import fr.paris.lutece.plugins.asynchronousupload.service.UploadCacheService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -41,22 +52,7 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
-import fr.paris.lutece.portal.web.upload.IAsynchronousUploadHandler;
-import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
-import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringUtils;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-
 
 /**
  * Upload application
@@ -72,10 +68,9 @@ public class AsynchronousUploadApp extends MVCApplication
     private static final String MARK_SUBMIT_PREFIX = "submitPrefix";
     private static final String MARK_DELETE_PREFIX = "deletePrefix";
     private static final String MARK_CHECKBOX_PREFIX = "checkBoxPrefix";
-    
- 
+
     // Parameters
-    private static final String PROPERTY_KEY_PREFIX = "asynchronous.upload.config."; 
+    private static final String PROPERTY_KEY_PREFIX = "asynchronous.upload.config.";
     private static final String PARAMETER_HANDLER = "handler";
     private static final String PARAMETER_FIELD_NAME = "fieldname";
     private static final String PARAMETER_FIELD_INDEX = "field_index";
@@ -84,7 +79,7 @@ public class AsynchronousUploadApp extends MVCApplication
     private static final String PARAMETER_IMAGE_MAX_HEIGHT = "imageMaxHeight";
     private static final String PARAMETER_PREVIEW_MAX_WIDTH = "previewMaxWidth";
     private static final String PARAMETER_PREVIEW_MAX_HEIGHT = "previewMaxHeight";
-   
+
     // Templates
     private static final String TEMPLATE_MAIN_UPLOAD_JS = "skin/plugins/asynchronousupload/main.js";
 
@@ -93,16 +88,18 @@ public class AsynchronousUploadApp extends MVCApplication
 
     // Constants
     private static final String CONSTANT_COMA = ",";
-    //filed name
+    // filed name
     private static final String DEFAULT_FIELD_NAME = StringUtils.EMPTY;
+
     /**
      * Get the main upload JavaScript file. Available HTTP parameters are :
      * <ul>
-     * <li><b>handler</b> : Name of the handler that will manage the
-     * asynchronous upload.</li>
+     * <li><b>handler</b> : Name of the handler that will manage the asynchronous
+     * upload.</li>
      * <li><b>maxFileSize</b> : The maximum size (in bytes) of uploaded files.
      * Default value is 2097152</li>
      * </ul>
+     * 
      * @param request The request
      * @return The content of the JavaScript file
      */
@@ -120,7 +117,11 @@ public class AsynchronousUploadApp extends MVCApplication
 
         IAsyncUploadHandler handler = getHandler( strHandlerName );
 
-        int nMaxFileSize,nImageMaxHeight, nImageMaxWidth, nPreviewMaxWidth, nPreviewMaxHeight ;
+        int nMaxFileSize;
+        int nImageMaxHeight;
+        int nImageMaxWidth;
+        int nPreviewMaxWidth;
+        int nPreviewMaxHeight;
 
         if ( StringUtils.isNotEmpty( strMaxFileSize ) && StringUtils.isNumeric( strMaxFileSize ) )
         {
@@ -128,64 +129,67 @@ public class AsynchronousUploadApp extends MVCApplication
         }
         else
         {
-            nMaxFileSize = Integer.valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_MAX_FILE_SIZE ) );
+            nMaxFileSize = Integer
+                    .valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_MAX_FILE_SIZE ) );
         }
 
         if ( StringUtils.isNotEmpty( strImageMaxHeight ) && StringUtils.isNumeric( strImageMaxHeight ) )
         {
-        	nImageMaxHeight = Integer.parseInt( strImageMaxHeight );
+            nImageMaxHeight = Integer.parseInt( strImageMaxHeight );
         }
         else
         {
-        	nImageMaxHeight = Integer.valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_IMAGE_MAX_HEIGHT ) );
+            nImageMaxHeight = Integer
+                    .valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_IMAGE_MAX_HEIGHT ) );
         }
-        
 
         if ( StringUtils.isNotEmpty( strImageMaxWidth ) && StringUtils.isNumeric( strImageMaxWidth ) )
         {
-        	nImageMaxWidth = Integer.parseInt( strImageMaxWidth );
+            nImageMaxWidth = Integer.parseInt( strImageMaxWidth );
         }
         else
         {
-        	nImageMaxWidth = Integer.valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_IMAGE_MAX_WIDTH ) );
+            nImageMaxWidth = Integer
+                    .valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_IMAGE_MAX_WIDTH ) );
         }
         if ( StringUtils.isNotEmpty( strPreviewMaxWidth ) && StringUtils.isNumeric( strPreviewMaxWidth ) )
         {
-        	nPreviewMaxWidth = Integer.parseInt( strPreviewMaxWidth );
+            nPreviewMaxWidth = Integer.parseInt( strPreviewMaxWidth );
         }
         else
         {
-        	nPreviewMaxWidth = Integer.valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_PREVIEW_MAX_WIDTH ) );
+            nPreviewMaxWidth = Integer
+                    .valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_PREVIEW_MAX_WIDTH ) );
         }
-        
 
         if ( StringUtils.isNotEmpty( strPreviewMaxHeight ) && StringUtils.isNumeric( strPreviewMaxHeight ) )
         {
-        	nPreviewMaxHeight = Integer.parseInt( strPreviewMaxHeight );
+            nPreviewMaxHeight = Integer.parseInt( strPreviewMaxHeight );
         }
         else
         {
-        	nPreviewMaxHeight = Integer.valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_PREVIEW_MAX_HEIGHT ) );
+            nPreviewMaxHeight = Integer
+                    .valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_PREVIEW_MAX_HEIGHT ) );
         }
-        
-        if ( !StringUtils.isNotEmpty( strFieldName )  )
-        {
-        	strFieldName = DEFAULT_FIELD_NAME;
-        }
-        
-        String strKey = ( ( strHandlerName != null ) ? strHandlerName : StringUtils.EMPTY ) + strBaseUrl +
-            ( ( strMaxFileSize == null ) ? StringUtils.EMPTY : strMaxFileSize ) 
-            + ( ( strImageMaxWidth == null ) ? StringUtils.EMPTY : strImageMaxWidth )
-            + ( ( strImageMaxHeight == null ) ? StringUtils.EMPTY : strImageMaxHeight )
-            + ( ( strPreviewMaxWidth == null ) ? StringUtils.EMPTY : strPreviewMaxWidth )
-            + ( ( strPreviewMaxHeight == null ) ? StringUtils.EMPTY : strPreviewMaxHeight )	
-            +( ( strFieldName == null ) ? StringUtils.EMPTY : strFieldName );
 
-        String strContent = (String) UploadCacheService.getInstance(  ).getFromCache( strKey );
+        if ( StringUtils.isEmpty( strFieldName ) )
+        {
+            strFieldName = DEFAULT_FIELD_NAME;
+        }
+
+        String strKey = ( ( strHandlerName != null ) ? strHandlerName : StringUtils.EMPTY ) + strBaseUrl
+                + ( ( strMaxFileSize == null ) ? StringUtils.EMPTY : strMaxFileSize )
+                + ( ( strImageMaxWidth == null ) ? StringUtils.EMPTY : strImageMaxWidth )
+                + ( ( strImageMaxHeight == null ) ? StringUtils.EMPTY : strImageMaxHeight )
+                + ( ( strPreviewMaxWidth == null ) ? StringUtils.EMPTY : strPreviewMaxWidth )
+                + ( ( strPreviewMaxHeight == null ) ? StringUtils.EMPTY : strPreviewMaxHeight )
+                + strFieldName;
+
+        String strContent = (String) UploadCacheService.getInstance( ).getFromCache( strKey );
 
         if ( strContent == null )
         {
-            Map<String, Object> model = new HashMap<String, Object>(  );
+            Map<String, Object> model = new HashMap<>( );
 
             model.put( MARK_BASE_URL, strBaseUrl );
             model.put( MARK_UPLOAD_URL, URL_UPLOAD_SERVLET );
@@ -194,16 +198,16 @@ public class AsynchronousUploadApp extends MVCApplication
             model.put( PARAMETER_IMAGE_MAX_WIDTH, nImageMaxWidth );
             model.put( PARAMETER_IMAGE_MAX_HEIGHT, nImageMaxHeight );
             model.put( PARAMETER_PREVIEW_MAX_WIDTH, nPreviewMaxWidth );
-            model.put( PARAMETER_PREVIEW_MAX_HEIGHT, nPreviewMaxHeight );  
-            model.put( MARK_SUBMIT_PREFIX, handler.getUploadSubmitPrefix(  ) );
-            model.put( MARK_DELETE_PREFIX, handler.getUploadDeletePrefix(  ) );
-            model.put( MARK_CHECKBOX_PREFIX, handler.getUploadCheckboxPrefix(  ) );
+            model.put( PARAMETER_PREVIEW_MAX_HEIGHT, nPreviewMaxHeight );
+            model.put( MARK_SUBMIT_PREFIX, handler.getUploadSubmitPrefix( ) );
+            model.put( MARK_DELETE_PREFIX, handler.getUploadDeletePrefix( ) );
+            model.put( MARK_CHECKBOX_PREFIX, handler.getUploadCheckboxPrefix( ) );
             model.put( PARAMETER_FIELD_NAME, strFieldName );
 
-            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MAIN_UPLOAD_JS, request.getLocale(  ),
+            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MAIN_UPLOAD_JS, request.getLocale( ),
                     model );
-            strContent = template.getHtml(  );
-            UploadCacheService.getInstance(  ).putInCache( strKey, strContent );
+            strContent = template.getHtml( );
+            UploadCacheService.getInstance( ).putInCache( strKey, strContent );
         }
 
         return strContent;
@@ -211,6 +215,7 @@ public class AsynchronousUploadApp extends MVCApplication
 
     /**
      * Removes the uploaded fileItem.
+     * 
      * @param request the request
      * @return The JSON result
      */
@@ -219,9 +224,8 @@ public class AsynchronousUploadApp extends MVCApplication
         String strFieldName = request.getParameter( PARAMETER_FIELD_NAME );
 
         String strFieldIndex = request.getParameter( PARAMETER_FIELD_INDEX );
-        
 
-        List<Integer> listIndexesFilesToRemove = new ArrayList<Integer>(  );
+        List<Integer> listIndexesFilesToRemove = new ArrayList<>( );
 
         if ( StringUtils.isNotEmpty( strFieldIndex ) )
         {
@@ -237,12 +241,12 @@ public class AsynchronousUploadApp extends MVCApplication
         IAsyncUploadHandler handler = getHandler( request );
 
         return ( handler == null ) ? StringUtils.EMPTY
-                                   : handler.doRemoveUploadedFile( request, strFieldName, listIndexesFilesToRemove );
+                : handler.doRemoveUploadedFile( request, strFieldName, listIndexesFilesToRemove );
     }
-    
 
     /**
      * Gets the handler
+     * 
      * @param request the request
      * @return the handler found, <code>null</code> otherwise.
      * @see IAsynchronousUploadHandler#isInvoked(HttpServletRequest)
@@ -262,6 +266,7 @@ public class AsynchronousUploadApp extends MVCApplication
 
     /**
      * Get a handler from its name
+     * 
      * @param strName The name of the handler
      * @return The handler, or null if no handler was found
      */
@@ -269,7 +274,7 @@ public class AsynchronousUploadApp extends MVCApplication
     {
         for ( IAsyncUploadHandler handler : SpringContextService.getBeansOfType( IAsyncUploadHandler.class ) )
         {
-            if ( StringUtils.equals( handler.getHandlerName(  ), strName ) )
+            if ( StringUtils.equals( handler.getHandlerName( ), strName ) )
             {
                 return handler;
             }
@@ -280,7 +285,8 @@ public class AsynchronousUploadApp extends MVCApplication
 
     /**
      * Get the uploaded fileItem.
-     * @param request the request
+     * 
+     * @param request  the request
      * @param response the response
      */
     public void doRetrieveAsynchronousUploadedFile( HttpServletRequest request, HttpServletResponse response )
@@ -289,12 +295,15 @@ public class AsynchronousUploadApp extends MVCApplication
         byte[] data = handler.doRetrieveUploadedFile( request );
         String strFieldName = request.getParameter( "fileName" );
 
-        response.setHeader( "Content-length", Integer.toString(data.length) );
-        response.setHeader( "Content-Disposition", "attachment;;filename="+ strFieldName );
-        try {
+        response.setHeader( "Content-length", Integer.toString( data.length ) );
+        response.setHeader( "Content-Disposition", "attachment;;filename=" + strFieldName );
+        try
+        {
             response.getOutputStream( ).write( data, 0, data.length );
             response.getOutputStream( ).flush( );
-        } catch ( IOException e ) {
+        }
+        catch ( IOException e )
+        {
             AppLogService.error( e );
         }
     }
