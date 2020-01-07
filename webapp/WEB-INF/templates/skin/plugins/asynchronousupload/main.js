@@ -124,7 +124,7 @@ $(function () {
  * Sets the files list
  * @param jsonData data
  */
-function formDisplayUploadedFiles${fieldname}(jsonData, files, cbPrefix) {
+function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
     $.getJSON('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
         function (data) {
             var fieldName = data.field_name;
