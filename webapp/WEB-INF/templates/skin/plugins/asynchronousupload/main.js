@@ -90,7 +90,10 @@ $(function () {
                 $(' #progress_' + fieldName).hide();
             }
         }).on('fileuploaddone', function (e, data) {
-            formDisplayUploadedFiles${fieldname}( data.result, data.files, '${checkBoxPrefix}' );
+
+            var jsonData = {"fieldname":this.name, "asynchronousupload.handler":"${handler_name}"};
+            formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
+
         }).on('fileuploadfail', function (e, data) {
             var fieldName = data.formData[0].value;
             updateErrorBox( 'Une erreur est survenue lors de l\'upload du fichier', fieldName );
@@ -100,11 +103,7 @@ $(function () {
         this.parentNode.className=this.parentNode.className + ' fileinput-button';
 
         var jsonData = {"fieldname":this.name, "asynchronousupload.handler":"${handler_name}"};
-        $.getJSON('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
-            function(json) {
-                formDisplayUploadedFiles${fieldname}(json, null, '${checkBoxPrefix}');
-            }
-        );
+        formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
     };
 
     $('[id^="${submitPrefix}"]').click(function(event) {
@@ -121,47 +120,34 @@ $(function () {
     });
 
 });
-
 /**
  * Sets the files list
  * @param jsonData data
  */
-function formDisplayUploadedFiles${fieldname}( jsonData, files, cbPrefix )
-{
-    // create the div
-    var fieldName = jsonData.field_name;
-
-    updateErrorBox(jsonData.form_error, fieldName);
-
-    if ( fieldName != null )
-    {
-        if ( jsonData.fileCount == 0 ){
-            // no file uploaded, hiding content
-            $("#_file_deletion_label_" + fieldName ).hide(  );
-        } else {
-
-            var strContent = "";
-            var checkboxPrefix = cbPrefix + fieldName;
-
-            // jsonData.uploadedFiles.length is str length when file count is 1 so using fileCount instead.
-            // so if jsonData.fileCount == 1, the index should not be used
-            for ( var index = 0; index < jsonData.fileCount; index++ )
-            {
-                var imgContent = ( (jsonData.fileCount == 1) ? jsonData.files.preview : jsonData.files[index].preview );
-                var imgTag = "";
-                if (typeof(imgContent) == "string" && imgContent.length > 0) {
-                    imgTag = " <img src="+"'"+ imgContent +"'"+"alt='' "+" width='${previewMaxWidth}' height='${previewMaxHeight}'/>";
+function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
+    $.getJSON('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
+        function (data) {
+            var fieldName = data.field_name;
+            updateErrorBox(data.form_error, fieldName);
+            if (fieldName != null) {
+                if (data.fileCount == 0) {
+                    $("#_file_deletion_label_" + fieldName).hide();
+                } else {
+                    var strContent = "";
+                    var checkboxPrefix = cbPrefix + fieldName;
+                    for (var index = 0; index < data.fileCount; index++) {
+                        var imgContent = ((data.fileCount == 1) ? data.files.preview : data.files[index].preview);
+                        var imgTag = "";
+                        if (typeof (imgContent) == "string" && imgContent.length > 0) {
+                            imgTag = " <img src=" + "'" + imgContent + "'" + "alt='' " + " width='${previewMaxWidth}' height='${previewMaxHeight}'/>";
+                        }
+                        strContent = strContent + getTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgTag, '${handler_name}', '${base_url}');
+                    }
+                    $("#_file_deletion_" + fieldName).html(strContent);
+                    $("#_file_deletion_label_" + fieldName).show();
                 }
-
-                strContent = strContent + getTemplateUploadedFile(fieldName, index, checkboxPrefix, jsonData, imgTag, '${handler_name}', '${base_url}');
-
             }
-
-            $("#_file_deletion_" + fieldName ).html( strContent );
-            // show the hidden div (if not already)
-            $("#_file_deletion_label_" + fieldName ).show(  );
-        }
-    }
+        });
 }
 
 /**
@@ -193,13 +179,21 @@ function removeFile${checkBoxPrefix}( fieldName, handlerName, baseUrl ) {
     }
 
     var jsonData = {"fieldname":fieldName, "asynchronousupload.handler":handlerName, "field_index": strIndexes};
-
-    $.getJSON(baseUrl + 'jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
-        function(json) {
-            formDisplayUploadedFiles${fieldname}(json, null, '${checkBoxPrefix}');
-        }
-    );
+    formDisplayUploadedFiles${fieldname}(jsonData, null, '${checkBoxPrefix}');
 }
+
+/**
+ * Removes a file on click
+ */
+$(document).on('click', '.deleteSingleFile', function (event) {
+    event.preventDefault( );
+    var index = event.currentTarget.getAttribute("index");
+    var fieldName = event.currentTarget.getAttribute("fieldName")
+    var handlerName = event.currentTarget.getAttribute("handlerName");
+    var jsonData = {"fieldname":fieldName, "asynchronousupload.handler":handlerName, "field_index": index};
+    formDisplayUploadedFiles${fieldname}(jsonData, null, '${checkBoxPrefix}');
+    return false;
+});
 
 function updateErrorBox( errorMessage, fieldName )
 {
