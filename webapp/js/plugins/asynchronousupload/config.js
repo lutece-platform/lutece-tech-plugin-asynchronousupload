@@ -30,5 +30,5 @@ function getTemplateUploadedFile(fieldName, index, checkboxPrefix, jsonData, img
 		id=\"" + checkboxPrefix + index + "\"  \
 	/>  \
     <a href=\""+ baseUrl +"jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?fieldname="+ fieldName +"&field_index="+ index +"&fileName="+ fileName +"&asynchronousupload.handler="+ handler +"\">" + fileName + sizeDisplay +
-	"</a></label></div><div class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">"+ imgTag +"</div>";
+	"</a><a href='#' class='text-danger deleteSingleFile' fieldName='" + fieldName + "' handlerName='" + handler + "' index='" + index + "'> <i class='fa fa-times'></i> </a></label></div><div class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">"+ imgTag +"</div>";
 }
