@@ -46,8 +46,6 @@ $(function () {
         $(this).closest("div").find('input[type=file]').trigger('click');
     });
 
-    $(document).on('click','.${handler_name}${fieldname}', {} ,handlerDisplayImages);
-
     function handlerDisplayImages(){
         $(this).fileupload({
             // Uncomment the following to send cross-domain cookies:
