@@ -109,6 +109,14 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
      *            method {@link #getListUploadedFiles(String, HttpSession) }
      */
     void removeFileItem( String strFieldName, HttpSession session, int nIndex );
+    
+    /**
+     * Remove all file Item for a given session
+     * 
+     * @param session The session of the current user
+     */
+    void removeAllFileItem( HttpSession session);
+    
 
     /**
      * Add a file item to the list of uploaded files
@@ -188,6 +196,8 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
      * @return true if the handler manage partial content
      */
     boolean isManagePartialContent();
+    
+    
     
     
    

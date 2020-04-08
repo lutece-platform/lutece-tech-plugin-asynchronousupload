@@ -409,6 +409,12 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
     
     	return false;
     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeAllFileItem(HttpSession session) {
+    }
     
     
     /**

@@ -39,4 +39,9 @@
         <javascript-file>asynchronousupload/jquery.fileupload-validate.js</javascript-file>
 		<javascript-file>asynchronousupload/config.js</javascript-file>
     </javascript-files>
+    <listeners>
+		<listener>
+  	 		<listener-class>fr.paris.lutece.plugins.asynchronousupload.service.AsynchronousUploadSessionListener</listener-class>
+		</listener>
+ 	</listeners>
 </plug-in>
