@@ -33,20 +33,6 @@
  */
 package fr.paris.lutece.plugins.asynchronousupload.service;
 
-import fr.paris.lutece.plugins.asynchronousupload.util.JSONUtils;
-import fr.paris.lutece.portal.service.util.AppException;
-import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
-
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,10 +40,26 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+
+import fr.paris.lutece.plugins.asynchronousupload.util.JSONUtils;
+import fr.paris.lutece.portal.service.util.AppException;
+import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
+import net.sf.json.JSON;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 
 /**
  * AbstractAsynchronousUploadHandler.
@@ -75,6 +77,9 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
     private static final String KEY_FILE_NAME = "fileName";
     private static final String KEY_FIELD_NAME = "field_name";
     private static final String KEY_FILES = "files";
+    private static final String HEADER_CONTENT_RANGE="Content-Range";
+    private static final String REGEXP_CONTENT_RANGE_HEADER = "bytes (\\d*)-(\\d*)\\/(\\d*)";
+    
 
     @Override
     public void process( HttpServletRequest request, HttpServletResponse response, Map<String, Object> map,
@@ -93,10 +98,31 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
             String strError = canUploadFiles( request, strFieldName, listFileItemsToUpload, request.getLocale( ) );
             if ( strError == null )
             {
-                for ( FileItem fileItem : listFileItemsToUpload )
-                {
-                    addFileItemToUploadedFilesList( fileItem, strFieldName, request );
-                }
+            	//manage chunk file if there is not multiple file
+            	if(isManagePartialContent() && isRequestContainsPartialContent(request))
+            	{
+            		if(listFileItemsToUpload.size()==1)
+            		{
+	            		addFileItemToPartialUploadedFilesList(listFileItemsToUpload.get(0), strFieldName, request);
+	            		if (isRequestContainsLastPartialContent(request))
+	            		{
+	            			PartialFileItemGroup partialFileItemGroup= new PartialFileItemGroup(getListPartialUploadedFiles(strFieldName, request.getSession()));
+	            			addFileItemToUploadedFilesList( partialFileItemGroup, strFieldName, request );
+	            		}
+            		}
+            		else
+            		{
+            			AppLogService.error("AbstractAsynchronousUploadHandler.process : -Chunk files with  multiple file selected do not deal");
+            			 map.put( KEY_FORM_ERROR, "Chunk files with  multiple file selected do not deal" );
+            		}
+            	}
+            	else
+            	{
+	                for ( FileItem fileItem : listFileItemsToUpload )
+	                {	
+	                    addFileItemToUploadedFilesList( fileItem, strFieldName, request );
+	                }
+            	}
             }
             else
             {
@@ -328,7 +354,8 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
     {
         return getHandlerName( ) + UPLOAD_CHECKBOX_PREFIX;
     }
-
+    
+   
     /**
      * {@inheritDoc}
      */
@@ -351,4 +378,76 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
         }
         return itemToDownload.get( );
     }
+    
+    
+    
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<FileItem> getListPartialUploadedFiles(String strFieldName, HttpSession session) {
+    	
+    	AppLogService.error("the Upload Handler do not manage partial content files ");
+    	return null;
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addFileItemToPartialUploadedFilesList(FileItem fileItem, String strFieldName,
+    		HttpServletRequest request) {
+    	AppLogService.error("the Upload Handler do not manage partial content files ");
+    }
+    /**
+     * {@inheritDoc}
+     */
+    
+    @Override
+    public boolean isManagePartialContent() {
+    
+    	return false;
+    }
+    
+    
+    /**
+     * return true if the content of the request is partial
+     * @param request the request
+     * @return true if the content of the request is partial 
+     */
+    private boolean isRequestContainsPartialContent( HttpServletRequest request )
+    {
+    	return request.getHeader(HEADER_CONTENT_RANGE)!=null;
+    	
+    }
+    
+    
+    
+    /**
+     * return true if the request contain the last partial content of the file 
+     * @param request
+     * @return
+     */
+	private boolean isRequestContainsLastPartialContent(HttpServletRequest request) {
+
+		boolean bLastPartialContent = false;
+		String strContentRange = request.getHeader(HEADER_CONTENT_RANGE);
+		Pattern r = Pattern.compile(REGEXP_CONTENT_RANGE_HEADER);
+		Matcher m = r.matcher(strContentRange);
+
+		if (m.find()) {
+
+			String strLatsBytes = m.group(2);
+			String strTotalBytes = m.group(3);
+			int nTotalBytes = Integer.parseInt(strTotalBytes);
+			int nLastBytes = Integer.parseInt(strLatsBytes);
+			if (nTotalBytes - nLastBytes == 1) {
+				bLastPartialContent = true;
+
+			}
+
+		}
+		return bLastPartialContent;
+	}
 }

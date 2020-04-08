@@ -90,6 +90,17 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
     List<FileItem> getListUploadedFiles( String strFieldName, HttpSession session );
 
     /**
+     * Gets the list of partial upload files for a given field and a given session. The
+     * order of files in the list must be the upload order. Their index in this
+     * list (from 0 to the list size) will be used to identify them.
+     * @param strFieldName the field name
+     * @param session The session of the current user
+     * @return the fileItem found, <code>null</code> otherwise.
+     */
+    List<FileItem> getListPartialUploadedFiles( String strFieldName, HttpSession session );
+
+    
+    /**
      * Remove file Item
      * @param strFieldName the field name
      * @param session The session of the current user
@@ -106,6 +117,14 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
      * @param request the request
      */
     void addFileItemToUploadedFilesList( FileItem fileItem, String strFieldName, HttpServletRequest request );
+    
+    /**
+     * Add file item to the list of partial uploaded files
+     * @param fileItem the file item
+     * @param strFieldName the field name
+     * @param request the request
+     */
+    void addFileItemToPartialUploadedFilesList( FileItem fileItem, String strFieldName, HttpServletRequest request );
 
     /**
      * Check if the request has a remove flag for a given entry.
@@ -163,5 +182,13 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
      * @return The file
      */
     byte[] doRetrieveUploadedFile( HttpServletRequest request );
+    
+    /**
+     * 
+     * @return true if the handler manage partial content
+     */
+    boolean isManagePartialContent();
+    
+    
    
 }

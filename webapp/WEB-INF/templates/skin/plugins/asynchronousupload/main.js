@@ -58,6 +58,7 @@ $(function () {
             imageMaxHeight: ${imageMaxHeight},
             previewMaxWidth: ${previewMaxWidth},
             previewMaxHeight: ${previewMaxHeight},
+            <#if splitFile> maxChunkSize: ${maxChunkSize},</#if>
             imageCrop: false, // Force cropped images
             dropZone: $(this),
             maxFileSize: ${maxFileSize},

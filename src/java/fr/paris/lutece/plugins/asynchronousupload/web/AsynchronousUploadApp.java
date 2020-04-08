@@ -68,7 +68,7 @@ public class AsynchronousUploadApp extends MVCApplication
     private static final String MARK_SUBMIT_PREFIX = "submitPrefix";
     private static final String MARK_DELETE_PREFIX = "deletePrefix";
     private static final String MARK_CHECKBOX_PREFIX = "checkBoxPrefix";
-
+    private static final String MARK_SPLIT_FILE = "splitFile";
     // Parameters
     private static final String PROPERTY_KEY_PREFIX = "asynchronous.upload.config.";
     private static final String PARAMETER_HANDLER = "handler";
@@ -79,6 +79,8 @@ public class AsynchronousUploadApp extends MVCApplication
     private static final String PARAMETER_IMAGE_MAX_HEIGHT = "imageMaxHeight";
     private static final String PARAMETER_PREVIEW_MAX_WIDTH = "previewMaxWidth";
     private static final String PARAMETER_PREVIEW_MAX_HEIGHT = "previewMaxHeight";
+    private static final String PARAMETER_MAX_CHUNK_SIZE="maxChunkSize";
+    
 
     // Templates
     private static final String TEMPLATE_MAIN_UPLOAD_JS = "skin/plugins/asynchronousupload/main.js";
@@ -114,6 +116,7 @@ public class AsynchronousUploadApp extends MVCApplication
         String strPreviewMaxWidth = request.getParameter( PARAMETER_PREVIEW_MAX_WIDTH );
         String strPreviewMaxHeight = request.getParameter( PARAMETER_PREVIEW_MAX_HEIGHT );
         String strFieldName = request.getParameter( PARAMETER_FIELD_NAME );
+        String strMaxChunkSize=request.getParameter(PARAMETER_MAX_CHUNK_SIZE);
 
         IAsyncUploadHandler handler = getHandler( strHandlerName );
 
@@ -122,6 +125,7 @@ public class AsynchronousUploadApp extends MVCApplication
         int nImageMaxWidth;
         int nPreviewMaxWidth;
         int nPreviewMaxHeight;
+        int nMaxChunkSize; 
 
         if ( StringUtils.isNotEmpty( strMaxFileSize ) && StringUtils.isNumeric( strMaxFileSize ) )
         {
@@ -171,6 +175,14 @@ public class AsynchronousUploadApp extends MVCApplication
             nPreviewMaxHeight = Integer
                     .valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_PREVIEW_MAX_HEIGHT ) );
         }
+        if ( StringUtils.isNotEmpty( strMaxChunkSize ) && StringUtils.isNumeric( strMaxChunkSize ) )
+        {
+            nMaxChunkSize = Integer.parseInt( strMaxChunkSize );
+        }
+        else
+        {
+        	nMaxChunkSize = AppPropertiesService.getPropertyInt( PROPERTY_KEY_PREFIX + PARAMETER_MAX_CHUNK_SIZE ,0 );
+        }
 
         if ( StringUtils.isEmpty( strFieldName ) )
         {
@@ -183,6 +195,7 @@ public class AsynchronousUploadApp extends MVCApplication
                 + ( ( strImageMaxHeight == null ) ? StringUtils.EMPTY : strImageMaxHeight )
                 + ( ( strPreviewMaxWidth == null ) ? StringUtils.EMPTY : strPreviewMaxWidth )
                 + ( ( strPreviewMaxHeight == null ) ? StringUtils.EMPTY : strPreviewMaxHeight )
+                + ( ( strMaxChunkSize == null ) ? StringUtils.EMPTY : strMaxChunkSize )
                 + strFieldName;
 
         String strContent = (String) UploadCacheService.getInstance( ).getFromCache( strKey );
@@ -190,7 +203,7 @@ public class AsynchronousUploadApp extends MVCApplication
         if ( strContent == null )
         {
             Map<String, Object> model = new HashMap<>( );
-
+            boolean bSplitFile=handler.isManagePartialContent() && nMaxChunkSize>0; 
             model.put( MARK_BASE_URL, strBaseUrl );
             model.put( MARK_UPLOAD_URL, URL_UPLOAD_SERVLET );
             model.put( MARK_HANDLER_NAME, strHandlerName );
@@ -203,6 +216,9 @@ public class AsynchronousUploadApp extends MVCApplication
             model.put( MARK_DELETE_PREFIX, handler.getUploadDeletePrefix( ) );
             model.put( MARK_CHECKBOX_PREFIX, handler.getUploadCheckboxPrefix( ) );
             model.put( PARAMETER_FIELD_NAME, strFieldName );
+            model.put( MARK_SPLIT_FILE,bSplitFile);
+            model.put( PARAMETER_MAX_CHUNK_SIZE, nMaxChunkSize);
+            
 
             HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MAIN_UPLOAD_JS, request.getLocale( ),
                     model );
