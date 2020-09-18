@@ -65,6 +65,7 @@ $(function () {
             formData: [{name:'fieldname',value:$(this)[0].name}, {name:'asynchronousupload.handler', value:'${handler_name}'}],
             messages: {
                 maxFileSize: "#i18n{asynchronousupload.error.fileTooLarge}",
+                maxNumberOfFiles: "#i18n{asynchronousupload.error.maxNumberOfFiles}",
 
             },
             singleFileUploads:false
@@ -95,7 +96,7 @@ $(function () {
 
         }).on('fileuploadfail', function (e, data) {
             var fieldName = data.formData[0].value;
-            updateErrorBox( 'Une erreur est survenue lors de l\'upload du fichier', fieldName );
+            updateErrorBox( '#i18n{asynchronousupload.error.uploadFile}', fieldName );
             $(' #progress_' + fieldName).hide();
         }).prop('disabled', !$.support.fileInput)
             .parent().addClass($.support.fileInput ? undefined : 'disabled');

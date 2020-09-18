@@ -23,7 +23,6 @@
     <script src="js/plugins/asynchronousupload/jquery.fileupload-validate.js" ></script>
 </#macro>
 
-
 <#macro addFileInput fieldName handler cssClass multiple=false submitBtnName="${handler.uploadSubmitPrefix}${fieldName}">
 	<span class="form-inline file-input">
 		<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
@@ -38,6 +37,7 @@
         <div id="progress-bar_${fieldName}" class="progress-bar progress-bar-success progress-bar-striped">&nbsp;</div>
     </div>
 </#macro>
+
 <#macro addFileInputImage fieldName handler cssClass multiple=false>
 	<span class="form-inline file-input">
 		<input type="file" style="display:inline-block;" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
@@ -52,6 +52,7 @@
         <div id="progress-bar_${fieldName}" class="progress-bar progress-bar-success progress-bar-striped">&nbsp;</div>
     </div>
 </#macro>
+
 <#macro addUploadedFilesBox fieldName handler listFiles submitBtnName="${handler.uploadDeletePrefix}${fieldName}" noJs=false>
 	<#-- file removing -->
 	<#assign has_files = false>
@@ -59,13 +60,10 @@
 		<#assign has_files = true>
 	</#if>
 	
-	<div id="_file_error_box_${fieldName}" >
-	</div>
-	
+	<div id="_file_error_box_${fieldName}" ></div>
 	<div class="form-group" <#if !has_files>style="display:none;"</#if> id="_file_deletion_label_${fieldName}">
 		<label class="col-xs-12 col-sm-12">#i18n{asynchronousupload.file.uploadedFile}</label>
 		<div id="_file_deletion_${fieldName}" class="col-md-12">
-		
 			<#assign file_index = 0>
 			<#if has_files>
 				<#assign index = 0 />
