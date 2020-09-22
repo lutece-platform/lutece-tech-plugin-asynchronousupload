@@ -96,7 +96,7 @@ $(function () {
 
         }).on('fileuploadfail', function (e, data) {
             var fieldName = data.formData[0].value;
-            updateErrorBox( '#i18n{asynchronousupload.error.uploadFile}', fieldName );
+            updateErrorBox( "#i18n{asynchronousupload.error.uploadFile}", fieldName );
             $(' #progress_' + fieldName).hide();
         }).prop('disabled', !$.support.fileInput)
             .parent().addClass($.support.fileInput ? undefined : 'disabled');
