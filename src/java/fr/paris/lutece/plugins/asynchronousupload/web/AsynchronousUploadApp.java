@@ -220,7 +220,7 @@ public class AsynchronousUploadApp extends MVCApplication
             model.put( PARAMETER_MAX_CHUNK_SIZE, nMaxChunkSize);
             
 
-            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MAIN_UPLOAD_JS, request.getLocale( ),
+            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MAIN_UPLOAD_JS, getLocale( request ),
                     model );
             strContent = template.getHtml( );
             UploadCacheService.getInstance( ).putInCache( strKey, strContent );
