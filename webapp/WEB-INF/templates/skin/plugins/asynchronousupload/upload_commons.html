@@ -23,8 +23,8 @@
     <script src="js/plugins/asynchronousupload/jquery.fileupload-validate.js" ></script>
 </#macro>
 
-<#macro addFileInput fieldName handler cssClass multiple=false submitBtnName="${handler.uploadSubmitPrefix}${fieldName}">
-	<span class="form-inline file-input">
+<#macro addFileInput fieldName handler cssClass multiple=false submitBtnName="${handler.uploadSubmitPrefix}${fieldName}" hasError=false>
+	<span class="form-inline file-input<#if hasError> is-invalid</#if>">
 		<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
 		<button class="btn btn-primary btn-sm" name="${submitBtnName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
 			<i class="fa fa-upload"></i>

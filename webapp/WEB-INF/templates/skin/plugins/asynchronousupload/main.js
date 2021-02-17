@@ -195,16 +195,13 @@ $(document).on('click', '.deleteSingleFile', function (event) {
     return false;
 });
 
-function updateErrorBox( errorMessage, fieldName )
-{
-    if ( errorMessage != null && errorMessage != '' )
-    {
-        var strContent = '<span class="text-danger">' + errorMessage + '</span>'
-        $( '#_file_error_box_' + fieldName ).html( strContent );
-        $( '#_file_error_box_' + fieldName ).show( );
-    }
-    else
-    {
+function updateErrorBox( errorMessage, fieldName ){
+    if ( errorMessage != null && errorMessage !='' && errorMessage !== undefined || mapFileErrors.size > 0 ) {
+        if ( errorMessage == undefined ){ errorMessage='' };
+        var strContent = mapFileErrors.size > 0 ? mapFileErrors.get( fieldName ) : errorMessage;
+        $( '#_file_error_box_' + fieldName ).after( '<div class="invalid-feedback">' + strContent + '</div>' ).show( );
+        mapFileErrors.delete(fieldName);
+    } else {
         $( '#_file_error_box_' + fieldName ).hide( );
     }
 }
