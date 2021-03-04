@@ -197,11 +197,19 @@ $(document).on('click', '.deleteSingleFile', function (event) {
 
 function updateErrorBox( errorMessage, fieldName ){
     if ( errorMessage != null && errorMessage !='' && errorMessage !== undefined || mapFileErrors.size > 0 ) {
-        if ( errorMessage == undefined ){ errorMessage='' };
+        if ( errorMessage === undefined ){ errorMessage='' };
         var strContent = mapFileErrors.size > 0 ? mapFileErrors.get( fieldName ) : errorMessage;
-        $( '#_file_error_box_' + fieldName ).after( '<div class="invalid-feedback">' + strContent + '</div>' ).show( );
+		if( mapFilesNumber.get( fieldName ) > 1 ){
+			$( '#_file_error_box_' + fieldName ).after( '<div class="invalid-feedback">' + strContent + '</div>' ).show( );
+		} else {
+			var groupFile = $( '#_file_error_box_' + fieldName ).closest('.group-files.one-file');
+			groupFile.addClass( 'is-invalid' ).after( '<div class="invalid-feedback">' + strContent + '</div>' ).show( );
+		}
         mapFileErrors.delete(fieldName);
+        mapFilesNumber.delete(fieldName);
     } else {
         $( '#_file_error_box_' + fieldName ).hide( );
+		var groupFile = $( '#_file_error_box_' + fieldName ).closest('.group-files.one-file');
+		groupFile.removeClass( 'is-invalid' );
     }
 }
