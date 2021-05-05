@@ -10,7 +10,6 @@
 <#macro addRequiredJsFiles>
 	<link rel="stylesheet" href="css/plugins/asynchronousupload/jquery.fileupload.css" />
 	<link rel="stylesheet" href="css/plugins/asynchronousupload/jquery.fileupload-ui.css" />
-	
 	<script src="js/plugins/asynchronousupload/load-image.min.js" ></script>
 	<script src="js/plugins/asynchronousupload/vendor/jquery.ui.widget.js" ></script>
 	<script src="js/plugins/asynchronousupload/jquery.iframe-transport.js" ></script>
@@ -18,9 +17,13 @@
 	<script src="js/plugins/asynchronousupload/jquery.fileupload-process.js" ></script>
 	<script src="js/plugins/asynchronousupload/canvas-to-blob.min.js"></script>
 	<script src="js/plugins/asynchronousupload/config.js"></script>
-    
 	<script src="js/plugins/asynchronousupload/jquery.fileupload-image.js" ></script>
     <script src="js/plugins/asynchronousupload/jquery.fileupload-validate.js" ></script>
+	<script>
+		/* Maps to manage files field errors */
+		var mapFileErrors = new Map();
+		var mapFilesNumber = new Map();
+	</script>
 </#macro>
 
 <#macro addFileInput fieldName handler cssClass multiple=false submitBtnName="${handler.uploadSubmitPrefix}${fieldName}" hasError=false>
