@@ -30,11 +30,13 @@ function getTemplateUploadedFile( fieldName, index, checkboxPrefix, jsonData, im
 	   fileDisplayName = fileName.substr(0,20) + '...';
    }
 
-   strCode ='<div class="files-item" id="_file_uploaded_' + fieldName + index + '">' + 
-   '<label class="files-item-label" for="' + checkboxPrefix + index + '"><input class="" type="checkbox" name="' + checkboxPrefix + index + '" id="' + checkboxPrefix + index + '">' + 
-   '<a class="files-item-link" title="' + fileName + '" href="jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?fieldname=' + fieldName + '&field_index=' + index + '&fileName=' + fileName +'&asynchronousupload.handler='+ handler + '" data-type="' + mimeTypeDisplay + '" data-img="' + imgTag + '" ><span>' + fileDisplayName + '</span></a>' + 
-   '<a href="#" class="text-danger deleteSingleFile" fieldName="' + fieldName + '" handlerName="' + handler + '" index="' + index + '"><i class="fa fa-times fa-fw"></i> </a><br><small>' + sizeDisplay + '</small>' +
-   '</label></div>';
+   strCode ="<div class=\"checkbox\" id=\"_file_uploaded_" + fieldName + index + "\"><label class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">  \
+	<input type=\"checkbox\"  \
+		name=\"" + checkboxPrefix + index + "\"  \
+		id=\"" + checkboxPrefix + index + "\"  \
+	/>  \
+	&#160;" + ( (jsonData.fileCount == 1) ? jsonData.files.name : jsonData.files[index].name ) + sizeDisplay +
+	"</label></div><div class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">"+imgTag+"</div>";
    return strCode;
 }
 
