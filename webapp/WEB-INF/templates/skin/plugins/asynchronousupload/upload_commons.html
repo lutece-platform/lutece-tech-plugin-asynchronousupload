@@ -64,7 +64,7 @@
 	</#if>
 	
 	<div id="_file_error_box_${fieldName}" ></div>
-	<div class="form-group" <#if !has_files>style="display:none;"</#if> id="_file_deletion_label_${fieldName}">
+	<div class="form-files-group" <#if !has_files>style="display:none;"</#if> id="_file_deletion_label_${fieldName}">
 		<label class="col-xs-12 col-sm-12">#i18n{asynchronousupload.file.uploadedFile}</label>
 		<div id="_file_deletion_${fieldName}" class="col-md-12">
 			<#assign file_index = 0>
