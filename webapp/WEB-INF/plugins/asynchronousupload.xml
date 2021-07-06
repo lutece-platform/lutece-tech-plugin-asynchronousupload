@@ -27,18 +27,42 @@
     
 	<javascript-files>
         <javascript-files-scope>portal</javascript-files-scope>
+        <!-- vendor -->
         <javascript-file>asynchronousupload/vendor/jquery.ui.widget.js</javascript-file>
+        <javascript-file>asynchronousupload/vendor/canvas-to-blob.js</javascript-file>
+        <javascript-file>asynchronousupload/vendor/jquery.Jcrop.js</javascript-file>
+        <javascript-file>asynchronousupload/vendor/promise-polyfill.js</javascript-file>
+        <!-- base -->
         <javascript-file>asynchronousupload/jquery.iframe-transport.js</javascript-file>
-         <javascript-file>asynchronousupload/load-image.min.js</javascript-file> 
+        <javascript-file>asynchronousupload/load-image.all.min.js</javascript-file> 
         <javascript-file>asynchronousupload/jquery.fileupload.js</javascript-file>
         <javascript-file>asynchronousupload/jquery.fileupload-process.js</javascript-file>
         <javascript-file>asynchronousupload/jquery.fileupload-image.js</javascript-file>
-        <javascript-file>asynchronousupload/canvas-to-blob.min.js</javascript-file>
-<!--         <javascript-file>asynchronousupload/jquery.fileupload-audio.js</javascript-file> -->
-<!--         <javascript-file>asynchronousupload/jquery.fileupload-video.js</javascript-file> -->
         <javascript-file>asynchronousupload/jquery.fileupload-validate.js</javascript-file>
 		<javascript-file>asynchronousupload/config.js</javascript-file>
     </javascript-files>
+
+    <css-admin-stylesheets>
+        <css-admin-stylesheet>css/plugins/asynchronousupload/jquery.fileupload.css</css-admin-stylesheet>
+        <css-admin-stylesheet>css/plugins/asynchronousupload/jquery.fileupload-ui.css</css-admin-stylesheet>
+    </css-admin-stylesheets>
+
+    <admin-javascript-files>      
+        <!-- vendor -->
+        <admin-javascript-file>js/plugins/asynchronousupload/vendor/jquery.ui.widget.js</admin-javascript-file>
+        <admin-javascript-file>js/plugins/asynchronousupload/vendor/canvas-to-blob.js</admin-javascript-file>
+        <admin-javascript-file>js/plugins/asynchronousupload/vendor/jquery.Jcrop.js</admin-javascript-file>
+        <admin-javascript-file>js/plugins/asynchronousupload/vendor/promise-polyfill.js</admin-javascript-file>
+        <!-- base -->
+        <admin-javascript-file>js/plugins/asynchronousupload/jquery.iframe-transport.js</admin-javascript-file>
+        <admin-javascript-file>js/plugins/asynchronousupload/load-image.all.min.js</admin-javascript-file> 
+        <admin-javascript-file>js/plugins/asynchronousupload/jquery.fileupload.js</admin-javascript-file>
+        <admin-javascript-file>js/plugins/asynchronousupload/jquery.fileupload-process.js</admin-javascript-file>
+        <admin-javascript-file>js/plugins/asynchronousupload/jquery.fileupload-image.js</admin-javascript-file>
+        <admin-javascript-file>js/plugins/asynchronousupload/jquery.fileupload-validate.js</admin-javascript-file>
+		<admin-javascript-file>js/admin/plugins/asynchronousupload/config.js</admin-javascript-file>
+    </admin-javascript-files>   
+
     <listeners>
 		<listener>
   	 		<listener-class>fr.paris.lutece.plugins.asynchronousupload.service.AsynchronousUploadSessionListener</listener-class>

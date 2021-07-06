@@ -84,6 +84,7 @@ public class AsynchronousUploadApp extends MVCApplication
 
     // Templates
     private static final String TEMPLATE_MAIN_UPLOAD_JS = "skin/plugins/asynchronousupload/main.js";
+    private static final String TEMPLATE_ADMIN_MAIN_UPLOAD_JS = "admin/plugins/asynchronousupload/main.js";
 
     // Urls
     private static final String URL_UPLOAD_SERVLET = "jsp/site/upload";
@@ -103,11 +104,14 @@ public class AsynchronousUploadApp extends MVCApplication
      * </ul>
      * 
      * @param request The request
+     * @param bContext True if front / False if admin
      * @return The content of the JavaScript file
      */
-    public String getMainUploadJs( HttpServletRequest request )
+    public String getMainUploadJs( HttpServletRequest request, Boolean bContext )
     {
         String strBaseUrl = AppPathService.getBaseUrl( request );
+
+        String strTemplate;
 
         String strHandlerName = request.getParameter( PARAMETER_HANDLER );
         String strMaxFileSize = request.getParameter( PARAMETER_MAX_FILE_SIZE );
@@ -219,13 +223,15 @@ public class AsynchronousUploadApp extends MVCApplication
             model.put( MARK_SPLIT_FILE,bSplitFile);
             model.put( PARAMETER_MAX_CHUNK_SIZE, nMaxChunkSize);
             
-
-            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MAIN_UPLOAD_JS, request.getLocale( ),
-                    model );
+            if( bContext ){
+                strTemplate=TEMPLATE_MAIN_UPLOAD_JS;
+            } else {
+                strTemplate=TEMPLATE_ADMIN_MAIN_UPLOAD_JS;
+            }
+            HtmlTemplate template = AppTemplateService.getTemplate( strTemplate, request.getLocale( ), model );
             strContent = template.getHtml( );
             UploadCacheService.getInstance( ).putInCache( strKey, strContent );
         }
-
         return strContent;
     }
 
