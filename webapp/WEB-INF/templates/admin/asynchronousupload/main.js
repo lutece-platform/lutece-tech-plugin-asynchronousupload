@@ -54,11 +54,7 @@ var uploadButton = $('<button/>')
             mfs = $(this).data('mfs'),
             msgMaxFileSize='#i18n{asynchronousupload.error.fileTooLarge}'.replace( '{0}', prettySize( mfs ) ),
             msgMaxNumberOfFiles='#i18n{asynchronousupload.error.maxNumberOfFiles}'.replace( '{0}', nof );
-        var nbFilesUploaded = $( '#_file_deletion_' + $(this)[0].name + ':visible > .files-item' ).length;
-        if ( nbFilesUploaded == nof ){
-            toastr.warning( 'Attention nombre maximum de fichier atteint !' );
-            return false;
-        }
+        
         $(this).fileupload({
             // Uncomment the following to send cross-domain cookies:
             //xhrFields: {withCredentials: true},
@@ -82,9 +78,14 @@ var uploadButton = $('<button/>')
             },
             singleFileUploads:false
         }).on('fileuploadprocessalways', function (e, data) {
+            var nbFilesUploaded = $( '#_file_deletion_' + $(this)[0].name + ':visible > .list-file-item' ).length;
             var index = data.index,
                 file = data.files[index],
                 fieldName = data.formData[0].value;
+            if ( nbFilesUploaded == nof ){
+                updateErrorBox( 'Attention nombre maximum de fichier atteint !', fieldName )
+                return false;
+            }
             if (file.error) {
                 updateErrorBox( file.error, fieldName )
             }
