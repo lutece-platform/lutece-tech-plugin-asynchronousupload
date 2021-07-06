@@ -16,25 +16,25 @@ var mapFileErrors = new Map();
 var mapFilesNumber = new Map();
 
 $(function () {
-    'use strict';
-    var uploadButton = $('<button/>')
-        .addClass('btn btn-primary')
-        .prop('disabled', true)
-        .text('Processing...')
-        .on('click', function () {
-            var $this = $(this),
-                data = $this.data();
-            $this
-                .off('click')
-                .text('Abort')
-                .on('click', function () {
-                    $this.remove();
-                    data.abort();
-                });
-            data.submit().always(function () {
+'use strict';
+var uploadButton = $('<button/>')
+    .addClass('btn btn-primary')
+    .prop('disabled', true)
+    .text('Processing...')
+    .on('click', function () {
+        var $this = $(this),
+            data = $this.data();
+        $this
+            .off('click')
+            .text('Abort')
+            .on('click', function () {
                 $this.remove();
+                data.abort();
             });
+        data.submit().always(function () {
+            $this.remove();
         });
+    });
 
     // Initialize the jQuery File Upload widget & show add file(s) button(s):
     $(document).ready(function(){
@@ -50,6 +50,15 @@ $(function () {
     });
 
     function handlerDisplayImages(){
+        var nof=$(this).data('nof') , 
+            mfs = $(this).data('mfs'),
+            msgMaxFileSize='#i18n{asynchronousupload.error.fileTooLarge}'.replace( '{0}', prettySize( mfs ) ),
+            msgMaxNumberOfFiles='#i18n{asynchronousupload.error.maxNumberOfFiles}'.replace( '{0}', nof );
+        var nbFilesUploaded = $( '#_file_deletion_' + $(this)[0].name + ':visible > .files-item' ).length;
+        if ( nbFilesUploaded == nof ){
+            toastr.warning( 'Attention nombre maximum de fichier atteint !' );
+            return false;
+        }
         $(this).fileupload({
             // Uncomment the following to send cross-domain cookies:
             //xhrFields: {withCredentials: true},
@@ -64,12 +73,12 @@ $(function () {
             <#if splitFile> maxChunkSize: ${maxChunkSize},</#if>
             imageCrop: false, // Force cropped images
             dropZone: $(this),
-            maxFileSize: ${maxFileSize},
+            maxNumberOfFiles: nof,
+            maxFileSize: mfs,
             formData: [{name:'fieldname',value:$(this)[0].name}, {name:'asynchronousupload.handler', value:'${handler_name}'}],
             messages: {
-                maxFileSize: "#i18n{asynchronousupload.error.fileTooLarge}",
-                maxNumberOfFiles: "#i18n{asynchronousupload.error.maxNumberOfFiles}",
-
+                maxFileSize: msgMaxFileSize,
+                maxNumberOfFiles: msgMaxNumberOfFiles,
             },
             singleFileUploads:false
         }).on('fileuploadprocessalways', function (e, data) {
@@ -82,18 +91,16 @@ $(function () {
         }).on('fileuploadprogressall', function (e, data) {
             var progress = parseInt(data.loaded / data.total * 100, 10);
             var fieldName = this.name;
-            var bar = $(' #progress-bar_' + fieldName);
+            var bar = $(' #progress_' + fieldName + ' .progress-bar');
             bar.html( progress + '%'  );
             bar.css( 'width', progress + '%' );
 
             $(' #progress_' + fieldName).show( );
 
-            if ( progress >= 100 )
-            {
+            if ( progress >= 100 ){
                 $(' #progress_' + fieldName).hide();
             }
         }).on('fileuploaddone', function (e, data) {
-
             var jsonData = {"fieldname":this.name, "asynchronousupload.handler":"${handler_name}"};
             formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
 
@@ -113,15 +120,6 @@ $(function () {
         event.preventDefault( );
     });
 
-    // prevent user from quitting the page before his upload ended.
-    $(document).on('click','[value^="${deletePrefix}"]', {} ,function(event) {
-        if(this.getAttribute("nojs") === null) {
-        var fieldName = this.value.match("${deletePrefix}(.*)")[1];
-        removeFile${checkBoxPrefix}(fieldName, '${handler_name}', '${base_url}');
-        event.preventDefault( );
-        }
-    });
-
 });
 
 /**
@@ -129,31 +127,44 @@ $(function () {
  * @param jsonData data
  */
  function formDisplayUploadedFiles${fieldname}( jsonData, cbPrefix ){
-    $.getJSON('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
+    $.getJSON('${base_url}jsp/admin/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
     function (data) {
-        // updateErrorBox( data.form_error, fieldName );
-        var fieldName = data.field_name;
+         var fieldName = data.field_name;
         var errorFileName=$( '#_file_error_box_' + fieldName ), 
         groupFiles = errorFileName.closest('.group-files');
-        //$('.invalid-feedback').remove( );
 		groupFiles.removeClass( 'is-invalid' );
         if ( fieldName != null ) {
             if ( data.fileCount == 0 ) {
                 $( "#_file_deletion_label_" + fieldName ).hide();
             } else {
                 var strContent = "";
-                var checkboxPrefix = cbPrefix + fieldName;
+                var checkboxPrefix = '${checkBoxPrefix}' + fieldName;
                 for ( var index = 0; index < data.fileCount; index++ ) {
                     var imgContent = ( (data.fileCount == 1) ? data.files.preview : data.files[index].preview );
-                    var imgTag = "";
-                    if ( typeof (imgContent) == "string" && imgContent.length > 0) {
-                        imgTag = " <img src=" + "'" + imgContent + "'" + "alt='' " + " width='${previewMaxWidth}' height='${previewMaxHeight}'/>";
-                    }
-                    strContent = strContent + getTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgTag,'${handler_name}', '${base_url}');
+                    strContent = strContent + getAdminTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgContent ,'${handler_name}', '${base_url}');
                 }
                 $("#_file_deletion_" + fieldName).html( strContent );
                 $("#_file_deletion_label_" + fieldName).show();
-            }
+
+                $(document).on('click', '.btn-rm-all', {} ,function(event) {
+                    removeFile${checkBoxPrefix}( fieldName, '${handler_name}', '${base_url}');
+                    return false;
+                });
+
+                var uploadedItems = $(document).find('.uploaded_check');
+                if ( uploadedItems.length > 0 ){
+                    uploadedItems.on( 'click', function(){
+                        if( $(this).prop('checked') ){
+                            $('#rmAll' + fieldName ).prop('disabled','');
+                        } else {
+                            var upChecked =  $(document).find('.uploaded_check:checked');
+                            if( upChecked.length == 0 ){
+                                $('#rmAll' + fieldName ).prop('disabled','disabled');
+                            }
+                        }
+                    })
+                }
+            }   
         }
     });
 }
@@ -165,14 +176,11 @@ $(function () {
 function removeFile${checkBoxPrefix}( fieldName, handlerName, baseUrl ) {
     // build indexes to remove
     var strIndexes = '';
-
     var indexesCount = 0;
     var checkboxPrefix = '${checkBoxPrefix}' + fieldName;
     $('[name^="' + checkboxPrefix + '"]:checked' ).each( function() {
-        if (this.checked)
-        {
-            if ( indexesCount > 0 )
-            {
+        if (this.checked) {
+            if ( indexesCount > 0 ){
                 strIndexes = strIndexes + ",";
             }
             indexesCount++;
@@ -180,29 +188,25 @@ function removeFile${checkBoxPrefix}( fieldName, handlerName, baseUrl ) {
             strIndexes = strIndexes + index;
         }
     });
-
-    if ( !indexesCount )
-    {
+    if ( !indexesCount ){
         return;
     }
-
     var jsonData = {"fieldname":fieldName, "asynchronousupload.handler":handlerName, "field_index": strIndexes};
-    formDisplayUploadedFiles${fieldname}(jsonData, null, '${checkBoxPrefix}');
+    formDisplayUploadedFiles${fieldname}( jsonData, null, '${checkBoxPrefix}');
 }
+
 
 /**
  * Removes a file on click
  */
 $(document).on('click', '.deleteSingleFile', function (event) {
-    event.preventDefault( );
     var index = event.currentTarget.getAttribute("index");
     var fieldName = event.currentTarget.getAttribute("fieldName")
     var handlerName = event.currentTarget.getAttribute("handlerName");
     var jsonData = {"fieldname":fieldName, "asynchronousupload.handler":handlerName, "field_index": index};
     formDisplayUploadedFiles${fieldname}(jsonData, null, '${checkBoxPrefix}');
-    return false;
+    event.preventDefault( );
 });
-
 
 function updateErrorBox( errorMessage, fieldName ){
     var errorFileName=$( '#_file_error_box_' + fieldName ), 
@@ -210,7 +214,7 @@ function updateErrorBox( errorMessage, fieldName ){
     if ( errorMessage != null && errorMessage !='' && errorMessage !== undefined || mapFileErrors.size > 0 ) {
        var strContent = mapFileErrors.size > 0 ? mapFileErrors.get( fieldName ) : errorMessage;
 		if( mapFilesNumber.get( fieldName ) > 1 ){
-			errorFileName.after( '<div class="invalid-feedback">' + strContent + '</div>' ).show( );
+			errorFileName.after( '<div class="invalid-feedback text-danger"><i class="fa fa-exclamation-triangle fa-fw"></i> ' + strContent + '</div>' ).show( );
         } else {
 			if( !groupFiles.hasClass( 'is-invalid' ) ){
                 groupFiles.addClass( 'is-invalid' ).after( '<div class="invalid-feedback">' + strContent + '</div>' ).show( );
@@ -224,22 +228,3 @@ function updateErrorBox( errorMessage, fieldName ){
     }
 
 }
-
-// function updateErrorBox( errorMessage, fieldName ){
-//     if ( errorMessage != null && errorMessage !='' && errorMessage !== undefined || mapFileErrors.size > 0 ) {
-//         if ( errorMessage === undefined ){ errorMessage='' };
-//         var strContent = mapFileErrors.size > 0 ? mapFileErrors.get( fieldName ) : errorMessage;
-// 		if( mapFilesNumber.get( fieldName ) > 1 ){
-// 			$( '#_file_error_box_' + fieldName ).after( '<div class="invalid-feedback">' + strContent + '</div>' ).show( );
-// 		} else {
-// 			var groupFile = $( '#_file_error_box_' + fieldName ).closest('.group-files.one-file');
-// 			groupFile.addClass( 'is-invalid' ).after( '<div class="invalid-feedback">' + strContent + '</div>' ).show( );
-// 		}
-//         mapFileErrors.delete(fieldName);
-//         mapFilesNumber.delete(fieldName);
-//     } else {
-//         $( '#_file_error_box_' + fieldName ).hide( );
-// 		var groupFile = $( '#_file_error_box_' + fieldName ).closest('.group-files.one-file');
-// 		groupFile.removeClass( 'is-invalid' );
-//     }
-// }
