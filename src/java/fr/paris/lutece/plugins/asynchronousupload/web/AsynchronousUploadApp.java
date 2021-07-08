@@ -228,7 +228,7 @@ public class AsynchronousUploadApp extends MVCApplication
             } else {
                 strTemplate=TEMPLATE_ADMIN_MAIN_UPLOAD_JS;
             }
-            HtmlTemplate template = AppTemplateService.getTemplate( strTemplate, request.getLocale( ), model );
+            HtmlTemplate template = AppTemplateService.getTemplate( strTemplate, getLocale( request ), model );
             strContent = template.getHtml( );
             UploadCacheService.getInstance( ).putInCache( strKey, strContent );
         }
