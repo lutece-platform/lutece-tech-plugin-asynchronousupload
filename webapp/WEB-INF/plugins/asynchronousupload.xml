@@ -63,9 +63,9 @@
 		<admin-javascript-file>js/admin/plugins/asynchronousupload/config.js</admin-javascript-file>
     </admin-javascript-files>   
 
-    <listeners>
-		<listener>
-  	 		<listener-class>fr.paris.lutece.plugins.asynchronousupload.service.AsynchronousUploadSessionListener</listener-class>
-		</listener>
- 	</listeners>
+	<listeners>
+	   <listener>
+	       <listener-class>fr.paris.lutece.plugins.asynchronousupload.service.AsynchronousUploadSessionListener</listener-class>
+	   </listener>
+	</listeners>
 </plug-in>

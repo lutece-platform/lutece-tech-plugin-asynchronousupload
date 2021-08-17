@@ -382,9 +382,8 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
     @Override
     public List<FileItem> getListPartialUploadedFiles( String strFieldName, HttpSession session )
     {
-
         AppLogService.error( "the Upload Handler do not manage partial content files " );
-        return null;
+        return new ArrayList<>( );
     }
 
     /**

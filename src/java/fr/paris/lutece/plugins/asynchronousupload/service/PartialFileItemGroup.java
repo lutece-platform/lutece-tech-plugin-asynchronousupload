@@ -39,9 +39,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.SequenceInputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 import java.util.stream.Collectors;
 
 import org.apache.commons.fileupload.FileItem;
@@ -70,7 +70,7 @@ public class PartialFileItemGroup implements FileItem
     public PartialFileItemGroup( List<FileItem> items )
     {
         _items = items;
-        Vector vOut = new Vector( );
+        List<InputStream> vOut = new ArrayList<>( );
 
         try
         {
@@ -85,8 +85,7 @@ public class PartialFileItemGroup implements FileItem
         {
             AppLogService.error( "error creating Partial File item sequence inputstream", e );
         }
-        Enumeration enumeration = vOut.elements( );
-        _sequenceInputStream = new SequenceInputStream( enumeration );
+        _sequenceInputStream = new SequenceInputStream( Collections.enumeration( vOut ) );
 
     }
 
@@ -173,7 +172,7 @@ public class PartialFileItemGroup implements FileItem
     @Override
     public long getSize( )
     {
-        return _items.stream( ).collect( Collectors.summingLong( x -> x.getSize( ) ) );
+        return _items.stream( ).collect( Collectors.summingLong( FileItem::getSize ) );
     }
 
     /**
@@ -236,7 +235,7 @@ public class PartialFileItemGroup implements FileItem
     @Override
     public void write( File file ) throws Exception
     {
-
+        // Nothing
     }
 
     /**
@@ -254,6 +253,6 @@ public class PartialFileItemGroup implements FileItem
     @Override
     public void setHeaders( FileItemHeaders headers )
     {
-
+        // No Default Headers
     }
 }
