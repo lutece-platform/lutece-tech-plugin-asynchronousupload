@@ -42,7 +42,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
 import fr.paris.lutece.plugins.asynchronousupload.service.UploadCacheService;
@@ -123,69 +123,41 @@ public class AsynchronousUploadApp extends MVCApplication
         String strMaxChunkSize=request.getParameter(PARAMETER_MAX_CHUNK_SIZE);
 
         IAsyncUploadHandler handler = getHandler( strHandlerName );
-
-        int nMaxFileSize;
-        int nImageMaxHeight;
-        int nImageMaxWidth;
-        int nPreviewMaxWidth;
-        int nPreviewMaxHeight;
-        int nMaxChunkSize; 
-
-        if ( StringUtils.isNotEmpty( strMaxFileSize ) && StringUtils.isNumeric( strMaxFileSize ) )
+        
+        int nMaxFileSize = Integer.parseInt( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_MAX_FILE_SIZE ) );
+        if ( StringUtils.isNumeric( strMaxFileSize ) )
         {
             nMaxFileSize = Integer.parseInt( strMaxFileSize );
         }
-        else
-        {
-            nMaxFileSize = Integer
-                    .valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_MAX_FILE_SIZE ) );
-        }
 
-        if ( StringUtils.isNotEmpty( strImageMaxHeight ) && StringUtils.isNumeric( strImageMaxHeight ) )
+        int nImageMaxHeight = Integer.parseInt( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_IMAGE_MAX_HEIGHT ) );
+        if ( StringUtils.isNumeric( strImageMaxHeight ) )
         {
             nImageMaxHeight = Integer.parseInt( strImageMaxHeight );
         }
-        else
-        {
-            nImageMaxHeight = Integer
-                    .valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_IMAGE_MAX_HEIGHT ) );
-        }
 
-        if ( StringUtils.isNotEmpty( strImageMaxWidth ) && StringUtils.isNumeric( strImageMaxWidth ) )
+        int nImageMaxWidth = Integer.parseInt( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_IMAGE_MAX_WIDTH ) );
+        if ( StringUtils.isNumeric( strImageMaxWidth ) )
         {
             nImageMaxWidth = Integer.parseInt( strImageMaxWidth );
         }
-        else
-        {
-            nImageMaxWidth = Integer
-                    .valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_IMAGE_MAX_WIDTH ) );
-        }
-        if ( StringUtils.isNotEmpty( strPreviewMaxWidth ) && StringUtils.isNumeric( strPreviewMaxWidth ) )
+
+        int nPreviewMaxWidth = Integer.parseInt( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_PREVIEW_MAX_WIDTH ) );
+        if ( StringUtils.isNumeric( strPreviewMaxWidth ) )
         {
             nPreviewMaxWidth = Integer.parseInt( strPreviewMaxWidth );
         }
-        else
-        {
-            nPreviewMaxWidth = Integer
-                    .valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_PREVIEW_MAX_WIDTH ) );
-        }
 
-        if ( StringUtils.isNotEmpty( strPreviewMaxHeight ) && StringUtils.isNumeric( strPreviewMaxHeight ) )
+        int nPreviewMaxHeight = Integer.parseInt( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_PREVIEW_MAX_HEIGHT ) );
+        if ( StringUtils.isNumeric( strPreviewMaxHeight ) )
         {
             nPreviewMaxHeight = Integer.parseInt( strPreviewMaxHeight );
         }
-        else
-        {
-            nPreviewMaxHeight = Integer
-                    .valueOf( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_PREVIEW_MAX_HEIGHT ) );
-        }
-        if ( StringUtils.isNotEmpty( strMaxChunkSize ) && StringUtils.isNumeric( strMaxChunkSize ) )
+
+        int nMaxChunkSize = AppPropertiesService.getPropertyInt( PROPERTY_KEY_PREFIX + PARAMETER_MAX_CHUNK_SIZE ,0 );
+        if ( StringUtils.isNumeric( strMaxChunkSize ) )
         {
             nMaxChunkSize = Integer.parseInt( strMaxChunkSize );
-        }
-        else
-        {
-        	nMaxChunkSize = AppPropertiesService.getPropertyInt( PROPERTY_KEY_PREFIX + PARAMETER_MAX_CHUNK_SIZE ,0 );
         }
 
         if ( StringUtils.isEmpty( strFieldName ) )
@@ -193,45 +165,50 @@ public class AsynchronousUploadApp extends MVCApplication
             strFieldName = DEFAULT_FIELD_NAME;
         }
 
-        String strKey = ( ( strHandlerName != null ) ? strHandlerName : StringUtils.EMPTY ) + strBaseUrl
-                + ( ( strMaxFileSize == null ) ? StringUtils.EMPTY : strMaxFileSize )
-                + ( ( strImageMaxWidth == null ) ? StringUtils.EMPTY : strImageMaxWidth )
-                + ( ( strImageMaxHeight == null ) ? StringUtils.EMPTY : strImageMaxHeight )
-                + ( ( strPreviewMaxWidth == null ) ? StringUtils.EMPTY : strPreviewMaxWidth )
-                + ( ( strPreviewMaxHeight == null ) ? StringUtils.EMPTY : strPreviewMaxHeight )
-                + ( ( strMaxChunkSize == null ) ? StringUtils.EMPTY : strMaxChunkSize )
+        String strKey = StringUtils.defaultString( strHandlerName ) + strBaseUrl
+                + StringUtils.defaultString( strMaxFileSize )
+                + StringUtils.defaultString( strImageMaxWidth )
+                + StringUtils.defaultString( strImageMaxHeight )
+                + StringUtils.defaultString( strPreviewMaxWidth )
+                + StringUtils.defaultString( strPreviewMaxHeight )
+                + StringUtils.defaultString( strMaxChunkSize )
                 + strFieldName;
 
         String strContent = (String) UploadCacheService.getInstance( ).getFromCache( strKey );
 
-        if ( strContent == null )
+        if ( strContent != null )
         {
-            Map<String, Object> model = new HashMap<>( );
-            boolean bSplitFile=handler.isManagePartialContent() && nMaxChunkSize>0; 
-            model.put( MARK_BASE_URL, strBaseUrl );
-            model.put( MARK_UPLOAD_URL, URL_UPLOAD_SERVLET );
-            model.put( MARK_HANDLER_NAME, strHandlerName );
-            model.put( PARAMETER_MAX_FILE_SIZE, nMaxFileSize );
-            model.put( PARAMETER_IMAGE_MAX_WIDTH, nImageMaxWidth );
-            model.put( PARAMETER_IMAGE_MAX_HEIGHT, nImageMaxHeight );
-            model.put( PARAMETER_PREVIEW_MAX_WIDTH, nPreviewMaxWidth );
-            model.put( PARAMETER_PREVIEW_MAX_HEIGHT, nPreviewMaxHeight );
-            model.put( MARK_SUBMIT_PREFIX, handler.getUploadSubmitPrefix( ) );
-            model.put( MARK_DELETE_PREFIX, handler.getUploadDeletePrefix( ) );
-            model.put( MARK_CHECKBOX_PREFIX, handler.getUploadCheckboxPrefix( ) );
-            model.put( PARAMETER_FIELD_NAME, strFieldName );
-            model.put( MARK_SPLIT_FILE,bSplitFile);
-            model.put( PARAMETER_MAX_CHUNK_SIZE, nMaxChunkSize);
-            
-            if( bContext ){
-                strTemplate=TEMPLATE_MAIN_UPLOAD_JS;
-            } else {
-                strTemplate=TEMPLATE_ADMIN_MAIN_UPLOAD_JS;
-            }
-            HtmlTemplate template = AppTemplateService.getTemplate( strTemplate, getLocale( request ), model );
-            strContent = template.getHtml( );
-            UploadCacheService.getInstance( ).putInCache( strKey, strContent );
+            return strContent;
         }
+        
+        Map<String, Object> model = new HashMap<>( );
+        boolean bSplitFile=handler.isManagePartialContent() && nMaxChunkSize>0; 
+        model.put( MARK_BASE_URL, strBaseUrl );
+        model.put( MARK_UPLOAD_URL, URL_UPLOAD_SERVLET );
+        model.put( MARK_HANDLER_NAME, strHandlerName );
+        model.put( PARAMETER_MAX_FILE_SIZE, nMaxFileSize );
+        model.put( PARAMETER_IMAGE_MAX_WIDTH, nImageMaxWidth );
+        model.put( PARAMETER_IMAGE_MAX_HEIGHT, nImageMaxHeight );
+        model.put( PARAMETER_PREVIEW_MAX_WIDTH, nPreviewMaxWidth );
+        model.put( PARAMETER_PREVIEW_MAX_HEIGHT, nPreviewMaxHeight );
+        model.put( MARK_SUBMIT_PREFIX, handler.getUploadSubmitPrefix( ) );
+        model.put( MARK_DELETE_PREFIX, handler.getUploadDeletePrefix( ) );
+        model.put( MARK_CHECKBOX_PREFIX, handler.getUploadCheckboxPrefix( ) );
+        model.put( PARAMETER_FIELD_NAME, strFieldName );
+        model.put( MARK_SPLIT_FILE,bSplitFile);
+        model.put( PARAMETER_MAX_CHUNK_SIZE, nMaxChunkSize);
+        
+        if( Boolean.TRUE.equals( bContext ) )
+        {
+            strTemplate=TEMPLATE_MAIN_UPLOAD_JS;
+        }
+        else
+        {
+            strTemplate=TEMPLATE_ADMIN_MAIN_UPLOAD_JS;
+        }
+        HtmlTemplate template = AppTemplateService.getTemplate( strTemplate, getLocale( request ), model );
+        strContent = template.getHtml( );
+        UploadCacheService.getInstance( ).putInCache( strKey, strContent );
         return strContent;
     }
 
