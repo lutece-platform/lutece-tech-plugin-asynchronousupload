@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -79,10 +79,10 @@ public final class JSONUtils
     }
 
     /**
-     * Builds a json object for the file item list. Key is
-     * {@link #JSON_KEY_UPLOADED_FILES}, value is the array of uploaded file.
+     * Builds a json object for the file item list. Key is {@link #JSON_KEY_UPLOADED_FILES}, value is the array of uploaded file.
      * 
-     * @param listFileItem the fileItem list
+     * @param listFileItem
+     *            the fileItem list
      * @return the json
      */
     public static JSONObject getUploadedFileJSON( List<FileItem> listFileItem )
@@ -114,15 +114,15 @@ public final class JSONUtils
     /**
      * Builds a json object with the error message.
      * 
-     * @param request the request
+     * @param request
+     *            the request
      * @return the json object.
      */
     public static JSONObject buildJsonErrorRemovingFile( HttpServletRequest request )
     {
         JSONObject json = new JSONObject( );
 
-        json.element( JSON_KEY_FORM_ERROR,
-                I18nService.getLocalizedString( PROPERTY_MESSAGE_ERROR_REMOVING_FILE, request.getLocale( ) ) );
+        json.element( JSON_KEY_FORM_ERROR, I18nService.getLocalizedString( PROPERTY_MESSAGE_ERROR_REMOVING_FILE, request.getLocale( ) ) );
 
         return json;
     }
@@ -130,8 +130,10 @@ public final class JSONUtils
     /**
      * Builds a json object with the error message.
      * 
-     * @param json       the JSON
-     * @param strMessage the error message
+     * @param json
+     *            the JSON
+     * @param strMessage
+     *            the error message
      */
     public static void buildJsonError( JSONObject json, String strMessage )
     {

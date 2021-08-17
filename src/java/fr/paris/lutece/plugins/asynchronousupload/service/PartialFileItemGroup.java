@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -70,20 +70,24 @@ public class PartialFileItemGroup implements FileItem
     public PartialFileItemGroup( List<FileItem> items )
     {
         _items = items;
-        Vector vOut = new Vector(); 
-        
-    	try {
-    		
-			for (FileItem fileItem : items) {
-				vOut.add(fileItem.getInputStream());
+        Vector vOut = new Vector( );
 
-			}
-    	} catch (IOException e) {
-			AppLogService.error("error creating Partial File item sequence inputstream",e);
-		}
-        Enumeration enumeration = vOut.elements(); 
-        _sequenceInputStream = new SequenceInputStream(enumeration);
-        
+        try
+        {
+
+            for ( FileItem fileItem : items )
+            {
+                vOut.add( fileItem.getInputStream( ) );
+
+            }
+        }
+        catch( IOException e )
+        {
+            AppLogService.error( "error creating Partial File item sequence inputstream", e );
+        }
+        Enumeration enumeration = vOut.elements( );
+        _sequenceInputStream = new SequenceInputStream( enumeration );
+
     }
 
     /**
@@ -92,10 +96,10 @@ public class PartialFileItemGroup implements FileItem
     @Override
     public void delete( )
     {
-    	for(FileItem item:_items)
-    	{
-    		item.delete( );
-    	}
+        for ( FileItem item : _items )
+        {
+            item.delete( );
+        }
     }
 
     /**
@@ -104,14 +108,17 @@ public class PartialFileItemGroup implements FileItem
     @Override
     public byte [ ] get( )
     {
-    	
-    	byte [ ] bReturn=null;
-        try {
-			bReturn= IOUtils.toByteArray(_sequenceInputStream);
-		} catch (IOException e) {
-			AppLogService.error("error getting Partial File item  inputstream",e);
-			
-		}
+
+        byte [ ] bReturn = null;
+        try
+        {
+            bReturn = IOUtils.toByteArray( _sequenceInputStream );
+        }
+        catch( IOException e )
+        {
+            AppLogService.error( "error getting Partial File item  inputstream", e );
+
+        }
         return bReturn;
     }
 
@@ -121,7 +128,7 @@ public class PartialFileItemGroup implements FileItem
     @Override
     public String getContentType( )
     {
-        return _items.get(0).getContentType( );
+        return _items.get( 0 ).getContentType( );
     }
 
     /**
@@ -130,7 +137,7 @@ public class PartialFileItemGroup implements FileItem
     @Override
     public String getFieldName( )
     {
-        return _items.get(0).getFieldName( );
+        return _items.get( 0 ).getFieldName( );
     }
 
     /**
@@ -148,7 +155,7 @@ public class PartialFileItemGroup implements FileItem
     @Override
     public String getName( )
     {
-        return UploadUtil.cleanFileName( FilenameUtils.getName( _items.get(0).getName( ) ) );
+        return UploadUtil.cleanFileName( FilenameUtils.getName( _items.get( 0 ).getName( ) ) );
     }
 
     /**
@@ -166,7 +173,7 @@ public class PartialFileItemGroup implements FileItem
     @Override
     public long getSize( )
     {
-        return _items.stream().collect(Collectors.summingLong(x->x.getSize()));
+        return _items.stream( ).collect( Collectors.summingLong( x -> x.getSize( ) ) );
     }
 
     /**
@@ -175,7 +182,7 @@ public class PartialFileItemGroup implements FileItem
     @Override
     public String getString( )
     {
-        return _items.get(0).getString( );
+        return _items.get( 0 ).getString( );
     }
 
     /**
@@ -184,7 +191,7 @@ public class PartialFileItemGroup implements FileItem
     @Override
     public String getString( String encoding ) throws UnsupportedEncodingException
     {
-        return _items.get(0).getString( encoding );
+        return _items.get( 0 ).getString( encoding );
     }
 
     /**
@@ -193,7 +200,7 @@ public class PartialFileItemGroup implements FileItem
     @Override
     public boolean isFormField( )
     {
-        return _items.get(0).isFormField( );
+        return _items.get( 0 ).isFormField( );
     }
 
     /**
@@ -202,7 +209,7 @@ public class PartialFileItemGroup implements FileItem
     @Override
     public boolean isInMemory( )
     {
-        return _items.get(0).isInMemory( );
+        return _items.get( 0 ).isInMemory( );
     }
 
     /**
@@ -211,7 +218,7 @@ public class PartialFileItemGroup implements FileItem
     @Override
     public void setFieldName( String name )
     {
-    	_items.get(0).setFieldName( name );
+        _items.get( 0 ).setFieldName( name );
     }
 
     /**
@@ -220,7 +227,7 @@ public class PartialFileItemGroup implements FileItem
     @Override
     public void setFormField( boolean state )
     {
-    	_items.get(0).setFormField( state );
+        _items.get( 0 ).setFormField( state );
     }
 
     /**
@@ -229,7 +236,7 @@ public class PartialFileItemGroup implements FileItem
     @Override
     public void write( File file ) throws Exception
     {
-        
+
     }
 
     /**
@@ -238,7 +245,7 @@ public class PartialFileItemGroup implements FileItem
     @Override
     public FileItemHeaders getHeaders( )
     {
-        return _items.get(0).getHeaders( );
+        return _items.get( 0 ).getHeaders( );
     }
 
     /**
@@ -247,6 +254,6 @@ public class PartialFileItemGroup implements FileItem
     @Override
     public void setHeaders( FileItemHeaders headers )
     {
-       
+
     }
 }

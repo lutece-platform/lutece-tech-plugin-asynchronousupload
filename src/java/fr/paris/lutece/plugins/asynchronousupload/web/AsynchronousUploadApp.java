@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -79,8 +79,7 @@ public class AsynchronousUploadApp extends MVCApplication
     private static final String PARAMETER_IMAGE_MAX_HEIGHT = "imageMaxHeight";
     private static final String PARAMETER_PREVIEW_MAX_WIDTH = "previewMaxWidth";
     private static final String PARAMETER_PREVIEW_MAX_HEIGHT = "previewMaxHeight";
-    private static final String PARAMETER_MAX_CHUNK_SIZE="maxChunkSize";
-    
+    private static final String PARAMETER_MAX_CHUNK_SIZE = "maxChunkSize";
 
     // Templates
     private static final String TEMPLATE_MAIN_UPLOAD_JS = "skin/plugins/asynchronousupload/main.js";
@@ -97,14 +96,14 @@ public class AsynchronousUploadApp extends MVCApplication
     /**
      * Get the main upload JavaScript file. Available HTTP parameters are :
      * <ul>
-     * <li><b>handler</b> : Name of the handler that will manage the asynchronous
-     * upload.</li>
-     * <li><b>maxFileSize</b> : The maximum size (in bytes) of uploaded files.
-     * Default value is 2097152</li>
+     * <li><b>handler</b> : Name of the handler that will manage the asynchronous upload.</li>
+     * <li><b>maxFileSize</b> : The maximum size (in bytes) of uploaded files. Default value is 2097152</li>
      * </ul>
      * 
-     * @param request The request
-     * @param bContext True if front / False if admin
+     * @param request
+     *            The request
+     * @param bContext
+     *            True if front / False if admin
      * @return The content of the JavaScript file
      */
     public String getMainUploadJs( HttpServletRequest request, Boolean bContext )
@@ -120,10 +119,10 @@ public class AsynchronousUploadApp extends MVCApplication
         String strPreviewMaxWidth = request.getParameter( PARAMETER_PREVIEW_MAX_WIDTH );
         String strPreviewMaxHeight = request.getParameter( PARAMETER_PREVIEW_MAX_HEIGHT );
         String strFieldName = request.getParameter( PARAMETER_FIELD_NAME );
-        String strMaxChunkSize=request.getParameter(PARAMETER_MAX_CHUNK_SIZE);
+        String strMaxChunkSize = request.getParameter( PARAMETER_MAX_CHUNK_SIZE );
 
         IAsyncUploadHandler handler = getHandler( strHandlerName );
-        
+
         int nMaxFileSize = Integer.parseInt( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_MAX_FILE_SIZE ) );
         if ( StringUtils.isNumeric( strMaxFileSize ) )
         {
@@ -154,7 +153,7 @@ public class AsynchronousUploadApp extends MVCApplication
             nPreviewMaxHeight = Integer.parseInt( strPreviewMaxHeight );
         }
 
-        int nMaxChunkSize = AppPropertiesService.getPropertyInt( PROPERTY_KEY_PREFIX + PARAMETER_MAX_CHUNK_SIZE ,0 );
+        int nMaxChunkSize = AppPropertiesService.getPropertyInt( PROPERTY_KEY_PREFIX + PARAMETER_MAX_CHUNK_SIZE, 0 );
         if ( StringUtils.isNumeric( strMaxChunkSize ) )
         {
             nMaxChunkSize = Integer.parseInt( strMaxChunkSize );
@@ -165,14 +164,10 @@ public class AsynchronousUploadApp extends MVCApplication
             strFieldName = DEFAULT_FIELD_NAME;
         }
 
-        String strKey = StringUtils.defaultString( strHandlerName ) + strBaseUrl
-                + StringUtils.defaultString( strMaxFileSize )
-                + StringUtils.defaultString( strImageMaxWidth )
-                + StringUtils.defaultString( strImageMaxHeight )
-                + StringUtils.defaultString( strPreviewMaxWidth )
-                + StringUtils.defaultString( strPreviewMaxHeight )
-                + StringUtils.defaultString( strMaxChunkSize )
-                + strFieldName;
+        String strKey = StringUtils.defaultString( strHandlerName ) + strBaseUrl + StringUtils.defaultString( strMaxFileSize )
+                + StringUtils.defaultString( strImageMaxWidth ) + StringUtils.defaultString( strImageMaxHeight )
+                + StringUtils.defaultString( strPreviewMaxWidth ) + StringUtils.defaultString( strPreviewMaxHeight )
+                + StringUtils.defaultString( strMaxChunkSize ) + strFieldName;
 
         String strContent = (String) UploadCacheService.getInstance( ).getFromCache( strKey );
 
@@ -180,9 +175,9 @@ public class AsynchronousUploadApp extends MVCApplication
         {
             return strContent;
         }
-        
+
         Map<String, Object> model = new HashMap<>( );
-        boolean bSplitFile=handler.isManagePartialContent() && nMaxChunkSize>0; 
+        boolean bSplitFile = handler.isManagePartialContent( ) && nMaxChunkSize > 0;
         model.put( MARK_BASE_URL, strBaseUrl );
         model.put( MARK_UPLOAD_URL, URL_UPLOAD_SERVLET );
         model.put( MARK_HANDLER_NAME, strHandlerName );
@@ -195,16 +190,16 @@ public class AsynchronousUploadApp extends MVCApplication
         model.put( MARK_DELETE_PREFIX, handler.getUploadDeletePrefix( ) );
         model.put( MARK_CHECKBOX_PREFIX, handler.getUploadCheckboxPrefix( ) );
         model.put( PARAMETER_FIELD_NAME, strFieldName );
-        model.put( MARK_SPLIT_FILE,bSplitFile);
-        model.put( PARAMETER_MAX_CHUNK_SIZE, nMaxChunkSize);
-        
-        if( Boolean.TRUE.equals( bContext ) )
+        model.put( MARK_SPLIT_FILE, bSplitFile );
+        model.put( PARAMETER_MAX_CHUNK_SIZE, nMaxChunkSize );
+
+        if ( Boolean.TRUE.equals( bContext ) )
         {
-            strTemplate=TEMPLATE_MAIN_UPLOAD_JS;
+            strTemplate = TEMPLATE_MAIN_UPLOAD_JS;
         }
         else
         {
-            strTemplate=TEMPLATE_ADMIN_MAIN_UPLOAD_JS;
+            strTemplate = TEMPLATE_ADMIN_MAIN_UPLOAD_JS;
         }
         HtmlTemplate template = AppTemplateService.getTemplate( strTemplate, getLocale( request ), model );
         strContent = template.getHtml( );
@@ -215,7 +210,8 @@ public class AsynchronousUploadApp extends MVCApplication
     /**
      * Removes the uploaded fileItem.
      * 
-     * @param request the request
+     * @param request
+     *            the request
      * @return The JSON result
      */
     public String doRemoveAsynchronousUploadedFile( HttpServletRequest request )
@@ -239,14 +235,14 @@ public class AsynchronousUploadApp extends MVCApplication
 
         IAsyncUploadHandler handler = getHandler( request );
 
-        return ( handler == null ) ? StringUtils.EMPTY
-                : handler.doRemoveUploadedFile( request, strFieldName, listIndexesFilesToRemove );
+        return ( handler == null ) ? StringUtils.EMPTY : handler.doRemoveUploadedFile( request, strFieldName, listIndexesFilesToRemove );
     }
 
     /**
      * Gets the handler
      * 
-     * @param request the request
+     * @param request
+     *            the request
      * @return the handler found, <code>null</code> otherwise.
      * @see IAsynchronousUploadHandler#isInvoked(HttpServletRequest)
      */
@@ -266,7 +262,8 @@ public class AsynchronousUploadApp extends MVCApplication
     /**
      * Get a handler from its name
      * 
-     * @param strName The name of the handler
+     * @param strName
+     *            The name of the handler
      * @return The handler, or null if no handler was found
      */
     private IAsyncUploadHandler getHandler( String strName )
@@ -285,13 +282,15 @@ public class AsynchronousUploadApp extends MVCApplication
     /**
      * Get the uploaded fileItem.
      * 
-     * @param request  the request
-     * @param response the response
+     * @param request
+     *            the request
+     * @param response
+     *            the response
      */
     public void doRetrieveAsynchronousUploadedFile( HttpServletRequest request, HttpServletResponse response )
     {
         IAsyncUploadHandler handler = getHandler( request );
-        byte[] data = handler.doRetrieveUploadedFile( request );
+        byte [ ] data = handler.doRetrieveUploadedFile( request );
         String strFieldName = request.getParameter( "fileName" );
 
         response.setHeader( "Content-length", Integer.toString( data.length ) );
@@ -301,7 +300,7 @@ public class AsynchronousUploadApp extends MVCApplication
             response.getOutputStream( ).write( data, 0, data.length );
             response.getOutputStream( ).flush( );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
         }

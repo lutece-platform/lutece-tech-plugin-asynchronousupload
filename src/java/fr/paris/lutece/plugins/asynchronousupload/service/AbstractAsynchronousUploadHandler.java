@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -77,13 +77,11 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
     private static final String KEY_FILE_NAME = "fileName";
     private static final String KEY_FIELD_NAME = "field_name";
     private static final String KEY_FILES = "files";
-    private static final String HEADER_CONTENT_RANGE="Content-Range";
+    private static final String HEADER_CONTENT_RANGE = "Content-Range";
     private static final String REGEXP_CONTENT_RANGE_HEADER = "bytes (\\d*)-(\\d*)\\/(\\d*)";
-    
 
     @Override
-    public void process( HttpServletRequest request, HttpServletResponse response, Map<String, Object> map,
-            List<FileItem> listFileItemsToUpload )
+    public void process( HttpServletRequest request, HttpServletResponse response, Map<String, Object> map, List<FileItem> listFileItemsToUpload )
     {
         map.clear( );
         String strFieldName = request.getParameter( PARAMETER_FIELD_NAME );
@@ -98,31 +96,32 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
             String strError = canUploadFiles( request, strFieldName, listFileItemsToUpload, request.getLocale( ) );
             if ( strError == null )
             {
-            	//manage chunk file if there is not multiple file
-            	if(isManagePartialContent() && isRequestContainsPartialContent(request))
-            	{
-            		if(listFileItemsToUpload.size()==1)
-            		{
-	            		addFileItemToPartialUploadedFilesList(listFileItemsToUpload.get(0), strFieldName, request);
-	            		if (isRequestContainsLastPartialContent(request))
-	            		{
-	            			PartialFileItemGroup partialFileItemGroup= new PartialFileItemGroup(getListPartialUploadedFiles(strFieldName, request.getSession()));
-	            			addFileItemToUploadedFilesList( partialFileItemGroup, strFieldName, request );
-	            		}
-            		}
-            		else
-            		{
-            			AppLogService.error("AbstractAsynchronousUploadHandler.process : -Chunk files with  multiple file selected do not deal");
-            			 map.put( KEY_FORM_ERROR, "Chunk files with  multiple file selected do not deal" );
-            		}
-            	}
-            	else
-            	{
-	                for ( FileItem fileItem : listFileItemsToUpload )
-	                {	
-	                    addFileItemToUploadedFilesList( fileItem, strFieldName, request );
-	                }
-            	}
+                // manage chunk file if there is not multiple file
+                if ( isManagePartialContent( ) && isRequestContainsPartialContent( request ) )
+                {
+                    if ( listFileItemsToUpload.size( ) == 1 )
+                    {
+                        addFileItemToPartialUploadedFilesList( listFileItemsToUpload.get( 0 ), strFieldName, request );
+                        if ( isRequestContainsLastPartialContent( request ) )
+                        {
+                            PartialFileItemGroup partialFileItemGroup = new PartialFileItemGroup(
+                                    getListPartialUploadedFiles( strFieldName, request.getSession( ) ) );
+                            addFileItemToUploadedFilesList( partialFileItemGroup, strFieldName, request );
+                        }
+                    }
+                    else
+                    {
+                        AppLogService.error( "AbstractAsynchronousUploadHandler.process : -Chunk files with  multiple file selected do not deal" );
+                        map.put( KEY_FORM_ERROR, "Chunk files with  multiple file selected do not deal" );
+                    }
+                }
+                else
+                {
+                    for ( FileItem fileItem : listFileItemsToUpload )
+                    {
+                        addFileItemToUploadedFilesList( fileItem, strFieldName, request );
+                    }
+                }
             }
             else
             {
@@ -148,7 +147,8 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
     /**
      * Checks the request parameters to see if an upload submit has been called.
      *
-     * @param request the HTTP request
+     * @param request
+     *            the HTTP request
      * @return the name of the upload action, if any. Null otherwise.
      */
     public String getUploadAction( HttpServletRequest request )
@@ -215,8 +215,7 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
      * {@inheritDoc}
      */
     @Override
-    public String doRemoveUploadedFile( HttpServletRequest request, String strFieldName,
-            List<Integer> listIndexesFilesToRemove )
+    public String doRemoveUploadedFile( HttpServletRequest request, String strFieldName, List<Integer> listIndexesFilesToRemove )
     {
         if ( StringUtils.isBlank( strFieldName ) )
         {
@@ -234,15 +233,15 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
             }
 
             JSONArray jsonArrayFieldIndexers = (JSONArray) jsonFieldIndexes;
-            int[] tabFieldIndex = new int[jsonArrayFieldIndexers.size( )];
+            int [ ] tabFieldIndex = new int [ jsonArrayFieldIndexers.size( )];
 
             for ( int nIndex = 0; nIndex < jsonArrayFieldIndexers.size( ); nIndex++ )
             {
                 try
                 {
-                    tabFieldIndex[nIndex] = Integer.parseInt( jsonArrayFieldIndexers.getString( nIndex ) );
+                    tabFieldIndex [nIndex] = Integer.parseInt( jsonArrayFieldIndexers.getString( nIndex ) );
                 }
-                catch ( NumberFormatException nfe )
+                catch( NumberFormatException nfe )
                 {
                     return JSONUtils.buildJsonErrorRemovingFile( request ).toString( );
                 }
@@ -270,8 +269,7 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
         JSONObject json = new JSONObject( );
         json.element( JSONUtils.JSON_KEY_SUCCESS, JSONUtils.JSON_KEY_SUCCESS );
 
-        json.accumulateAll(
-                JSONUtils.getUploadedFileJSON( getListUploadedFiles( strFieldName, request.getSession( ) ) ) );
+        json.accumulateAll( JSONUtils.getUploadedFileJSON( getListUploadedFiles( strFieldName, request.getSession( ) ) ) );
         json.element( JSONUtils.JSON_KEY_FIELD_NAME, strFieldName );
 
         return json.toString( );
@@ -354,13 +352,12 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
     {
         return getHandlerName( ) + UPLOAD_CHECKBOX_PREFIX;
     }
-    
-   
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public byte[] doRetrieveUploadedFile( HttpServletRequest request )
+    public byte [ ] doRetrieveUploadedFile( HttpServletRequest request )
     {
         String strFieldName = request.getParameter( PARAMETER_FIELD_NAME );
         String strFieldIndex = request.getParameter( PARAMETER_FIELD_INDEX );
@@ -374,86 +371,91 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
         }
         if ( itemToDownload == null )
         {
-            return new byte[0];
+            return new byte [ 0];
         }
         return itemToDownload.get( );
     }
-    
-    
-    
-    
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<FileItem> getListPartialUploadedFiles(String strFieldName, HttpSession session) {
-    	
-    	AppLogService.error("the Upload Handler do not manage partial content files ");
-    	return null;
+    public List<FileItem> getListPartialUploadedFiles( String strFieldName, HttpSession session )
+    {
+
+        AppLogService.error( "the Upload Handler do not manage partial content files " );
+        return null;
     }
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public void addFileItemToPartialUploadedFilesList(FileItem fileItem, String strFieldName,
-    		HttpServletRequest request) {
-    	AppLogService.error("the Upload Handler do not manage partial content files ");
+    public void addFileItemToPartialUploadedFilesList( FileItem fileItem, String strFieldName, HttpServletRequest request )
+    {
+        AppLogService.error( "the Upload Handler do not manage partial content files " );
     }
+
     /**
      * {@inheritDoc}
      */
-    
+
     @Override
-    public boolean isManagePartialContent() {
-    
-    	return false;
+    public boolean isManagePartialContent( )
+    {
+
+        return false;
     }
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public void removeAllFileItem(HttpSession session) {
+    public void removeAllFileItem( HttpSession session )
+    {
     }
-    
-    
+
     /**
      * return true if the content of the request is partial
-     * @param request the request
-     * @return true if the content of the request is partial 
+     * 
+     * @param request
+     *            the request
+     * @return true if the content of the request is partial
      */
     private boolean isRequestContainsPartialContent( HttpServletRequest request )
     {
-    	return request.getHeader(HEADER_CONTENT_RANGE)!=null;
-    	
+        return request.getHeader( HEADER_CONTENT_RANGE ) != null;
+
     }
-    
-    
-    
+
     /**
-     * return true if the request contain the last partial content of the file 
+     * return true if the request contain the last partial content of the file
+     * 
      * @param request
      * @return
      */
-	private boolean isRequestContainsLastPartialContent(HttpServletRequest request) {
+    private boolean isRequestContainsLastPartialContent( HttpServletRequest request )
+    {
 
-		boolean bLastPartialContent = false;
-		String strContentRange = request.getHeader(HEADER_CONTENT_RANGE);
-		Pattern r = Pattern.compile(REGEXP_CONTENT_RANGE_HEADER);
-		Matcher m = r.matcher(strContentRange);
+        boolean bLastPartialContent = false;
+        String strContentRange = request.getHeader( HEADER_CONTENT_RANGE );
+        Pattern r = Pattern.compile( REGEXP_CONTENT_RANGE_HEADER );
+        Matcher m = r.matcher( strContentRange );
 
-		if (m.find()) {
+        if ( m.find( ) )
+        {
 
-			String strLatsBytes = m.group(2);
-			String strTotalBytes = m.group(3);
-			int nTotalBytes = Integer.parseInt(strTotalBytes);
-			int nLastBytes = Integer.parseInt(strLatsBytes);
-			if (nTotalBytes - nLastBytes == 1) {
-				bLastPartialContent = true;
+            String strLatsBytes = m.group( 2 );
+            String strTotalBytes = m.group( 3 );
+            int nTotalBytes = Integer.parseInt( strTotalBytes );
+            int nLastBytes = Integer.parseInt( strLatsBytes );
+            if ( nTotalBytes - nLastBytes == 1 )
+            {
+                bLastPartialContent = true;
 
-			}
+            }
 
-		}
-		return bLastPartialContent;
-	}
+        }
+        return bLastPartialContent;
+    }
 }

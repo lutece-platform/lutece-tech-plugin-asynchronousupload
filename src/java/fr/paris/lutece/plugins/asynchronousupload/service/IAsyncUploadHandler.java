@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,162 +43,192 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-
 /**
- * Interface for asynchronous upload handlers used by entries of type upload.
- * Handler must be declared as Spring beans.
+ * Interface for asynchronous upload handlers used by entries of type upload. Handler must be declared as Spring beans.
  */
 public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
 {
     /**
      * Get the upload submit prefix
+     * 
      * @return The upload submit prefix
      */
-    String getUploadSubmitPrefix(  );
+    String getUploadSubmitPrefix( );
 
     /**
      * Get the upload delete prefix
+     * 
      * @return The upload delete prefix
      */
-    String getUploadDeletePrefix(  );
+    String getUploadDeletePrefix( );
 
     /**
      * Get the upload checkbox prefix
+     * 
      * @return The upload checkbox prefix
      */
-    String getUploadCheckboxPrefix(  );
+    String getUploadCheckboxPrefix( );
 
     /**
      * Check if the file can be uploaded or not.
-     * @param request The request
-     * @param strFieldName the field name
-     * @param listFileItemsToUpload the list of files to upload
-     * @param locale the locale
+     * 
+     * @param request
+     *            The request
+     * @param strFieldName
+     *            the field name
+     * @param listFileItemsToUpload
+     *            the list of files to upload
+     * @param locale
+     *            the locale
      * @return The error message if any, or null if the files can be uploaded.
      */
-    String canUploadFiles( HttpServletRequest request, String strFieldName, List<FileItem> listFileItemsToUpload,
-        Locale locale );
+    String canUploadFiles( HttpServletRequest request, String strFieldName, List<FileItem> listFileItemsToUpload, Locale locale );
 
     /**
-     * Gets the list of upload files for a given field and a given session. The
-     * order of files in the list must be the upload order. Their index in this
-     * list (from 0 to the list size) will be used to identify them.
-     * @param strFieldName the field name
-     * @param session The session of the current user
+     * Gets the list of upload files for a given field and a given session. The order of files in the list must be the upload order. Their index in this list
+     * (from 0 to the list size) will be used to identify them.
+     * 
+     * @param strFieldName
+     *            the field name
+     * @param session
+     *            The session of the current user
      * @return the fileItem found, <code>null</code> otherwise.
      */
     List<FileItem> getListUploadedFiles( String strFieldName, HttpSession session );
 
     /**
-     * Gets the list of partial upload files for a given field and a given session. The
-     * order of files in the list must be the upload order. Their index in this
+     * Gets the list of partial upload files for a given field and a given session. The order of files in the list must be the upload order. Their index in this
      * list (from 0 to the list size) will be used to identify them.
-     * @param strFieldName the field name
-     * @param session The session of the current user
+     * 
+     * @param strFieldName
+     *            the field name
+     * @param session
+     *            The session of the current user
      * @return the fileItem found, <code>null</code> otherwise.
      */
     List<FileItem> getListPartialUploadedFiles( String strFieldName, HttpSession session );
 
-    
     /**
      * Remove file Item
-     * @param strFieldName the field name
-     * @param session The session of the current user
-     * @param nIndex the index of the file to remove (from 0 to n). The index is
-     *            the index of the file in the uploaded file list given by the
-     *            method {@link #getListUploadedFiles(String, HttpSession) }
+     * 
+     * @param strFieldName
+     *            the field name
+     * @param session
+     *            The session of the current user
+     * @param nIndex
+     *            the index of the file to remove (from 0 to n). The index is the index of the file in the uploaded file list given by the method
+     *            {@link #getListUploadedFiles(String, HttpSession) }
      */
     void removeFileItem( String strFieldName, HttpSession session, int nIndex );
-    
+
     /**
      * Remove all file Item for a given session
      * 
-     * @param session The session of the current user
+     * @param session
+     *            The session of the current user
      */
-    void removeAllFileItem( HttpSession session);
-    
+    void removeAllFileItem( HttpSession session );
 
     /**
      * Add a file item to the list of uploaded files
-     * @param fileItem the file item
-     * @param strFieldName the field name
-     * @param request the request
+     * 
+     * @param fileItem
+     *            the file item
+     * @param strFieldName
+     *            the field name
+     * @param request
+     *            the request
      */
     void addFileItemToUploadedFilesList( FileItem fileItem, String strFieldName, HttpServletRequest request );
-    
+
     /**
      * Add file item to the list of partial uploaded files
-     * @param fileItem the file item
-     * @param strFieldName the field name
-     * @param request the request
+     * 
+     * @param fileItem
+     *            the file item
+     * @param strFieldName
+     *            the field name
+     * @param request
+     *            the request
      */
     void addFileItemToPartialUploadedFilesList( FileItem fileItem, String strFieldName, HttpServletRequest request );
 
     /**
      * Check if the request has a remove flag for a given entry.
-     * @param request The request
-     * @param strFieldName The field name
-     * @return True if the request has a remove flag for the given entry, false
-     *         otherwise
+     * 
+     * @param request
+     *            The request
+     * @param strFieldName
+     *            The field name
+     * @return True if the request has a remove flag for the given entry, false otherwise
      */
     boolean hasRemoveFlag( HttpServletRequest request, String strFieldName );
 
     /**
-     * Do remove a file of a given entry if a flag is present in the request.
-     * Files are selected from the request.
-     * @param request The request
-     * @param strFieldName The field name
+     * Do remove a file of a given entry if a flag is present in the request. Files are selected from the request.
+     * 
+     * @param request
+     *            The request
+     * @param strFieldName
+     *            The field name
      */
     void doRemoveFile( HttpServletRequest request, String strFieldName );
 
     /**
      * Do remove a list of files from uploaded files.
-     * @param request The request
-     * @param strFieldName The field name of the files to remove
-     * @param listIndexesFilesToRemove The list of indexes of files to remove
+     * 
+     * @param request
+     *            The request
+     * @param strFieldName
+     *            The field name of the files to remove
+     * @param listIndexesFilesToRemove
+     *            The list of indexes of files to remove
      * @return The result JSON
      */
     String doRemoveUploadedFile( HttpServletRequest request, String strFieldName, List<Integer> listIndexesFilesToRemove );
 
     /**
-     * Check if the request has the flag to submit a file without submitting the
-     * form.
-     * @param request The request
-     * @param strFieldName The id of the entry
+     * Check if the request has the flag to submit a file without submitting the form.
+     * 
+     * @param request
+     *            The request
+     * @param strFieldName
+     *            The id of the entry
      * @return True if the flag is present in the request, false otherwise
      */
     boolean hasAddFileFlag( HttpServletRequest request, String strFieldName );
 
     /**
      * Add files uploaded synchronously for a given field
-     * @param request The request
-     * @param strFieldName The name of the field to add files of
+     * 
+     * @param request
+     *            The request
+     * @param strFieldName
+     *            The name of the field to add files of
      */
     void addFilesUploadedSynchronously( HttpServletRequest request, String strFieldName );
 
     /**
-     * Get the name of the handler. The name of the handler must be unique. The
-     * handler name must only contain alphabetic characters (no point, no space,
-     * no coma, no #, ...).
+     * Get the name of the handler. The name of the handler must be unique. The handler name must only contain alphabetic characters (no point, no space, no
+     * coma, no #, ...).
+     * 
      * @return The name of the handler
      */
-    String getHandlerName(  );
-    
+    String getHandlerName( );
+
     /**
      * Do retrieve a file from uploaded files.
-     * @param request The request
+     * 
+     * @param request
+     *            The request
      * @return The file
      */
-    byte[] doRetrieveUploadedFile( HttpServletRequest request );
-    
+    byte [ ] doRetrieveUploadedFile( HttpServletRequest request );
+
     /**
      * 
      * @return true if the handler manage partial content
      */
-    boolean isManagePartialContent();
-    
-    
-    
-    
-   
+    boolean isManagePartialContent( );
+
 }

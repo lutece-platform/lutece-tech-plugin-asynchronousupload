@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,28 +35,28 @@ package fr.paris.lutece.plugins.asynchronousupload.service;
 
 import fr.paris.lutece.portal.service.cache.AbstractCacheableService;
 
-
 /**
  * Cache service for asynchronous upload
  */
 public final class UploadCacheService extends AbstractCacheableService
 {
     private static final String CACHE_NAME = "asynchronousupload.asynchronousUploadCacheService";
-    private static UploadCacheService _instance = new UploadCacheService(  );
+    private static UploadCacheService _instance = new UploadCacheService( );
 
     /**
      * Private constructor
      */
-    private UploadCacheService(  )
+    private UploadCacheService( )
     {
-        initCache(  );
+        initCache( );
     }
 
     /**
      * Get the instance of the service
+     * 
      * @return The instance of the service
      */
-    public static UploadCacheService getInstance(  )
+    public static UploadCacheService getInstance( )
     {
         return _instance;
     }
@@ -65,7 +65,7 @@ public final class UploadCacheService extends AbstractCacheableService
      * {@inheritDoc}
      */
     @Override
-    public String getName(  )
+    public String getName( )
     {
         return CACHE_NAME;
     }
