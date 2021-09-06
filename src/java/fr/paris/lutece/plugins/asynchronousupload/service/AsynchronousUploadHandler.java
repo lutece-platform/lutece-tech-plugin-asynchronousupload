@@ -14,12 +14,14 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.util.filesystem.UploadUtil;
 
 public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
 {
 
+    private static final String BEAN_NAME = "asynchronous-upload.asynchronousUploadHandler";
     private static final String HANDLER_NAME = "asynchronousUploadHandler";
     
     // Error messages
@@ -27,6 +29,16 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
     
     /** contains uploaded file items */
     private static Map<String, Map<String, List<FileItem>>> _mapAsynchronousUpload = new ConcurrentHashMap<>( );
+    
+    /**
+     * Get the handler
+     * 
+     * @return the handler
+     */
+    public static AsynchronousUploadHandler getHandler( )
+    {
+        return SpringContextService.getBean( BEAN_NAME );
+    }
     
     @Override
     public String canUploadFiles( HttpServletRequest request, String strFieldName, List<FileItem> listFileItemsToUpload, Locale locale )
