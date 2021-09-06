@@ -40,6 +40,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,6 +67,7 @@ import net.sf.json.JSONSerializer;
  */
 public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadHandler
 {
+    protected static final String PARAM_CUSTOM_SESSION_ID = "CUSTOM_SESSION";
     private static final String PARAMETER_FIELD_NAME = "fieldname";
     private static final String PARAMETER_FIELD_INDEX = "field_index";
     private static final String PARAMETER_HANDLER = "asynchronousupload.handler";
@@ -456,5 +458,30 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
 
         }
         return bLastPartialContent;
+    }
+    
+    protected String getCustomSessionId( HttpSession session )
+    {
+        String sessionId = (String) session.getAttribute( PARAM_CUSTOM_SESSION_ID );
+        if ( sessionId == null )
+        {
+            sessionId = UUID.randomUUID( ).toString( );
+            session.setAttribute( PARAM_CUSTOM_SESSION_ID, sessionId );
+        }
+        return sessionId;
+    }
+    
+    @Override
+    public void removeFileItem( String strFieldName, HttpSession session, int nIndex )
+    {
+        // Remove the file (this will also delete the file physically)
+        List<FileItem> uploadedFiles = getListUploadedFiles( strFieldName, session );
+
+        if ( ( uploadedFiles != null ) && !uploadedFiles.isEmpty( ) && ( uploadedFiles.size( ) > nIndex ) )
+        {
+            // Remove the object from the Hashmap
+            FileItem fileItem = uploadedFiles.remove( nIndex );
+            fileItem.delete( );
+        }
     }
 }
