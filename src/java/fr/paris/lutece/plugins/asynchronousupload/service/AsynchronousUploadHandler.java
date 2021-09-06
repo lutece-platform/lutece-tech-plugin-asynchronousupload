@@ -121,4 +121,15 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
 
         mapFileItemsSession.computeIfAbsent( strFieldName, s -> new ArrayList<>( ) );
     }
+    
+    @Override
+    public void removeSessionFiles( HttpSession session )
+    {
+        String sessionId = (String) session.getAttribute( PARAM_CUSTOM_SESSION_ID );
+        if ( sessionId != null )
+        {
+            _mapAsynchronousUpload.remove( sessionId );
+        }
+
+    }
 }

@@ -231,4 +231,13 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
      */
     boolean isManagePartialContent( );
 
+    /**
+     * Removes all files associated to the session
+     * 
+     * @param strSessionId
+     *            the session id
+     */
+    default void removeSessionFiles( HttpSession session )
+    {
+    }
 }
