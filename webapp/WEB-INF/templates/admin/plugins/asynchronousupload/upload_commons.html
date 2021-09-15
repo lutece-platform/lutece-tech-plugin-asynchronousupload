@@ -12,38 +12,30 @@
 var mapFileErrors = new Map();
 var mapFilesNumber = new Map();
 </script>
-
 </#macro>
-
 <#macro addFileInput fieldName handler cssClass multiple=false submitBtnName="${handler.uploadSubmitPrefix}${fieldName}" type="button" ariaDescribedby="" required=false hasError=false >
 <@input type='hidden' name='asynchronousupload.handler' value='${handler.handlerName}' />
-<#assign inputClass>file-input<#if hasError> is-invalid</#if></#assign>
-<@row>
-	<@columns md=12 lg=8 class=inputClass?string >
-		<@formLabel for='${fieldName}' id='dropzone_${fieldName!}' class='sr-only'>#i18n{asynchronousupload.action.browse.name}</@formLabel>
-		<#assign pmultiple><#if multiple>multiple="multiple"</#if></#assign> 
-		<@input type='file' name='${fieldName}' placeHolder='#i18n{asynchronousupload.action.browse.name}' id='${fieldName}' class='${cssClass!} ${handler.handlerName}' params=pmultiple />
-		<@progressBar id="progress_${fieldName}" params=' style="display:none;"' />
-		<@div id="_file_error_box_${fieldName}" />
-	</@columns>	
-</@row>
+<#assign inputClass>async file-input<#if hasError> is-invalid</#if></#assign>
+<@formLabel for='${fieldName}' id='dropzone_${fieldName!}' class='sr-only'>#i18n{asynchronousupload.action.browse.name}</@formLabel>
+<#assign pmultiple><#if multiple>multiple="multiple"</#if></#assign> 
+<@input type='file' name='${fieldName}' placeHolder='#i18n{asynchronousupload.action.browse.name}' id='${fieldName}' class='${cssClass!} ${handler.handlerName}' params=pmultiple />
+<@progressBar id="progress_${fieldName}" />
+<@div id="_file_error_box_${fieldName}" />
 </#macro>
-
 <#macro addUploadedFilesBox fieldName handler listFiles submitBtnName="${handler.uploadDeletePrefix}${fieldName}" noJs=false>
 <#-- file removing -->
 <#assign has_files = false>
 <#if listFiles?? && listFiles?has_content><#assign has_files = true></#if>
-
 <#assign paramGroup><#if !has_files>style="display:none;"</#if></#assign>
 <@row>
-	<@columns md=12 lg=8>
+	<@columns>
 		<@div id='_file_deletion_label_${fieldName}' params=paramGroup >
 			<h3>#i18n{asynchronousupload.file.uploadedFile}</h3>
-			<@div id='_file_deletion_${fieldName}' class='list-group files-group'>
+			<@div id='_file_deletion_${fieldName}' >
 				<#assign file_index = 0>	
 				<#if has_files>	
 					<#assign index = 0 />
-					<@listGroup id='listUpload'>
+					<@listGroup id='listUpload-man'>
 						<#list listFiles as file>
 							<#assign filename = ''>
 							<#if file.name?? && file.name != ''>
@@ -66,18 +58,17 @@ var mapFilesNumber = new Map();
 								</#if>
 							</#if>
 							<#if filename != '' >
-								<div class="list-group-item" id="_file_uploaded_${fieldName}${file_index}">
+								<div class="list-group-item" >
 									<label for="${handler.uploadCheckboxPrefix}${fieldName}${file_index}">
 										<input type="checkbox" name="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" id="${handler.uploadCheckboxPrefix}${fieldName}${file_index}"> 
-										<a title="${filename}" href="jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?asynchronousupload.handler=${handler.handlerName}&fieldname=${fieldName}&field_index=${file_index}&fileName=${filename}" data-type="${filename?keep_after_last('.')}" data-img="" >
-											<span>${filename}</span>
-										</a>
-										<a href="#" class="text-danger deleteSingleFile" fieldName="${filename}" handlerName="formsAsynchronousUploadHandler" index="${file_index}"> 
-											<i class="fa fa-times fa-fw"></i> 
-										</a>
-										<br>
-										<small><#if file.size?has_content>${octetNumber?string["0"]} ${octetUnit}</#if> </small>
 									</label>
+									<a title="${filename}" href="jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?asynchronousupload.handler=${handler.handlerName}&fieldname=${fieldName}&field_index=${file_index}&fileName=${filename}" data-type="${filename?keep_after_last('.')}" data-img="" >
+										<span>${filename}</span>
+									</a>
+									<a href="#" class="text-danger is-danger deleteSingleFile" fieldName="${filename}" handlerName="formsAsynchronousUploadHandler" index="${file_index}"> 
+										<i class="fa fa-times fa-fw"></i> 
+									</a>
+									<small><#if file.size?has_content>${octetNumber?string["0"]} ${octetUnit}</#if> </small>
 								</div>
 							</#if>
 						</#list>
@@ -91,11 +82,11 @@ var mapFilesNumber = new Map();
 	<@columns>
 		<div class="checkbox">
 			<input type="checkbox" class="sr-only" id="selectAll${fieldName}" aria-hidden="true">
-			<label id="btn-select-all${fieldName}" class="btn btn-primary" for="selectAll${fieldName}">
-				<i class="fa fa-check" aria-hidden="true"></i> Tout s&eacute;lectionner
+			<label id="btn-select-all${fieldName}" class="btn btn-primary button is-primary is-small" for="selectAll${fieldName}">
+				<i class="fa fa-check fa-fw mr-2" aria-hidden="true"></i> Tout s&eacute;lectionner
 			</label>
-			<button id="rmAll${fieldName}" class="btn btn-danger btn-rm-all" name="${submitBtnName}" value="${handler.uploadDeletePrefix}${fieldName}" type="submit" <#if noJs>nojs</#if> >
-				<i class="fa fa-trash" aria-hidden="true"></i> #i18n{asynchronousupload.action.delete.name}
+			<button id="rmAll${fieldName}" class="btn btn-danger btn-rm-all  button is-danger is-small" name="${submitBtnName}" value="${handler.uploadDeletePrefix}${fieldName}" type="submit" <#if noJs>nojs</#if> >
+				<i class="fa fa-trash fa-fw mr-2" aria-hidden="true"></i> #i18n{asynchronousupload.action.delete.name}
 			</button>
 		</div>	
 	</@columns>
@@ -108,30 +99,25 @@ $('#selectAll${fieldName}').on('click', function(){
 	if( !hasChecked ){
 		$('#_file_deletion_${fieldName} input[type="checkbox"]').prop('checked','checked');
 		$('#rmAll${fieldName}').prop('disabled','');
-		$('#btn-select-all${fieldName}').html('<i class="fa fa-times" aria-hidden="true"></i> Tout d&eacute;s&eacute;lectionner');
+		$('#btn-select-all${fieldName}').html('<i class="fa fa-times fa-fw mr-2" aria-hidden="true"></i> Tout d&eacute;s&eacute;lectionner');
 		hasChecked=true;
 	} else {
 		$('#_file_deletion_${fieldName} input[type="checkbox"]').prop('checked','');
 		$('#rmAll${fieldName}').prop('disabled','disabled');
-		$('#btn-select-all${fieldName}').html('<i class="fa fa-check" aria-hidden="true"></i> Tout s&eacute;lectionner');
+		$('#btn-select-all${fieldName}').html('<i class="fa fa-check fa-fw mr-2" aria-hidden="true"></i> Tout s&eacute;lectionner');
 		hasChecked=false;
 	}
-
 	$( '#_file_deletion_${fieldName} input[type="checkbox"]' ).change( function(){
 		if ( $(this).prop( "checked" ) ){
 			$('#rmAll${fieldName}').prop('disabled','');
-			
 		};
 	});
 })
-
 $('#btn-select-all${fieldName}').on( 'click', function(){
 	$('#_file_deletion_${fieldName} input[type="checkbox"]').prop('checked','checked');
 })
-
 </script>
 </#macro>
-
 <#-- Macro to add a file input for asynchronous and synchronous uploads.
  # @param fieldName The name of the field.
  # @param handler The associated handler service.
