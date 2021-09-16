@@ -1,3 +1,36 @@
+/*
+ * Copyright (c) 2002-2021, City of Paris
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice
+ *     and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright notice
+ *     and the following disclaimer in the documentation and/or other materials
+ *     provided with the distribution.
+ *
+ *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * License 1.0
+ */
 package fr.paris.lutece.plugins.asynchronousupload.service;
 
 import java.util.ArrayList;
@@ -23,13 +56,13 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
 
     private static final String BEAN_NAME = "asynchronous-upload.asynchronousUploadHandler";
     private static final String HANDLER_NAME = "asynchronousUploadHandler";
-    
+
     // Error messages
     private static final String ERROR_MESSAGE_UNKNOWN_ERROR = "asynchronousupload.message.unknownError";
-    
+
     /** contains uploaded file items */
     private static Map<String, Map<String, List<FileItem>>> _mapAsynchronousUpload = new ConcurrentHashMap<>( );
-    
+
     /**
      * Get the handler
      * 
@@ -39,7 +72,7 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
     {
         return SpringContextService.getBean( BEAN_NAME );
     }
-    
+
     @Override
     public String canUploadFiles( HttpServletRequest request, String strFieldName, List<FileItem> listFileItemsToUpload, Locale locale )
     {
@@ -47,7 +80,7 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
         {
             String sessionId = getCustomSessionId( request.getSession( ) );
             initMap( sessionId, strFieldName );
-            
+
             return null;
         }
         return I18nService.getLocalizedString( ERROR_MESSAGE_UNKNOWN_ERROR, locale );
@@ -74,7 +107,7 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
     @Override
     public void addFileItemToUploadedFilesList( FileItem fileItem, String strFieldName, HttpServletRequest request )
     {
-     // This is the name that will be displayed in the form. We keep
+        // This is the name that will be displayed in the form. We keep
         // the original name, but clean it to make it cross-platform.
         String strFileName = UploadUtil.cleanFileName( fileItem.getName( ).trim( ) );
 
@@ -133,7 +166,7 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
 
         mapFileItemsSession.computeIfAbsent( strFieldName, s -> new ArrayList<>( ) );
     }
-    
+
     @Override
     public void removeSessionFiles( HttpSession session )
     {

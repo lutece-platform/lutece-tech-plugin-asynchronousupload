@@ -459,7 +459,7 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
         }
         return bLastPartialContent;
     }
-    
+
     protected String getCustomSessionId( HttpSession session )
     {
         String sessionId = (String) session.getAttribute( PARAM_CUSTOM_SESSION_ID );
@@ -470,7 +470,7 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
         }
         return sessionId;
     }
-    
+
     @Override
     public void removeFileItem( String strFieldName, HttpSession session, int nIndex )
     {
