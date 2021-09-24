@@ -99,12 +99,12 @@ $('#selectAll${fieldName}').on('click', function(){
 	if( !hasChecked ){
 		$('#_file_deletion_${fieldName} input[type="checkbox"]').prop('checked','checked');
 		$('#rmAll${fieldName}').prop('disabled','');
-		$('#btn-select-all${fieldName}').html('<i class="fa fa-times fa-fw mr-2" aria-hidden="true"></i> #i18n{asynchronousupload.action.selectAll.name}');
+		$('#btn-select-all${fieldName}').html('<i class="fa fa-times fa-fw mr-2" aria-hidden="true"></i> #i18n{asynchronousupload.action.unselectAll.name}');
 		hasChecked=true;
 	} else {
 		$('#_file_deletion_${fieldName} input[type="checkbox"]').prop('checked','');
 		$('#rmAll${fieldName}').prop('disabled','disabled');
-		$('#btn-select-all${fieldName}').html('<i class="fa fa-check fa-fw mr-2" aria-hidden="true"></i> #i18n{asynchronousupload.action.unselectAll.name}');
+		$('#btn-select-all${fieldName}').html('<i class="fa fa-check fa-fw mr-2" aria-hidden="true"></i> #i18n{asynchronousupload.action.selectAll.name}');
 		hasChecked=false;
 	}
 	$( '#_file_deletion_${fieldName} input[type="checkbox"]' ).change( function(){
