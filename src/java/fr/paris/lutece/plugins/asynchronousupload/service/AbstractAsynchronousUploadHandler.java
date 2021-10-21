@@ -50,8 +50,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.asynchronousupload.util.JSONUtils;
 import fr.paris.lutece.portal.service.util.AppException;
