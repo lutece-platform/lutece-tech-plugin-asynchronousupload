@@ -62,7 +62,7 @@ var mapFilesNumber = new Map();
 									<label for="${handler.uploadCheckboxPrefix}${fieldName}${file_index}">
 										<input type="checkbox" name="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" id="${handler.uploadCheckboxPrefix}${fieldName}${file_index}"> 
 									</label>
-									<a title="${filename}" href="jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?asynchronousupload.handler=${handler.handlerName}&fieldname=${fieldName}&field_index=${file_index}&fileName=${filename}" data-type="${filename?keep_after_last('.')}" data-img="" >
+									<a title="${filename}" href="jsp/admin/plugins/asynchronousupload/DoDownloadFile.jsp?asynchronousupload.handler=${handler.handlerName}&fieldname=${fieldName}&field_index=${file_index}&fileName=${filename}" data-type="${filename?keep_after_last('.')}" data-img="" >
 										<span>${filename}</span>
 									</a>
 									<a href="#" class="text-danger is-danger deleteSingleFile" fieldName="${filename}" handlerName="formsAsynchronousUploadHandler" index="${file_index}"> 
