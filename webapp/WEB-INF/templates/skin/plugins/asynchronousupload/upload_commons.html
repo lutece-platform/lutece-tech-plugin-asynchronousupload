@@ -2,7 +2,6 @@
  # The main macro is addFileInputAndfilesBox. The macro addRequiredJsFiles is used to include required JavaScript and CSS files.
  # Others macros are private.
  -->
-
 <#--
  # Add required CSS and JavaScript files to use asynchronous uploads.
  # This is only needed in Back Office or in FO page not served by the portal service.
@@ -26,7 +25,6 @@ var mapFileErrors = new Map();
 var mapFilesNumber = new Map();
 </script>
 </#macro>
-
 <#macro addFileInput fieldName handler cssClass multiple=false submitBtnName="${handler.uploadSubmitPrefix}${fieldName}" hasError=false>
 <span class="form-inline file-input<#if hasError> is-invalid</#if>">
 	<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
@@ -41,7 +39,6 @@ var mapFilesNumber = new Map();
 	<div id="progress-bar_${fieldName}" class="progress-bar progress-bar-success progress-bar-striped">&nbsp;</div>
 </div>
 </#macro>
-
 <#macro addFileInputImage fieldName handler cssClass multiple=false>
 <span class="form-inline file-input">
 	<input type="file" style="display:inline-block;" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
@@ -56,7 +53,6 @@ var mapFilesNumber = new Map();
 	<div id="progress-bar_${fieldName}" class="progress-bar progress-bar-success progress-bar-striped">&nbsp;</div>
 </div>
 </#macro>
-
 <#macro addUploadedFilesBox fieldName handler listFiles submitBtnName="${handler.uploadDeletePrefix}${fieldName}" noJs=false>
 <#-- file removing -->
 <#assign has_files = false>
@@ -112,7 +108,6 @@ var mapFilesNumber = new Map();
 	</div>
 </div>
 </#macro>
-
 <#-- Macro to add a file input for asynchronous and synchronous uploads.
  # @param fieldName The name of the field.
  # @param handler The associated handler service.
@@ -124,7 +119,6 @@ var mapFilesNumber = new Map();
 	<@addFileInput fieldName=fieldName handler=handler cssClass=inputCssClass multiple=multiple />
 	<@addUploadedFilesBox fieldName=fieldName handler=handler listFiles=listUploadedFiles />
 </#macro>
-
 <#-- Macro to add a file image input for asynchronous and synchronous uploads.
  # @param fieldName The name of the field.
  # @param handler The associated handler service.
@@ -132,7 +126,6 @@ var mapFilesNumber = new Map();
  # @param inputCssClass The CSS class to add to the input if any. Default value is an empty string.
  # @param multiple True to use an HTML5 multiple file input, false otherwise. Default value if false.
  -->
-
 <#macro addFileInputImageAndfilesBox fieldName handler listUploadedFiles inputCssClass='' multiple=false>
 	<@addFileInputImage fieldName=fieldName handler=handler cssClass=inputCssClass multiple=multiple />
 	<@addUploadedFilesBox fieldName=fieldName handler=handler listFiles=listUploadedFiles />
