@@ -179,7 +179,7 @@ function removeFile${checkBoxPrefix}( fieldName, handlerName, baseUrl ) {
     }
 
     var jsonData = {"fieldname":fieldName, "asynchronousupload.handler":handlerName, "field_index": strIndexes};
-    formDisplayUploadedFiles${fieldname}(jsonData, null, '${checkBoxPrefix}');
+    formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
 }
 
 /**
@@ -191,7 +191,7 @@ $(document).on('click', '.deleteSingleFile', function (event) {
     var fieldName = event.currentTarget.getAttribute("fieldName")
     var handlerName = event.currentTarget.getAttribute("handlerName");
     var jsonData = {"fieldname":fieldName, "asynchronousupload.handler":handlerName, "field_index": index};
-    formDisplayUploadedFiles${fieldname}(jsonData, null, '${checkBoxPrefix}');
+    formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
     return false;
 });
 
