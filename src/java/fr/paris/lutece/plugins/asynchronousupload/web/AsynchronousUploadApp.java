@@ -88,6 +88,8 @@ public class AsynchronousUploadApp extends MVCApplication
     // Urls
     private static final String URL_UPLOAD_SERVLET = "jsp/site/upload";
 
+    private static final String URL_UPLOAD_BO_SERVLET = "jsp/admin/upload";
+
     // Constants
     private static final String CONSTANT_COMA = ",";
     // filed name
@@ -179,7 +181,6 @@ public class AsynchronousUploadApp extends MVCApplication
         Map<String, Object> model = new HashMap<>( );
         boolean bSplitFile = handler.isManagePartialContent( ) && nMaxChunkSize > 0;
         model.put( MARK_BASE_URL, strBaseUrl );
-        model.put( MARK_UPLOAD_URL, URL_UPLOAD_SERVLET );
         model.put( MARK_HANDLER_NAME, strHandlerName );
         model.put( PARAMETER_MAX_FILE_SIZE, nMaxFileSize );
         model.put( PARAMETER_IMAGE_MAX_WIDTH, nImageMaxWidth );
@@ -195,10 +196,12 @@ public class AsynchronousUploadApp extends MVCApplication
 
         if ( Boolean.TRUE.equals( bContext ) )
         {
+            model.put( MARK_UPLOAD_URL, URL_UPLOAD_SERVLET );
             strTemplate = TEMPLATE_MAIN_UPLOAD_JS;
         }
         else
         {
+            model.put( MARK_UPLOAD_URL, URL_UPLOAD_BO_SERVLET );
             strTemplate = TEMPLATE_ADMIN_MAIN_UPLOAD_JS;
         }
         HtmlTemplate template = AppTemplateService.getTemplate( strTemplate, getLocale( request ), model );
