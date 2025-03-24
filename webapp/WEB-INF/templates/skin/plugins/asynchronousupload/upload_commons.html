@@ -25,7 +25,8 @@ var mapFileErrors = new Map();
 var mapFilesNumber = new Map();
 </script>
 </#macro>
-<#macro addFileInput fieldName handler cssClass multiple=false submitBtnName="${handler.uploadSubmitPrefix}${fieldName}" hasError=false>
+<#macro addFileInput fieldName handler cssClass multiple=false submitBtnName="${handler.uploadSubmitPrefix}${fieldName}" hasError=false required=false deprecated...>
+<@deprecatedWarning args=deprecated />
 <span class="form-inline file-input<#if hasError> is-invalid</#if>">
 	<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
 	<button class="btn btn-primary btn-sm" name="${submitBtnName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
@@ -39,7 +40,8 @@ var mapFilesNumber = new Map();
 	<div id="progress-bar_${fieldName}" class="progress-bar progress-bar-success progress-bar-striped">&nbsp;</div>
 </div>
 </#macro>
-<#macro addFileInputImage fieldName handler cssClass multiple=false>
+<#macro addFileInputImage fieldName handler cssClass multiple=false hasError=false required=false deprecated...>
+<@deprecatedWarning args=deprecated />
 <span class="form-inline file-input">
 	<input type="file" style="display:inline-block;" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
 	<button class="btn btn-primary btn-sm" name="${handler.uploadSubmitPrefix}${fieldName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
