@@ -39,14 +39,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
 import fr.paris.lutece.plugins.asynchronousupload.service.UploadCacheService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -57,6 +60,8 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 /**
  * Upload application
  */
+@RequestScoped
+@Named
 public class AsynchronousUploadApp extends MVCApplication
 {
     private static final long serialVersionUID = -2287035947644920508L;
@@ -94,6 +99,12 @@ public class AsynchronousUploadApp extends MVCApplication
     private static final String CONSTANT_COMA = ",";
     // filed name
     private static final String DEFAULT_FIELD_NAME = StringUtils.EMPTY;
+    
+    @Inject
+    private UploadCacheService _uploadCacheService;
+    
+    @Inject
+    private Instance<IAsyncUploadHandler> _asyncUploadHandler;
 
     /**
      * Get the main upload JavaScript file. Available HTTP parameters are :
@@ -171,7 +182,7 @@ public class AsynchronousUploadApp extends MVCApplication
                 + StringUtils.defaultString( strPreviewMaxWidth ) + StringUtils.defaultString( strPreviewMaxHeight )
                 + StringUtils.defaultString( strMaxChunkSize ) + strFieldName;
 
-        String strContent = (String) UploadCacheService.getInstance( ).getFromCache( strKey );
+        String strContent = _uploadCacheService.get( strKey );
 
         if ( strContent != null )
         {
@@ -206,7 +217,7 @@ public class AsynchronousUploadApp extends MVCApplication
         }
         HtmlTemplate template = AppTemplateService.getTemplate( strTemplate, getLocale( request ), model );
         strContent = template.getHtml( );
-        UploadCacheService.getInstance( ).putInCache( strKey, strContent );
+        _uploadCacheService.put( strKey, strContent );
         return strContent;
     }
 
@@ -251,7 +262,7 @@ public class AsynchronousUploadApp extends MVCApplication
      */
     private IAsyncUploadHandler getHandler( HttpServletRequest request )
     {
-        for ( IAsyncUploadHandler handler : SpringContextService.getBeansOfType( IAsyncUploadHandler.class ) )
+        for ( IAsyncUploadHandler handler : _asyncUploadHandler.stream( ).toList( ) )
         {
             if ( handler.isInvoked( request ) )
             {
@@ -271,7 +282,8 @@ public class AsynchronousUploadApp extends MVCApplication
      */
     private IAsyncUploadHandler getHandler( String strName )
     {
-        for ( IAsyncUploadHandler handler : SpringContextService.getBeansOfType( IAsyncUploadHandler.class ) )
+        System.err.println( ">>>>>>>> handlername " + strName );
+        for ( IAsyncUploadHandler handler : _asyncUploadHandler.stream( ).toList( ) )
         {
             if ( StringUtils.equals( handler.getHandlerName( ), strName ) )
             {

@@ -33,10 +33,9 @@
  */
 package fr.paris.lutece.plugins.asynchronousupload.service;
 
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
-
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.servlet.http.HttpSessionEvent;
+import jakarta.servlet.http.HttpSessionListener;
 
 /**
  * Will remove fileItems uploaded
@@ -58,7 +57,7 @@ public class AsynchronousUploadSessionListener implements HttpSessionListener
     @Override
     public void sessionDestroyed( HttpSessionEvent se )
     {
-        for ( IAsyncUploadHandler handler : SpringContextService.getBeansOfType( IAsyncUploadHandler.class ) )
+    	for ( IAsyncUploadHandler handler : CDI.current( ).select( IAsyncUploadHandler.class ).stream( ).toList( ) )
         {
             handler.removeAllFileItem( se.getSession( ) );
         }

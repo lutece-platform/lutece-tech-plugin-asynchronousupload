@@ -40,41 +40,53 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.util.filesystem.UploadUtil;
 
+@ApplicationScoped
+@Named( "asynchronous-upload.asynchronousUploadHandler" )
 public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
 {
 
-    private static final String BEAN_NAME = "asynchronous-upload.asynchronousUploadHandler";
     private static final String HANDLER_NAME = "asynchronousUploadHandler";
 
     // Error messages
     private static final String ERROR_MESSAGE_UNKNOWN_ERROR = "asynchronousupload.message.unknownError";
 
     /** contains uploaded file items */
-    private static Map<String, Map<String, List<FileItem>>> _mapAsynchronousUpload = new ConcurrentHashMap<>( );
+    private static Map<String, Map<String, List<MultipartItem>>> _mapAsynchronousUpload = new ConcurrentHashMap<>( );
 
     /**
      * Get the handler
      * 
+     * <p>This method is deprecated and is provided for backward compatibility only. 
+     * For new code, use dependency injection with {@code @Inject} to obtain the 
+     * {@link AsynchronousUploadHandler} instance instead.</p>
+     * 
+     * 
      * @return the handler
+     * 
+     * @deprecated Use {@code @Inject} to obtain the {@link AsynchronousUploadHandler} 
+     * instance. This method will be removed in future versions.
      */
+    @Deprecated
     public static AsynchronousUploadHandler getHandler( )
     {
-        return SpringContextService.getBean( BEAN_NAME );
+    	return CDI.current( ).select( AsynchronousUploadHandler.class ) .get( );
     }
 
     @Override
-    public String canUploadFiles( HttpServletRequest request, String strFieldName, List<FileItem> listFileItemsToUpload, Locale locale )
+    public String canUploadFiles( HttpServletRequest request, String strFieldName, List<MultipartItem> listFileItemsToUpload, Locale locale )
     {
         if ( StringUtils.isNotBlank( strFieldName ) )
         {
@@ -87,7 +99,7 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
     }
 
     @Override
-    public List<FileItem> getListUploadedFiles( String strFieldName, HttpSession session )
+    public List<MultipartItem> getListUploadedFiles( String strFieldName, HttpSession session )
     {
         if ( StringUtils.isBlank( strFieldName ) )
         {
@@ -99,13 +111,13 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
         initMap( sessionId, strFieldName );
 
         // find session-related files in the map
-        Map<String, List<FileItem>> mapFileItemsSession = _mapAsynchronousUpload.get( sessionId );
+        Map<String, List<MultipartItem>> mapFileItemsSession = _mapAsynchronousUpload.get( sessionId );
 
         return mapFileItemsSession.get( strFieldName );
     }
 
     @Override
-    public void addFileItemToUploadedFilesList( FileItem fileItem, String strFieldName, HttpServletRequest request )
+    public void addFileItemToUploadedFilesList( MultipartItem fileItem, String strFieldName, HttpServletRequest request )
     {
         // This is the name that will be displayed in the form. We keep
         // the original name, but clean it to make it cross-platform.
@@ -115,7 +127,7 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
         initMap( sessionId, strFieldName );
 
         // Check if this file has not already been uploaded
-        List<FileItem> uploadedFiles = getListUploadedFiles( strFieldName, request.getSession( ) );
+        List<MultipartItem> uploadedFiles = getListUploadedFiles( strFieldName, request.getSession( ) );
 
         if ( uploadedFiles != null )
         {
@@ -123,11 +135,11 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
 
             if ( !uploadedFiles.isEmpty( ) )
             {
-                Iterator<FileItem> iterUploadedFiles = uploadedFiles.iterator( );
+                Iterator<MultipartItem> iterUploadedFiles = uploadedFiles.iterator( );
 
                 while ( bNew && iterUploadedFiles.hasNext( ) )
                 {
-                    FileItem uploadedFile = iterUploadedFiles.next( );
+                    MultipartItem uploadedFile = iterUploadedFiles.next( );
                     String strUploadedFileName = UploadUtil.cleanFileName( uploadedFile.getName( ).trim( ) );
                     // If we find a file with the same name and the same
                     // length, we consider that the current file has
@@ -152,7 +164,7 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
     private void initMap( String strSessionId, String strFieldName )
     {
         // find session-related files in the map
-        Map<String, List<FileItem>> mapFileItemsSession = _mapAsynchronousUpload.get( strSessionId );
+        Map<String, List<MultipartItem>> mapFileItemsSession = _mapAsynchronousUpload.get( strSessionId );
 
         // create map if not exists
         if ( mapFileItemsSession == null )

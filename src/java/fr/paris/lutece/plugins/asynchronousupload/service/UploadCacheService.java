@@ -34,31 +34,48 @@
 package fr.paris.lutece.plugins.asynchronousupload.service;
 
 import fr.paris.lutece.portal.service.cache.AbstractCacheableService;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Initialized;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.servlet.ServletContext;
 
 /**
  * Cache service for asynchronous upload
  */
-public final class UploadCacheService extends AbstractCacheableService
+@ApplicationScoped
+public class UploadCacheService extends AbstractCacheableService<String,String>
 {
     private static final String CACHE_NAME = "asynchronousupload.asynchronousUploadCacheService";
-    private static UploadCacheService _instance = new UploadCacheService( );
 
-    /**
-     * Private constructor
-     */
-    private UploadCacheService( )
+    UploadCacheService( )
     {
-        initCache( );
+    	// Ctor
     }
 
+    @PostConstruct
+    private void initUploadCacheService( )
+    {
+        enableCache( true );
+    }
+    
     /**
-     * Get the instance of the service
+     * Returns the unique instance of the {@link UploadCacheService} service.
      * 
-     * @return The instance of the service
+     * <p>This method is deprecated and is provided for backward compatibility only. 
+     * For new code, use dependency injection with {@code @Inject} to obtain the 
+     * {@link UploadCacheService} instance instead.</p>
+     * 
+     * @return The unique instance of {@link UploadCacheService}.
+     * 
+     * @deprecated Use {@code @Inject} to obtain the {@link UploadCacheService} 
+     * instance. This method will be removed in future versions.
      */
+    @Deprecated
     public static UploadCacheService getInstance( )
     {
-        return _instance;
+        return CDI.current( ).select( UploadCacheService.class ).get( );
     }
 
     /**
@@ -68,5 +85,19 @@ public final class UploadCacheService extends AbstractCacheableService
     public String getName( )
     {
         return CACHE_NAME;
+    }
+    
+    /**
+     * This method observes the initialization of the {@link ApplicationScoped} context.
+     * It ensures that this CDI beans are instantiated at the application startup.
+     *
+     * <p>This method is triggered automatically by CDI when the {@link ApplicationScoped} context is initialized,
+     * which typically occurs during the startup of the application server.</p>
+     *
+     * @param context the {@link ServletContext} that is initialized. This parameter is observed
+     *                and injected automatically by CDI when the {@link ApplicationScoped} context is initialized.
+     */
+    public void initializedService(@Observes @Initialized(ApplicationScoped.class) ServletContext context) {
+        // This method is intentionally left empty to trigger CDI bean instantiation
     }
 }

@@ -35,13 +35,13 @@ package fr.paris.lutece.plugins.asynchronousupload.util;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.xml.bind.DatatypeConverter;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.util.file.FileUtil;
 import net.sf.json.JSONObject;
 
@@ -85,13 +85,13 @@ public final class JSONUtils
      *            the fileItem list
      * @return the json
      */
-    public static JSONObject getUploadedFileJSON( List<FileItem> listFileItem )
+    public static JSONObject getUploadedFileJSON( List<MultipartItem> listFileItem )
     {
         JSONObject json = new JSONObject( );
 
         if ( listFileItem != null )
         {
-            for ( FileItem fileItem : listFileItem )
+            for ( MultipartItem fileItem : listFileItem )
             {
                 JSONObject jsonObject = new JSONObject( );
                 jsonObject.element( JSON_KEY_FILE_NAME, fileItem.getName( ) );
@@ -143,7 +143,7 @@ public final class JSONUtils
         }
     }
 
-    private static String getPreviewImage( FileItem fileItem )
+    private static String getPreviewImage( MultipartItem fileItem )
     {
 
         if ( FileUtil.hasImageExtension( fileItem.getName( ) ) )

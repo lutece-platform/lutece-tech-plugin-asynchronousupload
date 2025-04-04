@@ -33,18 +33,17 @@
  */
 package fr.paris.lutece.plugins.asynchronousupload.service;
 
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.web.upload.IAsynchronousUploadHandler2;
-
-import org.apache.commons.fileupload.FileItem;
 
 import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 /**
- * Interface for asynchronous upload handlers used by entries of type upload. Handler must be declared as Spring beans.
+ * Interface for asynchronous upload handlers used by entries of type upload. Handler must be declared as CDI beans.
  */
 public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
 {
@@ -82,7 +81,7 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
      *            the locale
      * @return The error message if any, or null if the files can be uploaded.
      */
-    String canUploadFiles( HttpServletRequest request, String strFieldName, List<FileItem> listFileItemsToUpload, Locale locale );
+    String canUploadFiles( HttpServletRequest request, String strFieldName, List<MultipartItem> listFileItemsToUpload, Locale locale );
 
     /**
      * Gets the list of upload files for a given field and a given session. The order of files in the list must be the upload order. Their index in this list
@@ -94,7 +93,7 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
      *            The session of the current user
      * @return the fileItem found, <code>null</code> otherwise.
      */
-    List<FileItem> getListUploadedFiles( String strFieldName, HttpSession session );
+    List<MultipartItem> getListUploadedFiles( String strFieldName, HttpSession session );
 
     /**
      * Gets the list of partial upload files for a given field and a given session. The order of files in the list must be the upload order. Their index in this
@@ -106,7 +105,7 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
      *            The session of the current user
      * @return the fileItem found, <code>null</code> otherwise.
      */
-    List<FileItem> getListPartialUploadedFiles( String strFieldName, HttpSession session );
+    List<MultipartItem> getListPartialUploadedFiles( String strFieldName, HttpSession session );
 
     /**
      * Remove file Item
@@ -139,7 +138,7 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
      * @param request
      *            the request
      */
-    void addFileItemToUploadedFilesList( FileItem fileItem, String strFieldName, HttpServletRequest request );
+    void addFileItemToUploadedFilesList( MultipartItem fileItem, String strFieldName, HttpServletRequest request );
 
     /**
      * Add file item to the list of partial uploaded files
@@ -151,7 +150,7 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
      * @param request
      *            the request
      */
-    void addFileItemToPartialUploadedFilesList( FileItem fileItem, String strFieldName, HttpServletRequest request );
+    void addFileItemToPartialUploadedFilesList( MultipartItem fileItem, String strFieldName, HttpServletRequest request );
 
     /**
      * Check if the request has a remove flag for a given entry.
