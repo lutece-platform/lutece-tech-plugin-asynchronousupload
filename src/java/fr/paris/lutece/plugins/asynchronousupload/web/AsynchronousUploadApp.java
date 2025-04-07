@@ -282,7 +282,6 @@ public class AsynchronousUploadApp extends MVCApplication
      */
     private IAsyncUploadHandler getHandler( String strName )
     {
-        System.err.println( ">>>>>>>> handlername " + strName );
         for ( IAsyncUploadHandler handler : _asyncUploadHandler.stream( ).toList( ) )
         {
             if ( StringUtils.equals( handler.getHandlerName( ), strName ) )
