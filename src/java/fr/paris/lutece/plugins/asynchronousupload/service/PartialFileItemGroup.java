@@ -33,32 +33,28 @@
  */
 package fr.paris.lutece.plugins.asynchronousupload.service;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.SequenceInputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemHeaders;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.filesystem.UploadUtil;
 
 /**
  * File item witch contains a list of partial file item
  */
-public class PartialFileItemGroup implements FileItem
+public class PartialFileItemGroup implements MultipartItem
 {
     private static final long serialVersionUID = 8696893066570050604L;
-    private List<FileItem> _items;
+    private List<MultipartItem> _items;
     private SequenceInputStream _sequenceInputStream;
 
     /**
@@ -67,7 +63,7 @@ public class PartialFileItemGroup implements FileItem
      * @param item
      *            the item
      */
-    public PartialFileItemGroup( List<FileItem> items )
+    public PartialFileItemGroup( List<MultipartItem> items )
     {
         _items = items;
         List<InputStream> vOut = new ArrayList<>( );
@@ -75,7 +71,7 @@ public class PartialFileItemGroup implements FileItem
         try
         {
 
-            for ( FileItem fileItem : items )
+            for ( MultipartItem fileItem : items )
             {
                 vOut.add( fileItem.getInputStream( ) );
 
@@ -93,9 +89,9 @@ public class PartialFileItemGroup implements FileItem
      * {@inheritDoc}
      */
     @Override
-    public void delete( )
+    public void delete( ) throws IOException
     {
-        for ( FileItem item : _items )
+        for ( MultipartItem item : _items )
         {
             item.delete( );
         }
@@ -161,98 +157,9 @@ public class PartialFileItemGroup implements FileItem
      * {@inheritDoc}
      */
     @Override
-    public OutputStream getOutputStream( ) throws IOException
-    {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public long getSize( )
     {
-        return _items.stream( ).collect( Collectors.summingLong( FileItem::getSize ) );
+        return _items.stream( ).collect( Collectors.summingLong( MultipartItem::getSize ) );
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getString( )
-    {
-        return _items.get( 0 ).getString( );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getString( String encoding ) throws UnsupportedEncodingException
-    {
-        return _items.get( 0 ).getString( encoding );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isFormField( )
-    {
-        return _items.get( 0 ).isFormField( );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isInMemory( )
-    {
-        return _items.get( 0 ).isInMemory( );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setFieldName( String name )
-    {
-        _items.get( 0 ).setFieldName( name );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setFormField( boolean state )
-    {
-        _items.get( 0 ).setFormField( state );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void write( File file ) throws Exception
-    {
-        // Nothing
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public FileItemHeaders getHeaders( )
-    {
-        return _items.get( 0 ).getHeaders( );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setHeaders( FileItemHeaders headers )
-    {
-        // No Default Headers
-    }
 }

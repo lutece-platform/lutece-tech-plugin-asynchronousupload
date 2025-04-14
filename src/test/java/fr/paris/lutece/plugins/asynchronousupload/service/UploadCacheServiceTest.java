@@ -33,28 +33,32 @@
  */
 package fr.paris.lutece.plugins.asynchronousupload.service;
 
+import org.junit.jupiter.api.Test;
+
 import fr.paris.lutece.test.LuteceTestCase;
+import jakarta.inject.Inject;
 
 public class UploadCacheServiceTest extends LuteceTestCase
 {
+	private @Inject UploadCacheService _cacheService;
 
+	@Test
     public void testCRUD( )
     {
-        UploadCacheService cacheService = UploadCacheService.getInstance( );
-        cacheService.enableCache( true );
+        _cacheService.enableCache( true );
 
-        assertNotNull( cacheService.getCache( ) );
-        assertNull( cacheService.getFromCache( "key" ) );
+        assertNotNull( _cacheService.getCache( ) );
+        assertNull( _cacheService.get( "key" ) );
 
-        cacheService.putInCache( "key", "object" );
-        assertEquals( 1, cacheService.getKeys( ).size( ) );
+        _cacheService.put( "key", "object" );
+        assertEquals( 1, _cacheService.getKeys( ).size( ) );
 
-        String object = (String) cacheService.getFromCache( "key" );
+        String object = _cacheService.get( "key" );
 
         assertEquals( "object", object );
 
-        cacheService.removeKey( "key" );
+        _cacheService.remove( "key" );
 
-        assertNull( cacheService.getFromCache( "key" ) );
+        assertNull( _cacheService.get( "key" ) );
     }
 }
