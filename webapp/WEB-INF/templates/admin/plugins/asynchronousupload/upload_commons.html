@@ -1,8 +1,7 @@
+<#ftl strip_whitespace='true'>
 <#--
- # The main macro is addFileInputAndfilesBox. The macro addRequiredJsFiles is used to include required JavaScript and CSS files.
+ # The main macro is addFileBOInputAndfilesBox. The macro addRequiredJsFiles is used to include required JavaScript and CSS files.
  # Others macros are private.
- -->
-<#--
  # Add required CSS and JavaScript files to use asynchronous uploads.
  # This is only needed in Back Office or in FO page not served by the portal service.
  -->
@@ -11,112 +10,63 @@
 /* Maps to manage files field errors */
 var mapFileErrors = new Map();
 var mapFilesNumber = new Map();
+var mapFilesNumber = new Map();
 </script>
 </#macro>
-<#macro addFileInput fieldName handler cssClass multiple=false submitBtnName="${handler.uploadSubmitPrefix}${fieldName}" type="button" ariaDescribedby="" required=false hasError=false >
-<@input type='hidden' name='asynchronousupload.handler' value='${handler.handlerName}' />
-<#assign inputClass>async file-input<#if hasError> is-invalid</#if></#assign>
-<@formLabel for='${fieldName}' id='dropzone_${fieldName!}' class='sr-only'>#i18n{asynchronousupload.action.browse.name}</@formLabel>
-<#assign pmultiple><#if multiple>multiple="multiple"</#if></#assign> 
-<@input type='file' name='${fieldName}' placeHolder='#i18n{asynchronousupload.action.browse.name}' id='${fieldName}' class='${cssClass!} ${handler.handlerName}' params=pmultiple />
-<@progressBar id="progress_${fieldName}" />
-<@div id="_file_error_box_${fieldName}" />
+<#--
+ # addFileBOInput
+ # Param "type" default: 'button' : Possible values 'button' / 'dropzone'
+ -->
+<#macro addFileBOInput fieldName handler cssClass image=false multiple=false label='' submitBtnName='${handler.uploadSubmitPrefix}${fieldName}' type='button' ariaDescribedby='' helpMsg='' disabled=false required=false hasError=false nbFiles=0 nbMaxFiles=0 maxFileSize=0 deprecated...>
+<@deprecatedWarning args=deprecated />
+<#local fieldClass>${cssClass!}</#local>
+<#local errorMsg><#if hasError><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#if></#local>
+<#local fieldParams><#if ariaDescribedby??> aria-describedby="${ariaDescribedby!}"</#if></#local>
+<#local hasFiles><#if nbFiles gt 0>true<#else>false</#if></#local>
+<@inputDropFiles name=fieldName handler=handler type=type image=image nbFiles=nbMaxFiles! nbUplodadedFiles=nbFiles! maxFileSize=maxFileSize! label=label formSubmitButtonName=submitBtnName disabled=disabled required=required multiple=multiple hasFiles=hasFiles?boolean helpMsg=helpMsg errorMsg=errorMsg class=fieldClass params=fieldParams>
+<#nested>
+</@inputDropFiles>
 </#macro>
-<#macro addUploadedFilesBox fieldName handler listFiles submitBtnName="${handler.uploadDeletePrefix}${fieldName}" noJs=false>
+<#-- DEPRECATED addFileBOInputImage -->
+<#macro addFileBOInputImage fieldName handler cssClass multiple=false label='' submitBtnName='${handler.uploadSubmitPrefix}${fieldName}' type='button' ariaDescribedby='' disabled=false  required=false hasError=false nbFiles=0 nbMaxFiles=0 maxFileSize=0 deprecated...>
+<@deprecatedWarning args=deprecated />
+<#local fieldClass>${cssClass!}</#local>
+<#local errorMsg><#if hasError><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#if></#local>
+<#local fieldParams><#if ariaDescribedby??> aria-describedby="${ariaDescribedby!}"</#if></#local>
+<#local hasFiles><#if nbFiles gt 0>true<#else>false</#if></#local>
+<@inputDropFiles name=fieldName handler=handler type=type nbFiles=nbMaxFiles! nbUplodadedFiles=nbFiles! maxFileSize=maxFileSize! label=label formSubmitButtonName=submitBtnName disabled=disabled required=required multiple=multiple hasFiles=hasFiles?boolean errorMsg=erroMsg class=fieldClass params=fieldParams >
+<#nested>
+</@inputDropFiles>
+</#macro>
+<#-- addFileBOInputImage -->
+<#macro addBOUploadedFilesBox fieldName handler listFiles noJs=false image=false maxFiles=0 accept='' errorMsg='' deprecated...>
+<@deprecatedWarning args=deprecated />
 <#-- file removing -->
 <#assign has_files = false>
-<#if listFiles?? && listFiles?has_content><#assign has_files = true></#if>
-<#assign paramGroup><#if !has_files>style="display:none;"</#if></#assign>
-<@row>
-	<@columns>
-		<@div id='_file_deletion_label_${fieldName}' params=paramGroup >
-			<h3>#i18n{asynchronousupload.file.uploadedFile}</h3>
-			<@div id='_file_deletion_${fieldName}' >
-				<#assign file_index = 0>	
-				<#if has_files>	
-					<#assign index = 0 />
-					<@listGroup id='listUpload-man'>
-						<#list listFiles as file>
-							<#assign filename = ''>
-							<#if file.name?? && file.name != ''>
-								<#assign filename = file.name >
-							<#else>
-								<#if file.title?? && file.title != ''>
-									<#assign filename = file.title >
-								</#if>
-							</#if>
-							<#if file.size??>
-								<#if file.size < 1024 >
-									<#assign octetUnit="o">
-									<#assign octetNumber=file.size>
-								<#elseif file.size < 1024 * 1024 >
-									<#assign octetUnit="Ko">
-									<#assign octetNumber=file.size/1024>
-								<#else >
-									<#assign octetUnit="Mo">
-									<#assign octetNumber=file.size/(1024*1024)>
-								</#if>
-							</#if>
-							<#if filename != '' >
-								<div class="list-group-item" >
-									<label for="${handler.uploadCheckboxPrefix}${fieldName}${file_index}">
-										<input type="checkbox" name="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" id="${handler.uploadCheckboxPrefix}${fieldName}${file_index}"> 
-									</label>
-									<a title="${filename}" href="jsp/admin/plugins/asynchronousupload/DoDownloadFile.jsp?asynchronousupload.handler=${handler.handlerName}&fieldname=${fieldName}&field_index=${file_index}&fileName=${filename}" data-type="${filename?keep_after_last('.')}" data-img="" >
-										<span>${filename}</span>
-									</a>
-									<a href="#" class="text-danger is-danger deleteSingleFile" fieldName="${filename}" handlerName="formsAsynchronousUploadHandler" index="${file_index}"> 
-										<i class="fa fa-times fa-fw"></i> 
-									</a>
-									<small><#if file.size?has_content>${octetNumber?string["0"]} ${octetUnit}</#if> </small>
-								</div>
-							</#if>
-						</#list>
-					</@listGroup>
-				</#if>
-			</@div>
-		</@div>
-	</@columns>
-</@row>
-<@row>
-	<@columns>
-		<div class="checkbox">
-			<input type="checkbox" class="sr-only" id="selectAll${fieldName}" aria-hidden="true">
-			<label id="btn-select-all${fieldName}" class="btn btn-primary button is-primary is-small" for="selectAll${fieldName}">
-				<i class="fa fa-check fa-fw mr-2" aria-hidden="true"></i> Tout s&eacute;lectionner
-			</label>
-			<button id="rmAll${fieldName}" class="btn btn-danger btn-rm-all  button is-danger is-small" name="${submitBtnName}" value="${handler.uploadDeletePrefix}${fieldName}" type="submit" <#if noJs>nojs</#if> >
-				<i class="fa fa-trash fa-fw mr-2" aria-hidden="true"></i> #i18n{asynchronousupload.action.delete.name}
-			</button>
-		</div>	
-	</@columns>
-</@row>
-<script>
-var hasChecked=false;
-$('#progress_${fieldName}' ).hide();
-$('#rmAll${fieldName}').prop('disabled','disabled');
-$('#selectAll${fieldName}').on('click', function(){
-	if( !hasChecked ){
-		$('#_file_deletion_${fieldName} input[type="checkbox"]').prop('checked','checked');
-		$('#rmAll${fieldName}').prop('disabled','');
-		$('#btn-select-all${fieldName}').html('<i class="fa fa-times fa-fw mr-2" aria-hidden="true"></i> Tout d&eacute;s&eacute;lectionner');
-		hasChecked=true;
-	} else {
-		$('#_file_deletion_${fieldName} input[type="checkbox"]').prop('checked','');
-		$('#rmAll${fieldName}').prop('disabled','disabled');
-		$('#btn-select-all${fieldName}').html('<i class="fa fa-check fa-fw mr-2" aria-hidden="true"></i> Tout s&eacute;lectionner');
-		hasChecked=false;
-	}
-	$( '#_file_deletion_${fieldName} input[type="checkbox"]' ).change( function(){
-		if ( $(this).prop( "checked" ) ){
-			$('#rmAll${fieldName}').prop('disabled','');
-		};
-	});
-})
-$('#btn-select-all${fieldName}').on( 'click', function(){
-	$('#_file_deletion_${fieldName} input[type="checkbox"]').prop('checked','checked');
-})
-</script>
+<#assign nb_files = 0>
+<#assign show_files = 0>
+<#if listFiles?? && listFiles?has_content>
+<#assign has_files = true>
+<#assign nb_files = listFiles?size>
+<#-- BEGIN QuickFix to remove duplicated files list REMOVE ASAP -->
+<#assign show_files = (nb_files / 2)?round - 1 >
+<#-- END QuickFix to remove duplicated files list REMOVE ASAP -->
+</#if>
+<#local file_index = 0 >
+<#local currentFilename = '' >
+<#if has_files>	
+<#list listFiles as file>
+<#local filename = ''>
+<#if file.name?? && file.name != ''><#local filename = file.name ><#else><#if file.title?? && file.title != ''><#local filename = file.title ></#if></#if>
+<#if currentFilename != filename >
+<@inputDropFilesItem name=fieldName label=filename idx=file_index handler=handler image=image fileSize=file.size urlDl='jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?asynchronousupload.handler=${handler.handlerName}&fieldname=${fieldName}&field_index=${file_index}&fileName=${filename}' />
+</#if>
+<#local file_index = file_index + 1>
+<#-- BEGIN QuickFix to remove duplicated files list REMOVE ASAP -->
+<#if nb_files gt 0 && file_index gte show_files ><#break /></#if>
+<#-- END  QuickFix to remove duplicated files list REMOVE ASAP -->
+</#list>
+</#if>
 </#macro>
 <#-- Macro to add a file input for asynchronous and synchronous uploads.
  # @param fieldName The name of the field.
@@ -125,7 +75,23 @@ $('#btn-select-all${fieldName}').on( 'click', function(){
  # @param inputCssClass The CSS class to add to the input if any. Default value is an empty string.
  # @param multiple True to use an HTML5 multiple file input, false otherwise. Default value if false.
  -->
-<#macro addFileInputAndfilesBox fieldName handler listUploadedFiles inputCssClass='' multiple=false>
-	<@addFileInput fieldName=fieldName handler=handler cssClass=inputCssClass multiple=multiple />
-	<@addUploadedFilesBox fieldName=fieldName handler=handler listFiles=listUploadedFiles />
+<#macro addFileBOInputAndfilesBox fieldName handler listUploadedFiles inputCssClass='' multiple=false>
+<@addFileBOInput fieldName=fieldName handler=handler cssClass=inputCssClass multiple=multiple>
+<!-- addBOUploadedFilesBox -->
+<@addBOUploadedFilesBox fieldName=fieldName handler=handler listFiles=listUploadedFiles />
+</@addFileBOInput>
 </#macro>
+<#-- Macro to add a file image input for asynchronous and synchronous uploads.
+ # @param fieldName The name of the field.
+ # @param handler The associated handler service.
+ # @param listUploadedFiles The list of files that have already been uploaded. Files must have a 'title' or a 'name' attribute. 
+ # @param inputCssClass The CSS class to add to the input if any. Default value is an empty string.
+ # @param multiple True to use an HTML5 multiple file input, false otherwise. Default value if false.
+ -->
+ <#-- addFileBOInputImage -->
+<#macro addFileBOInputImageAndfilesBox fieldName handler listUploadedFiles inputCssClass='' multiple=false>
+<@addFileBOInputImage fieldName=fieldName handler=handler cssClass=inputCssClass multiple=multiple >
+<@addBOUploadedFilesBox fieldName=fieldName handler=handler listFiles=listUploadedFiles />
+</@addFileBOInputImage>
+</#macro>
+<#-- addFileBOInputImage -->
