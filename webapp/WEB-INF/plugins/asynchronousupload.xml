@@ -60,7 +60,7 @@
         <admin-javascript-file>js/plugins/asynchronousupload/jquery.fileupload-process.js</admin-javascript-file>
         <admin-javascript-file>js/plugins/asynchronousupload/jquery.fileupload-image.js</admin-javascript-file>
         <admin-javascript-file>js/plugins/asynchronousupload/jquery.fileupload-validate.js</admin-javascript-file>
-		<admin-javascript-file>js/admin/plugins/asynchronousupload/config.js</admin-javascript-file>
+		<admin-javascript-file>themes/admin/shared/plugins/asynchronousupload/js/config.js</admin-javascript-file>
     </admin-javascript-files>   
 
 	<listeners>
