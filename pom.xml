@@ -61,8 +61,6 @@
 
     <properties>
         <componentName>asynchronousupload</componentName>
-        <jiraProjectName>ASYNCUP</jiraProjectName>
-        <jiraComponentId>12358</jiraComponentId>
     </properties>
 
     <scm>
