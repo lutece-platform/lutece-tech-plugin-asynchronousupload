@@ -7,11 +7,6 @@
  # This is only needed in Back Office or in FO page not served by the portal service.
  -->
 <#macro addRequiredJsFiles>
-<script>
-/* Maps to manage files field errors */
-var mapFileErrors = new Map();
-var mapFilesNumber = new Map();
-</script>
 </#macro>
 <#macro addFileInput fieldName handler cssClass multiple=false submitBtnName="${handler.uploadSubmitPrefix}${fieldName}" type="button" ariaDescribedby="" required=false hasError=false >
 <@input type='hidden' name='asynchronousupload.handler' value='${handler.handlerName}' />

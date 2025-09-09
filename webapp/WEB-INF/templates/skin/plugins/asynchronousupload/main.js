@@ -91,7 +91,7 @@ $(function () {
             }
         }).on('fileuploaddone', function (e, data) {
 
-            var jsonData = {"fieldname":this.name, "asynchronousupload.handler":"${handler_name}"};
+            var jsonData = {"fieldname":this.name, "asynchronousupload.handler":"${handler_name}", "result": data.result};
             formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
 
         }).on('fileuploadfail', function (e, data) {
@@ -125,29 +125,37 @@ $(function () {
  * @param jsonData data
  */
 function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
-    $.getJSON('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
-        function (data) {
-            var fieldName = data.field_name;
-            updateErrorBox(data.form_error, fieldName);
-            if (fieldName != null) {
-                if (data.fileCount == 0) {
-                    $("#_file_deletion_label_" + fieldName).hide();
-                } else {
-                    var strContent = "";
-                    var checkboxPrefix = cbPrefix + fieldName;
-                    for (var index = 0; index < data.fileCount; index++) {
-                        var imgContent = ((data.fileCount == 1) ? data.files.preview : data.files[index].preview);
-                        var imgTag = "";
-                        if (typeof (imgContent) == "string" && imgContent.length > 0) {
-                            imgTag = " <img src=" + "'" + imgContent + "'" + "alt='' " + " width='${previewMaxWidth}' height='${previewMaxHeight}'/>";
+
+    if( jsonData.result && jsonData.result.form_error )
+    {
+        updateErrorBox(jsonData.result.form_error, jsonData.fieldname);
+    }
+    else
+    {
+        $.getJSON('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
+            function (data) {
+                var fieldName = data.field_name;
+                updateErrorBox(data.form_error, fieldName);
+                if (fieldName != null) {
+                    if (data.fileCount == 0) {
+                        $("#_file_deletion_label_" + fieldName).hide();
+                    } else {
+                        var strContent = "";
+                        var checkboxPrefix = cbPrefix + fieldName;
+                        for (var index = 0; index < data.fileCount; index++) {
+                            var imgContent = ((data.fileCount == 1) ? data.files.preview : data.files[index].preview);
+                            var imgTag = "";
+                            if (typeof (imgContent) == "string" && imgContent.length > 0) {
+                                imgTag = " <img src=" + "'" + imgContent + "'" + "alt='' " + " width='${previewMaxWidth}' height='${previewMaxHeight}'/>";
+                            }
+                            strContent = strContent + getTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgTag, '${handler_name}', '${base_url}');
                         }
-                        strContent = strContent + getTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgTag, '${handler_name}', '${base_url}');
+                        $("#_file_deletion_" + fieldName).html(strContent);
+                        $("#_file_deletion_label_" + fieldName).show();
                     }
-                    $("#_file_deletion_" + fieldName).html(strContent);
-                    $("#_file_deletion_label_" + fieldName).show();
                 }
-            }
-        });
+            });
+    }
 }
 
 /**
@@ -196,20 +204,14 @@ $(document).on('click', '.deleteSingleFile', function (event) {
 });
 
 function updateErrorBox( errorMessage, fieldName ){
-    if ( errorMessage != null && errorMessage !='' && errorMessage !== undefined || mapFileErrors.size > 0 ) {
+    var errorClassName = "error_" + fieldName;
+    $( '.' + errorClassName ).remove()
+    if ( errorMessage != null && errorMessage !='' && errorMessage !== undefined ) {
         if ( errorMessage === undefined ){ errorMessage='' };
-        var strContent = mapFileErrors.size > 0 ? mapFileErrors.get( fieldName ) : errorMessage;
-		if( mapFilesNumber.get( fieldName ) > 1 ){
-			$( '#_file_error_box_' + fieldName ).after( '<div class="invalid-feedback">' + strContent + '</div>' ).show( );
-		} else {
-			var groupFile = $( '#_file_error_box_' + fieldName ).closest('.group-files.one-file');
-			groupFile.addClass( 'is-invalid' ).after( '<div class="invalid-feedback">' + strContent + '</div>' ).show( );
-		}
-        mapFileErrors.delete(fieldName);
-        mapFilesNumber.delete(fieldName);
+        $( '#_file_error_box_' + fieldName ).addClass( 'is-invalid' );
+		$( '#_file_error_box_' + fieldName ).after( '<div class="invalid-feedback ' + errorClassName + '">' + errorMessage + '</div>' );
+		$( '#_file_error_box_' + fieldName ).show( );
     } else {
         $( '#_file_error_box_' + fieldName ).hide( );
-		var groupFile = $( '#_file_error_box_' + fieldName ).closest('.group-files.one-file');
-		groupFile.removeClass( 'is-invalid' );
     }
 }
