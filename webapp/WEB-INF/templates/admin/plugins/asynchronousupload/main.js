@@ -88,7 +88,7 @@ $(function (){
                 $(' #progress_' + fieldName).hide();
             }
         }).on( 'fileuploaddone', function( e, data ){
-            const jsonData = { "fieldname": this.name, "asynchronousupload.handler":"${handler_name}", "nof": nof };
+            const jsonData = { "fieldname": this.name, "asynchronousupload.handler":"${handler_name}", "result": data.result, "nof": nof };
             $( '.select-all' ).removeClass( 'invisible' );
             $( '#btn-select-all-${handler_name}' ).removeClass( 'invisible' );
             const fieldName = this.name;
@@ -156,81 +156,88 @@ $(function (){
  * @param jsonData data
 */
 function formDisplayUploadedFiles${fieldname}( jsonData, cbPrefix  ){
-    $.getJSON('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
-    function ( data ) { 
-        const fieldName = data.field_name, 
-            errorFileName = $( '#_file_error_box_' + fieldName ), 
-            groupFiles = errorFileName.closest('.group-files'),
-            groupInfo=groupFiles.find('.file-input.fileinput-button'),
-            jFieldName =  $( '#' + fieldName );
-        const parentInput = jFieldName.parent();
-        parentInput.removeClass( 'is-invalid' )
-        
-       // reinitMsg( groupFiles  );
-        
-        if ( fieldName != null ) {
-            if ( data.fileCount == 0 ) {
-                jFieldName.attr( 'data-nfu', '0' );
-                jFieldName.removeAttr( 'disabled' );
-                jFieldName.removeClass( 'disabled' );
-                jFieldName.off( "click");
-                jFieldName.closest('.dropzone').removeClass('inactive' )
-                $( "#_file_deletion_label_" + fieldName ).hide();
-            } else {
-                let strContent = '',
-                    imgContent = '',
-                    imgTag = '',
-                    hasImage = groupFiles[0].classList.contains( 'image-file' ),
-                    checkboxPrefix = cbPrefix + fieldName;
-                for ( var index = 0; index < data.fileCount; index++ ) {
-                    if( hasImage ){
-                        imgContent = ( (data.fileCount == 1) ? data.files.preview : data.files[index].preview );
-                        if ( typeof (imgContent) == "string" && imgContent.length > 0 ){
-                            // imgTag = " <img src=" + "'" + imgContent + "'" + "alt='' " + " width='${previewMaxWidth}' height='${previewMaxHeight}'/>";
-                            imgTag = '<img src="' + imgContent + '" alt="" width="${previewMaxWidth}" class="img-fluid img-thumbnail" >';
-                        }
-                    }
-                    strContent = strContent + getTemplateUploadedFile( fieldName, index, checkboxPrefix, data, imgTag,'${handler_name}', '${base_url}', '#i18n{asynchronousupload.action.delete.name}');
-                }
+	if( jsonData.result && jsonData.result.form_error )
+	{
+	    updateErrorBox(jsonData.result.form_error, jsonData.fieldname);
+	}
+	else
+	{
+		$.getJSON('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
+		    function ( data ) { 
+		        const fieldName = data.field_name, 
+		            errorFileName = $( '#_file_error_box_' + fieldName ), 
+		            groupFiles = errorFileName.closest('.group-files'),
+		            groupInfo=groupFiles.find('.file-input.fileinput-button'),
+		            jFieldName =  $( '#' + fieldName );
+		        const parentInput = jFieldName.parent();
+		        parentInput.removeClass( 'is-invalid' )
+		        
+		       // reinitMsg( groupFiles  );
+		        
+		        if ( fieldName != null ) {
+		            if ( data.fileCount == 0 ) {
+		                jFieldName.attr( 'data-nfu', '0' );
+		                jFieldName.removeAttr( 'disabled' );
+		                jFieldName.removeClass( 'disabled' );
+		                jFieldName.off( "click");
+		                jFieldName.closest('.dropzone').removeClass('inactive' )
+		                $( "#_file_deletion_label_" + fieldName ).hide();
+		            } else {
+		                let strContent = '',
+		                    imgContent = '',
+		                    imgTag = '',
+		                    hasImage = groupFiles[0].classList.contains( 'image-file' ),
+		                    checkboxPrefix = cbPrefix + fieldName;
+		                for ( var index = 0; index < data.fileCount; index++ ) {
+		                    if( hasImage ){
+		                        imgContent = ( (data.fileCount == 1) ? data.files.preview : data.files[index].preview );
+		                        if ( typeof (imgContent) == "string" && imgContent.length > 0 ){
+		                            // imgTag = " <img src=" + "'" + imgContent + "'" + "alt='' " + " width='${previewMaxWidth}' height='${previewMaxHeight}'/>";
+		                            imgTag = '<img src="' + imgContent + '" alt="" width="${previewMaxWidth}" class="img-fluid img-thumbnail" >';
+		                        }
+		                    }
+		                    strContent = strContent + getTemplateUploadedFile( fieldName, index, checkboxPrefix, data, imgTag,'${handler_name}', '${base_url}', '#i18n{asynchronousupload.action.delete.name}');
+		                }
 
-                sessionStorage.setItem( fieldName, JSON.stringify( data.files ) );
+		                sessionStorage.setItem( fieldName, JSON.stringify( data.files ) );
 
-                $("#_file_deletion_" + fieldName).html( strContent );
-                $("#_file_deletion_label_" + fieldName).show();
+		                $("#_file_deletion_" + fieldName).html( strContent );
+		                $("#_file_deletion_label_" + fieldName).show();
 
-                if ( data.fileCount >= jsonData.nof ){
-                    jFieldName.attr('data-nfu', jsonData.nof );
-                    jFieldName.attr('data-nbuploadedfiles', jsonData.nof );
-                    jFieldName.prop('disabled', true );
-                    jFieldName.addClass('disabled');
-                    jFieldName.closest('.dropzone').addClass('inactive' )
-                    groupFiles.addClass('no-file');
-                    const errMsg=$('#msg_' + fieldName );
-                    if( errMsg.length === 0  ){
-                        jFieldName.attr('aria-labelledby','msg_' + fieldName )
-                        groupInfo.after('<p id="msg_' + fieldName + '" class="group-file-info text-muted p-2 mt-1"><span class="fa fa-exclamation-circle text-warning"></span> #i18n{asynchronousupload.info.maxNumberOfFiles}</p>');
-                    }
-                } else {
-                    jFieldName.attr('data-nfu', data.fileCount );
-                    jFieldName.attr('data-nbuploadedfiles', data.fileCount );
-                    jFieldName.removeAttr( 'disabled' );
-                    jFieldName.removeClass( 'disabled' );
-                    jFieldName.closest('.main-danger-color').removeClass('main-danger-color' )
-                    jFieldName.off( "click");
-                    jFieldName.removeAttr( 'aria-labelledby' );
-                    jFieldName.closest('.dropzone').removeClass('inactive' )
-                    $( '#msg_' + fieldName ).remove();
-                }
-            }
-        }
+		                if ( data.fileCount >= jsonData.nof ){
+		                    jFieldName.attr('data-nfu', jsonData.nof );
+		                    jFieldName.attr('data-nbuploadedfiles', jsonData.nof );
+		                    jFieldName.prop('disabled', true );
+		                    jFieldName.addClass('disabled');
+		                    jFieldName.closest('.dropzone').addClass('inactive' )
+		                    groupFiles.addClass('no-file');
+		                    const errMsg=$('#msg_' + fieldName );
+		                    if( errMsg.length === 0  ){
+		                        jFieldName.attr('aria-labelledby','msg_' + fieldName )
+		                        groupInfo.after('<p id="msg_' + fieldName + '" class="group-file-info text-muted p-2 mt-1"><span class="fa fa-exclamation-circle text-warning"></span> #i18n{asynchronousupload.info.maxNumberOfFiles}</p>');
+		                    }
+		                } else {
+		                    jFieldName.attr('data-nfu', data.fileCount );
+		                    jFieldName.attr('data-nbuploadedfiles', data.fileCount );
+		                    jFieldName.removeAttr( 'disabled' );
+		                    jFieldName.removeClass( 'disabled' );
+		                    jFieldName.closest('.main-danger-color').removeClass('main-danger-color' )
+		                    jFieldName.off( "click");
+		                    jFieldName.removeAttr( 'aria-labelledby' );
+		                    jFieldName.closest('.dropzone').removeClass('inactive' )
+		                    $( '#msg_' + fieldName ).remove();
+		                }
+		            }
+		        }
 
-        $( document ).find('.deleteSingleFile').on('click', '.deleteSingleFile', function(event) {
-            event.preventDefault( );
-            deleteFile( event );
-        });
+		        $( document ).find('.deleteSingleFile').on('click', '.deleteSingleFile', function(event) {
+		            event.preventDefault( );
+		            deleteFile( event );
+		        });
 
-        
-    });
+		        
+		    });
+	}
 }
 
 /**

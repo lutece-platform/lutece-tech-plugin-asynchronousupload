@@ -92,7 +92,7 @@ $(function () {
             }
         }).on('fileuploaddone', function (e, data) {
 
-            var jsonData = {"fieldname":this.name, "asynchronousupload.handler":"${handler_name}"};
+            var jsonData = {"fieldname":this.name, "asynchronousupload.handler":"${handler_name}", "result": data.result};
             formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
 
         }).on('fileuploadfail', function (e, data) {
@@ -126,29 +126,37 @@ $(function () {
  * @param jsonData data
  */
 function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
-    $.getJSON('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
-        function (data) {
-            var fieldName = data.field_name;
-            updateErrorBox(data.form_error, fieldName);
-            if (fieldName != null) {
-                if (data.fileCount == 0) {
-                    $("#_file_deletion_label_" + fieldName).hide();
-                } else {
-                    var strContent = "";
-                    var checkboxPrefix = cbPrefix + fieldName;
-                    for (var index = 0; index < data.fileCount; index++) {
-                        var imgContent = ((data.fileCount == 1) ? data.files.preview : data.files[index].preview);
-                        var imgTag = "";
-                        if (typeof (imgContent) == "string" && imgContent.length > 0) {
-                            imgTag = " <img src=" + "'" + imgContent + "'" + "alt='' " + " width='${previewMaxWidth}' height='${previewMaxHeight}'/>";
+
+    if( jsonData.result && jsonData.result.form_error )
+    {
+        updateErrorBox(jsonData.result.form_error, jsonData.fieldname);
+    }
+    else
+    {
+        $.getJSON('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
+            function (data) {
+                var fieldName = data.field_name;
+                updateErrorBox(data.form_error, fieldName);
+                if (fieldName != null) {
+                    if (data.fileCount == 0) {
+                        $("#_file_deletion_label_" + fieldName).hide();
+                    } else {
+                        var strContent = "";
+                        var checkboxPrefix = cbPrefix + fieldName;
+                        for (var index = 0; index < data.fileCount; index++) {
+                            var imgContent = ((data.fileCount == 1) ? data.files.preview : data.files[index].preview);
+                            var imgTag = "";
+                            if (typeof (imgContent) == "string" && imgContent.length > 0) {
+                                imgTag = " <img src=" + "'" + imgContent + "'" + "alt='' " + " width='${previewMaxWidth}' height='${previewMaxHeight}'/>";
+                            }
+                            strContent = strContent + getTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgTag, '${handler_name}', '${base_url}');
                         }
-                        strContent = strContent + getTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgTag, '${handler_name}', '${base_url}');
+                        $("#_file_deletion_" + fieldName).html(strContent);
+                        $("#_file_deletion_label_" + fieldName).show();
                     }
-                    $("#_file_deletion_" + fieldName).html(strContent);
-                    $("#_file_deletion_label_" + fieldName).show();
                 }
-            }
-        });
+            });
+    }
 }
 
 /**
