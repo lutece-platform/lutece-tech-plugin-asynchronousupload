@@ -9,12 +9,6 @@
  * http://www.opensource.org/licenses/MIT
  */
 
-/* global $, window */
-/* admin config */
-/* Maps to manage files field errors */
-var mapFileErrors = new Map();
-var mapFilesNumber = new Map();
-
 $(function () {
 'use strict';
 var uploadButton = $('<button/>')
@@ -102,7 +96,7 @@ var uploadButton = $('<button/>')
                 $(' #progress_' + fieldName).hide();
             }
         }).on('fileuploaddone', function (e, data) {
-            var jsonData = {"fieldname":this.name, "asynchronousupload.handler":"${handler_name}"};
+            var jsonData = {"fieldname":this.name, "asynchronousupload.handler":"${handler_name}", "result": data.result};
             formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
 
         }).on('fileuploadfail', function (e, data) {
@@ -128,46 +122,54 @@ var uploadButton = $('<button/>')
  * @param jsonData data
  */
  function formDisplayUploadedFiles${fieldname}( jsonData, cbPrefix ){
-    $.getJSON('${base_url}jsp/admin/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
-    function (data) {
-         var fieldName = data.field_name;
-        var errorFileName=$( '#_file_error_box_' + fieldName ), 
-        groupFiles = errorFileName.closest('.group-files');
-		groupFiles.removeClass( 'is-invalid' );
-        if ( fieldName != null ) {
-            if ( data.fileCount == 0 ) {
-                $( "#_file_deletion_label_" + fieldName ).hide();
-            } else {
-                var strContent = "";
-                var checkboxPrefix = '${checkBoxPrefix}' + fieldName;
-                for ( var index = 0; index < data.fileCount; index++ ) {
-                    var imgContent = ( (data.fileCount == 1) ? data.files.preview : data.files[index].preview );
-                    strContent = strContent + getAdminTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgContent ,'${handler_name}', '${base_url}');
-                }
-                $("#_file_deletion_" + fieldName).html( strContent );
-                $("#_file_deletion_label_" + fieldName).show();
 
-                $(document).on('click', '.btn-rm-all', {} ,function(event) {
-                    removeFile${checkBoxPrefix}( fieldName, '${handler_name}', '${base_url}');
-                    return false;
-                });
+     if( jsonData.result && jsonData.result.form_error )
+     {
+         updateErrorBox(jsonData.result.form_error, jsonData.fieldname);
+     }
+     else
+     {
+        $.getJSON('${base_url}jsp/admin/plugins/asynchronousupload/DoRemoveFile.jsp', jsonData,
+        function (data) {
+             var fieldName = data.field_name;
+            var errorFileName=$( '#_file_error_box_' + fieldName ),
+            groupFiles = errorFileName.closest('.group-files');
+            groupFiles.removeClass( 'is-invalid' );
+            if ( fieldName != null ) {
+                if ( data.fileCount == 0 ) {
+                    $( "#_file_deletion_label_" + fieldName ).hide();
+                } else {
+                    var strContent = "";
+                    var checkboxPrefix = '${checkBoxPrefix}' + fieldName;
+                    for ( var index = 0; index < data.fileCount; index++ ) {
+                        var imgContent = ( (data.fileCount == 1) ? data.files.preview : data.files[index].preview );
+                        strContent = strContent + getAdminTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgContent ,'${handler_name}', '${base_url}');
+                    }
+                    $("#_file_deletion_" + fieldName).html( strContent );
+                    $("#_file_deletion_label_" + fieldName).show();
 
-                var uploadedItems = $(document).find('.uploaded_check');
-                if ( uploadedItems.length > 0 ){
-                    uploadedItems.on( 'click', function(){
-                        if( $(this).prop('checked') ){
-                            $('#rmAll' + fieldName ).prop('disabled','');
-                        } else {
-                            var upChecked =  $(document).find('.uploaded_check:checked');
-                            if( upChecked.length == 0 ){
-                                $('#rmAll' + fieldName ).prop('disabled','disabled');
+                    $(document).on('click', '.btn-rm-all', {} ,function(event) {
+                        removeFile${checkBoxPrefix}( fieldName, '${handler_name}', '${base_url}');
+                        return false;
+                    });
+
+                    var uploadedItems = $(document).find('.uploaded_check');
+                    if ( uploadedItems.length > 0 ){
+                        uploadedItems.on( 'click', function(){
+                            if( $(this).prop('checked') ){
+                                $('#rmAll' + fieldName ).prop('disabled','');
+                            } else {
+                                var upChecked =  $(document).find('.uploaded_check:checked');
+                                if( upChecked.length == 0 ){
+                                    $('#rmAll' + fieldName ).prop('disabled','disabled');
+                                }
                             }
-                        }
-                    })
+                        })
+                    }
                 }
-            }   
-        }
-    });
+            }
+        });
+     }
 }
 
 /**
@@ -210,22 +212,14 @@ $(document).on('click', '.deleteSingleFile', function (event) {
 });
 
 function updateErrorBox( errorMessage, fieldName ){
-    var errorFileName=$( '#_file_error_box_' + fieldName ), 
-        groupFiles = errorFileName.closest('.group-files');
-    if ( errorMessage != null && errorMessage !='' && errorMessage !== undefined || mapFileErrors.size > 0 ) {
-       var strContent = mapFileErrors.size > 0 ? mapFileErrors.get( fieldName ) : errorMessage;
-		if( mapFilesNumber.get( fieldName ) > 1 ){
-			errorFileName.after( '<div class="invalid-feedback text-danger"><i class="fa fa-exclamation-triangle fa-fw"></i> ' + strContent + '</div>' ).show( );
-        } else {
-			if( !groupFiles.hasClass( 'is-invalid' ) ){
-                groupFiles.addClass( 'is-invalid' ).after( '<div class="invalid-feedback">' + strContent + '</div>' ).show( );
-            }
-        }
-        mapFileErrors.delete(fieldName);
-        mapFilesNumber.delete(fieldName);
+    var errorClassName = "error_" + fieldName;
+    $( '.' + errorClassName ).remove()
+    if ( errorMessage != null && errorMessage !='' && errorMessage !== undefined ) {
+        if ( errorMessage === undefined ){ errorMessage='' };
+        $( '#_file_error_box_' + fieldName ).addClass( 'is-invalid' );
+		$( '#_file_error_box_' + fieldName ).after( '<div class="invalid-feedback ' + errorClassName + '">' + errorMessage + '</div>' );
+		$( '#_file_error_box_' + fieldName ).show( );
     } else {
-        //$('.invalid-feedback').remove( );
-		groupFiles.removeClass( 'is-invalid' );
+        $( '#_file_error_box_' + fieldName ).hide( );
     }
-
 }
