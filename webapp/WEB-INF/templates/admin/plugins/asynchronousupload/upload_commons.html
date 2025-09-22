@@ -78,7 +78,7 @@
 		<div class="checkbox">
 			<input type="checkbox" class="sr-only" id="selectAll${fieldName}" aria-hidden="true">
 			<label id="btn-select-all${fieldName}" class="btn btn-primary button is-primary is-small" for="selectAll${fieldName}">
-				<i class="fa fa-check fa-fw mr-2" aria-hidden="true"></i> Tout s&eacute;lectionner
+				<i class="fa fa-check fa-fw mr-2" aria-hidden="true"></i> #i18n{asynchronousupload.action.selectAll.name}
 			</label>
 			<button id="rmAll${fieldName}" class="btn btn-danger btn-rm-all  button is-danger is-small" name="${submitBtnName}" value="${handler.uploadDeletePrefix}${fieldName}" type="submit" <#if noJs>nojs</#if> >
 				<i class="fa fa-trash fa-fw mr-2" aria-hidden="true"></i> #i18n{asynchronousupload.action.delete.name}
@@ -94,12 +94,12 @@ $('#selectAll${fieldName}').on('click', function(){
 	if( !hasChecked ){
 		$('#_file_deletion_${fieldName} input[type="checkbox"]').prop('checked','checked');
 		$('#rmAll${fieldName}').prop('disabled','');
-		$('#btn-select-all${fieldName}').html('<i class="fa fa-times fa-fw mr-2" aria-hidden="true"></i> Tout d&eacute;s&eacute;lectionner');
+		$('#btn-select-all${fieldName}').html('<i class="fa fa-times fa-fw mr-2" aria-hidden="true"></i> #i18n{asynchronousupload.action.unselectAll.name}');
 		hasChecked=true;
 	} else {
 		$('#_file_deletion_${fieldName} input[type="checkbox"]').prop('checked','');
 		$('#rmAll${fieldName}').prop('disabled','disabled');
-		$('#btn-select-all${fieldName}').html('<i class="fa fa-check fa-fw mr-2" aria-hidden="true"></i> Tout s&eacute;lectionner');
+		$('#btn-select-all${fieldName}').html('<i class="fa fa-check fa-fw mr-2" aria-hidden="true"></i> #i18n{asynchronousupload.action.selectAll.name}');
 		hasChecked=false;
 	}
 	$( '#_file_deletion_${fieldName} input[type="checkbox"]' ).change( function(){
