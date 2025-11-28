@@ -1,3 +1,4 @@
+<@cTpl>
 /*
  * jQuery File Upload Plugin JS Example 8.9.1
  * https://github.com/blueimp/jQuery-File-Upload
@@ -213,3 +214,4 @@ function updateErrorBox( errorMessage, fieldName ){
 		groupFile.removeClass( 'is-invalid' );
     }
 }
+</@cTpl>
