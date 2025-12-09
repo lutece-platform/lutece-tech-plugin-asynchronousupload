@@ -53,14 +53,15 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import fr.paris.lutece.plugins.asynchronousupload.util.JSONUtils;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
 
 /**
  * AbstractAsynchronousUploadHandler.
@@ -224,24 +225,25 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
             return JSONUtils.buildJsonErrorRemovingFile( request ).toString( );
         }
 
+        ObjectMapper mapper = new ObjectMapper( );
         if ( CollectionUtils.isNotEmpty( listIndexesFilesToRemove ) )
         {
             // parse json
-            JSON jsonFieldIndexes = JSONSerializer.toJSON( listIndexesFilesToRemove );
+            JsonNode jsonFieldIndexes = mapper.valueToTree( listIndexesFilesToRemove );
 
             if ( !jsonFieldIndexes.isArray( ) )
             {
                 return JSONUtils.buildJsonErrorRemovingFile( request ).toString( );
             }
 
-            JSONArray jsonArrayFieldIndexers = (JSONArray) jsonFieldIndexes;
+            ArrayNode jsonArrayFieldIndexers = (ArrayNode) jsonFieldIndexes;
             int [ ] tabFieldIndex = new int [ jsonArrayFieldIndexers.size( )];
 
             for ( int nIndex = 0; nIndex < jsonArrayFieldIndexers.size( ); nIndex++ )
             {
                 try
                 {
-                    tabFieldIndex [nIndex] = Integer.parseInt( jsonArrayFieldIndexers.getString( nIndex ) );
+                    tabFieldIndex [nIndex] = Integer.parseInt( jsonArrayFieldIndexers.get( nIndex ).asText( ) );
                 }
                 catch( NumberFormatException nfe )
                 {
@@ -268,11 +270,11 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
             }
         }
 
-        JSONObject json = new JSONObject( );
-        json.element( JSONUtils.JSON_KEY_SUCCESS, JSONUtils.JSON_KEY_SUCCESS );
+        ObjectNode json = mapper.createObjectNode( );
+        json.put( JSONUtils.JSON_KEY_SUCCESS, JSONUtils.JSON_KEY_SUCCESS );
 
-        json.accumulateAll( JSONUtils.getUploadedFileJSON( getListUploadedFiles( strFieldName, request.getSession( ) ) ) );
-        json.element( JSONUtils.JSON_KEY_FIELD_NAME, strFieldName );
+        json.setAll( JSONUtils.getUploadedFileJSON( getListUploadedFiles( strFieldName, request.getSession( ) ) ) );
+        json.put( JSONUtils.JSON_KEY_FIELD_NAME, strFieldName );
 
         return json.toString( );
     }
