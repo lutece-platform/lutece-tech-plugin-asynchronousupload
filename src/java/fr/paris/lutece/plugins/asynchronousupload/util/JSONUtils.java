@@ -40,10 +40,14 @@ import jakarta.xml.bind.DatatypeConverter;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.util.file.FileUtil;
-import net.sf.json.JSONObject;
 
 /**
  * Provides json utility methods for forms
@@ -85,27 +89,31 @@ public final class JSONUtils
      *            the fileItem list
      * @return the json
      */
-    public static JSONObject getUploadedFileJSON( List<MultipartItem> listFileItem )
+    public static ObjectNode getUploadedFileJSON( List<MultipartItem> listFileItem )
     {
-        JSONObject json = new JSONObject( );
+        ObjectMapper mapper = new ObjectMapper( );
+        ObjectNode json = mapper.createObjectNode( );
 
         if ( listFileItem != null )
         {
+            ArrayNode uploadedFilesArray = mapper.createArrayNode();
+            
             for ( MultipartItem fileItem : listFileItem )
             {
-                JSONObject jsonObject = new JSONObject( );
-                jsonObject.element( JSON_KEY_FILE_NAME, fileItem.getName( ) );
-                jsonObject.element( JSON_KEY_FILE_PREVIEW, getPreviewImage( fileItem ) );
-                jsonObject.element( JSON_KEY_FILE_SIZE, fileItem.getSize( ) );
-                json.accumulate( JSON_KEY_UPLOADED_FILES, jsonObject );
+                ObjectNode jsonObject = mapper.createObjectNode( );
+                jsonObject.put( JSON_KEY_FILE_NAME, fileItem.getName( ) );
+                jsonObject.put( JSON_KEY_FILE_PREVIEW, getPreviewImage( fileItem ) );
+                jsonObject.put( JSON_KEY_FILE_SIZE, fileItem.getSize( ) );
+                uploadedFilesArray.add( jsonObject );
             }
 
-            json.element( JSON_KEY_FILE_COUNT, listFileItem.size( ) );
+            json.set(JSON_KEY_UPLOADED_FILES, uploadedFilesArray);
+            json.put(JSON_KEY_FILE_COUNT, listFileItem.size());
         }
         else
         {
             // no file
-            json.element( JSON_KEY_FILE_COUNT, 0 );
+            json.put( JSON_KEY_FILE_COUNT, 0 );
         }
 
         return json;
@@ -118,11 +126,12 @@ public final class JSONUtils
      *            the request
      * @return the json object.
      */
-    public static JSONObject buildJsonErrorRemovingFile( HttpServletRequest request )
+    public static ObjectNode buildJsonErrorRemovingFile( HttpServletRequest request )
     {
-        JSONObject json = new JSONObject( );
+        ObjectMapper mapper = new ObjectMapper( );
+        ObjectNode json = mapper.createObjectNode( );
 
-        json.element( JSON_KEY_FORM_ERROR, I18nService.getLocalizedString( PROPERTY_MESSAGE_ERROR_REMOVING_FILE, request.getLocale( ) ) );
+        json.put( JSON_KEY_FORM_ERROR, I18nService.getLocalizedString( PROPERTY_MESSAGE_ERROR_REMOVING_FILE, request.getLocale( ) ) );
 
         return json;
     }
@@ -135,11 +144,22 @@ public final class JSONUtils
      * @param strMessage
      *            the error message
      */
-    public static void buildJsonError( JSONObject json, String strMessage )
+    public static void buildJsonError( ObjectNode json, String strMessage )
     {
         if ( json != null )
         {
-            json.accumulate( JSON_KEY_FORM_ERROR, strMessage );
+            ObjectMapper mapper = new ObjectMapper( );
+            JsonNode node = json.get( JSON_KEY_FORM_ERROR );
+            ArrayNode arrayErrors = mapper.createArrayNode();
+            if (null != node && node.isArray( ))
+            {
+                for ( JsonNode jsonNode : node )
+                {
+                    arrayErrors.add( jsonNode );
+                }
+            }
+            arrayErrors.add( strMessage );
+            json.set( JSON_KEY_FORM_ERROR, arrayErrors );
         }
     }
 
