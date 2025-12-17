@@ -94,21 +94,35 @@ public final class JSONUtils
         ObjectMapper mapper = new ObjectMapper( );
         ObjectNode json = mapper.createObjectNode( );
 
-        if ( listFileItem != null )
+        if ( listFileItem != null && !listFileItem.isEmpty( ) )
         {
-            ArrayNode uploadedFilesArray = mapper.createArrayNode();
-            
-            for ( FileItem fileItem : listFileItem )
+            if ( 1 == listFileItem.size( ) )
             {
                 ObjectNode jsonObject = mapper.createObjectNode( );
+                FileItem fileItem = listFileItem.get( 0 );
                 jsonObject.put( JSON_KEY_FILE_NAME, fileItem.getName( ) );
                 jsonObject.put( JSON_KEY_FILE_PREVIEW, getPreviewImage( fileItem ) );
                 jsonObject.put( JSON_KEY_FILE_SIZE, fileItem.getSize( ) );
-                uploadedFilesArray.add( jsonObject );
+                
+                json.set( JSON_KEY_UPLOADED_FILES, jsonObject );
+                json.put( JSON_KEY_FILE_COUNT, 1 );
             }
+            else
+            {
+                ArrayNode uploadedFilesArray = mapper.createArrayNode( );
 
-            json.set(JSON_KEY_UPLOADED_FILES, uploadedFilesArray);
-            json.put(JSON_KEY_FILE_COUNT, listFileItem.size());
+                for ( FileItem fileItem : listFileItem )
+                {
+                    ObjectNode jsonObject = mapper.createObjectNode( );
+                    jsonObject.put( JSON_KEY_FILE_NAME, fileItem.getName( ) );
+                    jsonObject.put( JSON_KEY_FILE_PREVIEW, getPreviewImage( fileItem ) );
+                    jsonObject.put( JSON_KEY_FILE_SIZE, fileItem.getSize( ) );
+                    uploadedFilesArray.add( jsonObject );
+                }
+
+                json.set( JSON_KEY_UPLOADED_FILES, uploadedFilesArray );
+                json.put( JSON_KEY_FILE_COUNT, listFileItem.size( ) );
+            }
         }
         else
         {
