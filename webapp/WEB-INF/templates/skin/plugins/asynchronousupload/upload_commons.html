@@ -8,20 +8,9 @@
  # This is only needed in Back Office or in FO page not served by the portal service.
  -->
 <#macro addRequiredJsFiles>
-<link rel="stylesheet" href="css/plugins/asynchronousupload/jquery.fileupload.css" />
-<link rel="stylesheet" href="css/plugins/asynchronousupload/jquery.fileupload-ui.css" />
-<script src="js/jquery/plugins/ui/jquery-ui-1.9.2.custom.min.js"></script>
-<script src="js/plugins/asynchronousupload/load-image.all.min.js" ></script>
-<script src="js/plugins/asynchronousupload/vendor/jquery.ui.widget.js" ></script>
-<script src="js/plugins/asynchronousupload/jquery.iframe-transport.js" ></script>
-<script src="js/plugins/asynchronousupload/jquery.fileupload.js" ></script>
-<script src="js/plugins/asynchronousupload/jquery.fileupload-process.js" ></script>
-<script src="js/plugins/asynchronousupload/vendor/canvas-to-blob.js"></script>
+<script src="js/plugins/asynchronousupload/uppy/uppy.min.js"></script>
 <script src="js/plugins/asynchronousupload/config.js"></script>
-<script src="js/plugins/asynchronousupload/jquery.fileupload-image.js" ></script>
-<script src="js/plugins/asynchronousupload/jquery.fileupload-validate.js" ></script>
 <script>
-/* Maps to manage files field errors */
 var mapFileErrors = new Map();
 var mapFilesNumber = new Map();
 </script>
@@ -29,7 +18,7 @@ var mapFilesNumber = new Map();
 <#macro addFileInput fieldName handler cssClass multiple=false submitBtnName="${handler.uploadSubmitPrefix}${fieldName}" hasError=false required=false deprecated...>
 <@deprecatedWarning args=deprecated />
 <span class="form-inline file-input<#if hasError> is-invalid</#if>">
-	<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
+	<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName} position-absolute opacity-0" style="pointer-events:none" />
 	<button class="btn btn-primary btn-sm" name="${submitBtnName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
 		<i class="fa fa-upload"></i>
 		<span class="file-input-text-noscript">#i18n{asynchronousupload.action.send.name}</span>
@@ -44,7 +33,7 @@ var mapFilesNumber = new Map();
 <#macro addFileInputImage fieldName handler cssClass multiple=false hasError=false required=false deprecated...>
 <@deprecatedWarning args=deprecated />
 <span class="form-inline file-input">
-	<input type="file" style="display:inline-block;" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName}" />
+	<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName} position-absolute opacity-0" style="pointer-events:none" />
 	<button class="btn btn-primary btn-sm" name="${handler.uploadSubmitPrefix}${fieldName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
 		<i class="fa fa-upload"></i>
 		<span class="file-input-text-noscript">#i18n{asynchronousupload.action.send.name}</span>
