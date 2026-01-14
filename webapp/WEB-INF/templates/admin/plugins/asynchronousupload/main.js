@@ -158,20 +158,11 @@ function initUppy(inputElement) {
         inputElement.closest('.dropzone')?.classList.add('inactive');
     }
 
-    const storedData = sessionStorage.getItem(fieldName);
-    if (storedData) {
-        try {
-            const data = JSON.parse(storedData);
-            if (data && document.querySelectorAll(`[id^="_file_deletion_${fieldName}"]`).length === 0) {
-                const jsonData = {
-                    fieldname: fieldName,
-                    'asynchronousupload.handler': '${handler_name}',
-                    nof: data.length
-                };
-                formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
-            }
-        } catch {}
-    }
+    const jsonData = {
+        fieldname: fieldName,
+        'asynchronousupload.handler': '${handler_name}'
+    };
+    formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
 }
 
 /**
@@ -283,17 +274,13 @@ function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
                     if (deletionLabel) deletionLabel.style.display = 'none';
                 } else {
                     let strContent = '';
-                    let imgContent = '';
-                    let imgTag = '';
-                    const hasImage = groupFiles?.classList.contains('image-file');
                     const checkboxPrefix = cbPrefix + fieldName;
 
                     for (let index = 0; index < data.fileCount; index++) {
-                        if (hasImage) {
-                            imgContent = (data.fileCount == 1) ? data.files.preview : data.files[index].preview;
-                            if (typeof imgContent === 'string' && imgContent.length > 0) {
-                                imgTag = '<img src="' + imgContent + '" alt="" width="${previewMaxWidth}" class="img-fluid img-thumbnail">';
-                            }
+                        const imgContent = (data.fileCount == 1) ? data.files.preview : data.files[index].preview;
+                        let imgTag = '';
+                        if (typeof imgContent === 'string' && imgContent.length > 0) {
+                            imgTag = '<img src="' + imgContent + '" alt="" width="${previewMaxWidth}" height="${previewMaxHeight}" class="img-fluid img-thumbnail">';
                         }
                         strContent += getTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgTag, '${handler_name}', '${base_url}', `#i18n{asynchronousupload.action.delete.name}`);
                     }
@@ -319,7 +306,7 @@ function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
                         const errMsg = document.getElementById('msg_' + fieldName);
                         if (!errMsg && jFieldName) {
                             jFieldName.setAttribute('aria-labelledby', 'msg_' + fieldName);
-                            const msgHtml = `<p id="msg_${fieldName}" class="group-file-info text-muted p-2 mt-1"><span class="fa fa-exclamation-circle text-warning"></span> #i18n{asynchronousupload.info.maxNumberOfFiles}</p>`;
+                            const msgHtml = '<p id="msg_' + fieldName + '" class="group-file-info text-muted p-2 mt-1"><span class="fa fa-exclamation-circle text-warning"></span> ' + `#i18n{asynchronousupload.info.maxNumberOfFiles}` + '</p>';
                             groupInfo?.insertAdjacentHTML('afterend', msgHtml);
                         }
                     } else {
@@ -381,31 +368,18 @@ function deleteFile(ev) {
  * @param {string} fieldName - The field name
  */
 function updateErrorBox(errorMessage, fieldName) {
-    let strContent = '';
-    const errorFileName = document.getElementById('_file_error_box_' + fieldName);
-    const groupFiles = errorFileName?.closest('.group-files');
-    const nextSibling = groupFiles?.nextElementSibling;
+    const errorClassName = 'error_' + fieldName;
+    document.querySelectorAll('.' + errorClassName).forEach(el => el.remove());
 
-    if (!nextSibling?.classList.contains('invalid-feedback')) {
-        if (errorMessage != null && errorMessage !== '' && errorMessage !== undefined || mapFileErrors.size > 0) {
-            strContent = mapFileErrors.size > 0 ? mapFileErrors.get(fieldName) : errorMessage;
-            if (mapFilesNumber.get(fieldName) > 1) {
-                if (!groupFiles?.classList.contains('is-invalid') || strContent !== '') {
-                    groupFiles?.insertAdjacentHTML('afterend', '<div class="invalid-feedback" role="status">' + strContent + '</div>');
-                    groupFiles?.style.display = 'block';
-                }
-            } else {
-                if (!groupFiles?.classList.contains('is-invalid') || strContent !== '') {
-                    groupFiles?.classList.add('is-invalid');
-                    groupFiles?.insertAdjacentHTML('afterend', '<div class="invalid-feedback" role="status">' + strContent + '</div>');
-                    groupFiles?.style.display = 'block';
-                }
-            }
-            mapFileErrors.delete(fieldName);
-            mapFilesNumber.delete(fieldName);
-        } else {
-            groupFiles?.classList.remove('is-invalid');
+    const errorBox = document.getElementById('_file_error_box_' + fieldName);
+    if (errorMessage && errorMessage !== '') {
+        if (errorBox) {
+            errorBox.classList.add('is-invalid');
+            errorBox.insertAdjacentHTML('afterend', '<div class="invalid-feedback ' + errorClassName + '" style="display:block">' + errorMessage + '</div>');
+            errorBox.style.display = 'block';
         }
+    } else {
+        if (errorBox) errorBox.style.display = 'none';
     }
 }
 
