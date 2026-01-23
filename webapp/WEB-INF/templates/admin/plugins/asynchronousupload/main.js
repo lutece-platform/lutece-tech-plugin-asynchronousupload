@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
     const params = new URLSearchParams(jsonData);
-    fetch('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp?' + params)
+    fetch('${base_url}jsp/admin/plugins/asynchronousupload/DoRemoveFile.jsp?' + params)
         .then(response => response.json())
         .then(data => {
             const fieldName = data.field_name;

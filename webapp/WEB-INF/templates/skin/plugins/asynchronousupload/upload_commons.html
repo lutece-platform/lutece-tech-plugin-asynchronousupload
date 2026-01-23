@@ -8,6 +8,7 @@
  # This is only needed in Back Office or in FO page not served by the portal service.
  -->
 <#macro addRequiredJsFiles>
+<!-- FO AsynUpload -->
 <script src="themes/shared/plugins/asynchronousupload/uppy/uppy.min.js"></script>
 <script src="themes/shared/plugins/asynchronousupload/config.js"></script>
 <script>
@@ -108,18 +109,7 @@ var mapFilesNumber = new Map();
  # @param multiple True to use an HTML5 multiple file input, false otherwise. Default value if false.
  -->
 <#macro addFileInputAndfilesBox fieldName handler listUploadedFiles inputCssClass='' multiple=false>
-	<@addFileInput fieldName=fieldName handler=handler cssClass=inputCssClass multiple=multiple />
-	<@addUploadedFilesBox fieldName=fieldName handler=handler listFiles=listUploadedFiles />
-</#macro>
-<#-- Macro to add a file image input for asynchronous and synchronous uploads.
- # @param fieldName The name of the field.
- # @param handler The associated handler service.
- # @param listUploadedFiles The list of files that have already been uploaded. Files must have a 'title' or a 'name' attribute. 
- # @param inputCssClass The CSS class to add to the input if any. Default value is an empty string.
- # @param multiple True to use an HTML5 multiple file input, false otherwise. Default value if false.
- -->
-<#macro addFileInputImageAndfilesBox fieldName handler listUploadedFiles inputCssClass='' multiple=false>
-	<@addFileInputImage fieldName=fieldName handler=handler cssClass=inputCssClass multiple=multiple />
-	<@addUploadedFilesBox fieldName=fieldName handler=handler listFiles=listUploadedFiles />
+<@addFileInput fieldName=fieldName handler=handler cssClass=inputCssClass multiple=multiple />
+<@addUploadedFilesBox fieldName=fieldName handler=handler listFiles=listUploadedFiles />
 </#macro>
 </@cTpl>

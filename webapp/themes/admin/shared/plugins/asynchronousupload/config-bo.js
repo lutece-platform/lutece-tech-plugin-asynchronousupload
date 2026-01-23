@@ -44,7 +44,7 @@ function getTemplateUploadedFile( fieldName, index, checkboxPrefix, jsonData, im
 	   strCode = `<li class="files-item" id="_file_uploaded_${fieldName}${index}">
 	   <label class="files-item-label ${labelClassName}" for="${checkboxPrefix}${index}">
 		  ${imgTag}
-		   <a class="files-item-link" title="${fileName}" href="jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?fieldname=${fieldName}&field_index=${index}&fileName=${fileName}&asynchronousupload.handler=${handler}" data-type="${mimeTypeDisplay}" data-img="">
+		   <a class="files-item-link" title="${fileName}" href="jsp/admin/plugins/asynchronousupload/DoDownloadFile.jsp?fieldname=${fieldName}&field_index=${index}&fileName=${fileName}&asynchronousupload.handler=${handler}" data-type="${mimeTypeDisplay}" data-img="">
 			   <span class="file-item-label">${fileDisplayName}</span>
 			   <span class="file-item-info">${sizeDisplay}</span>
 		   </a>
