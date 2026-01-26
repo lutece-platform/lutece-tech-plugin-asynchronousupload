@@ -90,9 +90,6 @@ var mapFilesNumber = new Map();
 			</#list>
 		</#if>
 	</div>
-	<div class="col">
-		<button class="btn btn-danger" name="${submitBtnName}" value="${handler.uploadDeletePrefix}${fieldName}" type="submit" <#if noJs>nojs</#if> >#i18n{asynchronousupload.action.delete.name}</button>
-	</div>
 </div>
 </#macro>
 <#-- Macro to add a file input for asynchronous and synchronous uploads.
