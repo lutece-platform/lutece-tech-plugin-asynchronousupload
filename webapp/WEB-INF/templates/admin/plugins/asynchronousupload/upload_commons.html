@@ -33,8 +33,8 @@ var mapFilesNumber = new Map();
 <@deprecatedWarning args=deprecated />
 <span class="form-inline file-input<#if hasError> is-invalid</#if>">
 	<input type="file" name="${fieldName}" id="${fieldName}" <#if multiple>multiple="multiple"</#if> class="${cssClass!} ${handler.handlerName} position-absolute opacity-0" style="pointer-events:none" />
-	<button class="btn btn-primary btn-sm" name="${submitBtnName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
-		<i class="fa fa-upload"></i>
+	<button class="btn btn-primary btn-sm w-50" name="${submitBtnName}" id="${handler.uploadSubmitPrefix}${fieldName}" value="${handler.uploadSubmitPrefix}${fieldName}" type="submit" >
+		<i class="ti ti-file-upload"></i>
 		<span class="file-input-text-noscript">#i18n{asynchronousupload.action.send.name}</span>
 		<span class="file-input-text-js" style="display:none;">#i18n{asynchronousupload.action.browse.name}</span>
 	</button>
