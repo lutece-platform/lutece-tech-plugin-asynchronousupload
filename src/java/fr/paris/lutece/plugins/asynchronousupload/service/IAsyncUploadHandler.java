@@ -122,10 +122,11 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
     void removeFileItem( String strFieldName, HttpSession session, int nIndex );
 
     /**
-     * Remove all file Item for a given session
-     * 
-     * @param session
-     *            The session of the current user
+     * The aim of this method is to delete physical temporary files uploaded in the session.
+     * This method should be parcourir les {@link FileItem} and call {@link FileItem#delete()}
+     * to releases resources.
+     *
+     * @param session the current session
      */
     void removeAllFileItem( HttpSession session );
 
@@ -232,10 +233,11 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
     boolean isManagePartialContent( );
 
     /**
-     * Removes all files associated to the session
-     * 
-     * @param strSessionId
-     *            the session id
+     * Method called when a session is terminated.
+     * During the workflow of upload files, a session can save many file and associate it to a session id.
+     * So, the aim of this method is to delete all the files associated to a session to free memory.
+     *
+     * @param session the current session
      */
     default void removeSessionFiles( HttpSession session )
     {
