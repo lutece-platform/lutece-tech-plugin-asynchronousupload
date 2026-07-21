@@ -60,7 +60,7 @@ public class AsynchronousUploadSessionListener implements HttpSessionListener
     {
         for ( IAsyncUploadHandler handler : SpringContextService.getBeansOfType( IAsyncUploadHandler.class ) )
         {
-                handler.removeSessionFiles( se.getSession( ) );
+            handler.removeSessionFiles( se.getSession( ) );
         }
     }
 }
