@@ -123,7 +123,7 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
 
     /**
      * The aim of this method is to delete physical temporary files uploaded in the session.
-     * This method should be parcourir les {@link FileItem} and call {@link FileItem#delete()}
+     * This method must iterate through the {@link FileItem} and call {@link FileItem#delete()}
      * to releases resources.
      *
      * @param session the current session
