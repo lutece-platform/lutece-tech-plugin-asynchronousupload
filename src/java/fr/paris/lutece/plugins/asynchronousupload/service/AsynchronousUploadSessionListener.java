@@ -59,7 +59,7 @@ public class AsynchronousUploadSessionListener implements HttpSessionListener
     {
     	for ( IAsyncUploadHandler handler : CDI.current( ).select( IAsyncUploadHandler.class ).stream( ).toList( ) )
         {
-            handler.removeAllFileItem( se.getSession( ) );
+            handler.removeSessionFiles( se.getSession( ) );
         }
     }
 }
