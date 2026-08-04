@@ -168,11 +168,7 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
     }
 
     /**
-     * Method called when a session is destroyed.
-     * During the workflow of upload files, a session can save many file and associate it to a session id.
-     * So, the aim of this method is to delete all the files associated to a session to free memory.
-     * The map will remove the session of his list and the file will be deleted physically.
-     * @param session the current session
+     * {@inheritDoc}
      */
     @Override
     public void removeSessionFiles( HttpSession session )
