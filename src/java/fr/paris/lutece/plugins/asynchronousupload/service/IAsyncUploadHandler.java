@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.asynchronousupload.service;
 
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.web.upload.IAsynchronousUploadHandler2;
 
 import org.apache.commons.fileupload.FileItem;
@@ -120,15 +121,6 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
      *            {@link #getListUploadedFiles(String, HttpSession) }
      */
     void removeFileItem( String strFieldName, HttpSession session, int nIndex );
-
-    /**
-     * The aim of this method is to delete physical temporary files uploaded in the session.
-     * This method must iterate through the {@link FileItem} and call {@link FileItem#delete()}
-     * to releases resources.
-     *
-     * @param session the current session
-     */
-    void removeAllFileItem( HttpSession session );
 
     /**
      * Add a file item to the list of uploaded files
@@ -233,11 +225,22 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
     boolean isManagePartialContent( );
 
     /**
-     * Method called when a session is terminated.
-     * During the workflow of upload files, a session can save many file and associate it to a session id.
-     * So, the aim of this method is to delete all the files associated to a session to free memory.
+     * Deletes the physical temporary files uploaded during the specified session.
      *
      * @param session the current session
+     * @deprecated Use {@link #removeSessionFiles(HttpSession)} instead.
+     */
+    @Deprecated
+    void removeAllFileItem(HttpSession session);
+
+
+    /**
+     * Cleans up all files associated with the specified session.
+     * Implementations must delete each physical temporary file, typically by calling
+     * {@link FileItem#delete()}, and remove the corresponding session entry from their internal
+     * file-item map as part of the same cleanup operation.
+     *
+     * @param session the terminated session
      */
     default void removeSessionFiles( HttpSession session )
     {
