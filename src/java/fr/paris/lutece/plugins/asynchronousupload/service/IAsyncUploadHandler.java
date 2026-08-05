@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.asynchronousupload.service;
 
-import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.web.upload.IAsynchronousUploadHandler2;
 
 import org.apache.commons.fileupload.FileItem;
