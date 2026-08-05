@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.asynchronousupload.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +41,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import fr.paris.lutece.portal.service.util.AppLogService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Named;
@@ -179,14 +181,42 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
         mapFileItemsSession.computeIfAbsent( strFieldName, s -> new ArrayList<>( ) );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeSessionFiles( HttpSession session )
     {
         String sessionId = (String) session.getAttribute( PARAM_CUSTOM_SESSION_ID );
-        if ( sessionId != null )
+
+        if( StringUtils.isBlank( sessionId) )
         {
-            _mapAsynchronousUpload.remove( sessionId );
+            return;
         }
 
+        Map<String, List<MultipartItem>> mapFileItemsSession = _mapAsynchronousUpload.remove( sessionId );
+
+        if ( mapFileItemsSession != null )
+        {
+            for ( List<MultipartItem> fileItems : mapFileItemsSession.values( ) )
+            {
+                deleteFiles( fileItems );
+            }
+        }
+    }
+
+    private void deleteFiles( List<MultipartItem> fileItems )
+    {
+        for ( MultipartItem fileItem : fileItems )
+        {
+            try
+            {
+                fileItem.delete( );
+            }
+            catch ( IOException e )
+            {
+                AppLogService.error( "Unable to delete uploaded file " + fileItem.getName( ), e );
+            }
+        }
     }
 }
