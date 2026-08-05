@@ -194,14 +194,23 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
             return;
         }
 
-        Map<String, List<MultipartItem>> mapFileItemsSession = _mapAsynchronousUpload.remove( sessionId );
+        Map<String, List<MultipartItem>> mapFileItemsSession = _mapAsynchronousUpload.get( sessionId );
 
-        if ( mapFileItemsSession != null )
+        if ( mapFileItemsSession == null )
+        {
+            return;
+        }
+
+        try
         {
             for ( List<MultipartItem> fileItems : mapFileItemsSession.values( ) )
             {
                 deleteFiles( fileItems );
             }
+        }
+        finally
+        {
+            _mapAsynchronousUpload.remove( sessionId );
         }
     }
 
