@@ -20,9 +20,9 @@ var mapFilesNumber = new Map();
  -->
 <#macro addFileInput fieldName handler cssClass='' image=false multiple=false label='' submitBtnName='${handler.uploadSubmitPrefix}${fieldName}' type='button' ariaDescribedby='' helpMsg='' errorMsg='' disabled=false required=false nbFiles=0 nbMaxFiles=0 maxFileSize=0 deprecated...>
 <@deprecatedWarning args=deprecated />
-<#local fieldClass>${cssClass!}</#local>
+<#local fieldClass = ( cssClass!'' )?string />
 <#local fieldParams><#if ariaDescribedby??> aria-describedby="${ariaDescribedby!}"</#if></#local>
-<#local hasFiles><#if nbFiles gt 0>true<#else>false</#if></#local>
+<#local hasFiles = ( nbFiles gt 0 )?then( 'true', 'false' ) />
 <@cInputDropFiles name=fieldName handler=handler type=type image=image nbFiles=nbMaxFiles! nbUplodadedFiles=nbFiles! maxFileSize=maxFileSize! label=label formSubmitButtonName=submitBtnName disabled=disabled required=required multiple=multiple hasFiles=hasFiles?boolean helpMsg=helpMsg errorMsg=errorMsg class=fieldClass params=fieldParams>
 <#nested>
 </@cInputDropFiles>
@@ -30,9 +30,9 @@ var mapFilesNumber = new Map();
 <#-- DEPRECATED addFileInputImage -->
 <#macro addFileInputImage fieldName handler cssClass multiple=false label='' submitBtnName='${handler.uploadSubmitPrefix}${fieldName}' type='button' ariaDescribedby='' disabled=false  required=false helpMsg='' errorMsg='' nbFiles=0 nbMaxFiles=0 maxFileSize=0 deprecated...>
 <@deprecatedWarning args=deprecated />
-<#local fieldClass>${cssClass!}</#local>
+<#local fieldClass = ( cssClass!'' )?string />
 <#local fieldParams><#if ariaDescribedby??> aria-describedby="${ariaDescribedby!}"</#if></#local>
-<#local hasFiles><#if nbFiles gt 0>true<#else>false</#if></#local>
+<#local hasFiles = ( nbFiles gt 0 )?then( 'true', 'false' ) />
 <@cInputDropFiles name=fieldName handler=handler type=type nbFiles=nbMaxFiles! nbUplodadedFiles=nbFiles! maxFileSize=maxFileSize! label=label formSubmitButtonName=submitBtnName disabled=disabled required=required multiple=multiple hasFiles=hasFiles?boolean helpMsg=helpMsg errorMsg=errorMsg class=fieldClass params=fieldParams >
 <#nested>
 </@cInputDropFiles>
@@ -58,7 +58,7 @@ var mapFilesNumber = new Map();
 <#local filename = ''>
 <#if file.name?? && file.name != ''><#local filename = file.name ><#else><#if file.title?? && file.title != ''><#local filename = file.title ></#if></#if>
 <#if currentFilename != filename >
-<@cInputDropFilesItem name=fieldName label=filename idx=file_index handler=handler image=image fileSize=file.size urlDl='jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?asynchronousupload.handler=${handler.handlerName}&fieldname=${fieldName}&field_index=${file_index}&fileName=${filename}' />
+<@cInputDropFilesItem name=fieldName label=filename idx=file_index handler=handler image=image fileSize=file.size urlDl='jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?asynchronousupload.handler=${handler.handlerName?url}&fieldname=${fieldName?url}&field_index=${file_index}&fileName=${filename?url}' />
 </#if>
 <#local file_index = file_index + 1>
 <#-- BEGIN QuickFix to remove duplicated files list REMOVE ASAP -->

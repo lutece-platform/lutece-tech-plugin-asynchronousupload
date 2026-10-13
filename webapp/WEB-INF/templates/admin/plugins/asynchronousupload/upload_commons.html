@@ -79,7 +79,7 @@ var mapFilesNumber = new Map();
 					<div class="checkbox" id="_file_uploaded_${fieldName}${file_index}">
 						<label class="col-xs-12 col-sm-12" for="${handler.uploadCheckboxPrefix}${fieldName}${file_index}">
 						<input type="checkbox" id="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" name="${handler.uploadCheckboxPrefix}${fieldName}${file_index}" value="${uploadHandler.uploadCheckboxPrefix}${fieldName}${file_index}" />
-						<a	href="jsp/admin/plugins/asynchronousupload/DoDownloadFile.jsp?asynchronousupload.handler=${handler.handlerName}&fieldname=${fieldName}&field_index=${file_index}&fileName=${filename}" download="${filename}">
+						<a	href="jsp/admin/plugins/asynchronousupload/DoDownloadFile.jsp?asynchronousupload.handler=${handler.handlerName?url}&fieldname=${fieldName?url}&field_index=${file_index}&fileName=${filename?url}" download="${filename}">
 							${filename}
 						</a>
 						<#if file.size?has_content> (${octetNumber?string["0"]} ${octetUnit})</#if>
