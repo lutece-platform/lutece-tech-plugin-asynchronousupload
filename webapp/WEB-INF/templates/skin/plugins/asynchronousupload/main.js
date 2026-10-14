@@ -10,7 +10,7 @@ const uppyInstances = new Map();
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.file-input-text-noscript').forEach(el => el.style.display = 'none');
     document.querySelectorAll('.file-input-text-js').forEach(el => el.style.display = 'inline');
-    document.querySelectorAll('.${handler_name}').forEach(initUppy);
+    document.querySelectorAll('.${handler_name?js_string}').forEach(initUppy);
 });
 
 document.addEventListener('click', (e) => {
@@ -51,7 +51,7 @@ function initUppy(inputElement) {
     });
 
     uppy.use(Uppy.XHRUpload, {
-        endpoint: '${base_url}${upload_url}',
+        endpoint: '${base_url?js_string}${upload_url?js_string}',
         fieldName: fieldName,
         formData: true,
         bundle: false,
@@ -66,7 +66,7 @@ function initUppy(inputElement) {
     uppy.on('file-added', (file) => {
         uppy.setFileMeta(file.id, {
             fieldname: fieldName,
-            'asynchronousupload.handler': '${handler_name}'
+            'asynchronousupload.handler': '${handler_name?js_string}'
         });
     });
 
@@ -94,9 +94,9 @@ function initUppy(inputElement) {
             } else {
                 const jsonData = {
                     fieldname: fieldName,
-                    'asynchronousupload.handler': '${handler_name}'
+                    'asynchronousupload.handler': '${handler_name?js_string}'
                 };
-                formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
+                formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix?js_string}');
             }
         }
 
@@ -145,9 +145,9 @@ function initUppy(inputElement) {
 
     const jsonData = {
         fieldname: fieldName,
-        'asynchronousupload.handler': '${handler_name}'
+        'asynchronousupload.handler': '${handler_name?js_string}'
     };
-    formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
+    formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix?js_string}');
 }
 
 /**
@@ -198,7 +198,7 @@ function setupDragAndDrop(inputElement, uppy, fieldName) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('[id^="${submitPrefix}"]').forEach(btn => {
+    document.querySelectorAll('[id^="${submitPrefix?js_string}"]').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -209,10 +209,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('click', (e) => {
-    if (e.target.matches('[value^="${deletePrefix}"]') && !e.target.hasAttribute('nojs')) {
+    if (e.target.matches('[value^="${deletePrefix?js_string}"]') && !e.target.hasAttribute('nojs')) {
         e.preventDefault();
-        const fieldName = e.target.value.match('${deletePrefix}(.*)')[1];
-        removeFile${checkBoxPrefix}(fieldName, '${handler_name}', '${base_url}');
+        const fieldName = e.target.value.match('${deletePrefix?js_string}(.*)')[1];
+        removeFile${checkBoxPrefix}(fieldName, '${handler_name?js_string}', '${base_url?js_string}');
     }
 });
 
@@ -223,7 +223,7 @@ document.addEventListener('click', (e) => {
  */
 function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
     const params = new URLSearchParams(jsonData);
-    fetch('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp?' + params)
+    fetch('${base_url?js_string}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp?' + params)
         .then(response => response.json())
         .then(data => {
             const fieldName = data.field_name;
@@ -246,7 +246,7 @@ function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
                         if (typeof imgContent === 'string' && imgContent.length > 0) {
                             imgTag = " <img src='" + imgContent + "' alt='' width='${previewMaxWidth}' height='${previewMaxHeight}'/>";
                         }
-                        strContent += getTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgTag, '${handler_name}', `#i18n{asynchronousupload.action.delete.name}`);
+                        strContent += getTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgTag, '${handler_name?js_string}', `#i18n{asynchronousupload.action.delete.name}`);
                     }
 
                     const deletionContainer = document.getElementById('_file_deletion_' + fieldName);
@@ -268,7 +268,7 @@ function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
 function removeFile${checkBoxPrefix}(fieldName, handlerName, baseUrl) {
     let strIndexes = '';
     let indexesCount = 0;
-    const checkboxPrefix = '${checkBoxPrefix}' + fieldName;
+    const checkboxPrefix = '${checkBoxPrefix?js_string}' + fieldName;
 
     document.querySelectorAll('[name^="' + checkboxPrefix + '"]:checked').forEach(checkbox => {
         if (checkbox.checked) {
@@ -292,7 +292,7 @@ function removeFile${checkBoxPrefix}(fieldName, handlerName, baseUrl) {
         'asynchronousupload.handler': handlerName,
         field_index: strIndexes
     };
-    formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
+    formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix?js_string}');
 }
 
 document.addEventListener('click', (event) => {
@@ -307,7 +307,7 @@ document.addEventListener('click', (event) => {
             'asynchronousupload.handler': handlerName,
             field_index: index
         };
-        formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
+        formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix?js_string}');
     }
 });
 

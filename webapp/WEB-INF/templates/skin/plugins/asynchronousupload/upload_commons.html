@@ -20,7 +20,7 @@ var mapFilesNumber = new Map();
  -->
 <#macro addFileInput fieldName handler cssClass='' image=false multiple=false label='' submitBtnName='${handler.uploadSubmitPrefix}${fieldName}' type='button' ariaDescribedby='' helpMsg='' errorMsg='' disabled=false required=false nbFiles=0 nbMaxFiles=0 maxFileSize=0 deprecated...>
 <@deprecatedWarning args=deprecated />
-<#local fieldClass = ( cssClass!'' )?string />
+<#local fieldClass = cssClass!'' />
 <#local fieldParams><#if ariaDescribedby??> aria-describedby="${ariaDescribedby!}"</#if></#local>
 <#local hasFiles = ( nbFiles gt 0 )?then( 'true', 'false' ) />
 <@cInputDropFiles name=fieldName handler=handler type=type image=image nbFiles=nbMaxFiles! nbUplodadedFiles=nbFiles! maxFileSize=maxFileSize! label=label formSubmitButtonName=submitBtnName disabled=disabled required=required multiple=multiple hasFiles=hasFiles?boolean helpMsg=helpMsg errorMsg=errorMsg class=fieldClass params=fieldParams>
@@ -30,7 +30,7 @@ var mapFilesNumber = new Map();
 <#-- DEPRECATED addFileInputImage -->
 <#macro addFileInputImage fieldName handler cssClass multiple=false label='' submitBtnName='${handler.uploadSubmitPrefix}${fieldName}' type='button' ariaDescribedby='' disabled=false  required=false helpMsg='' errorMsg='' nbFiles=0 nbMaxFiles=0 maxFileSize=0 deprecated...>
 <@deprecatedWarning args=deprecated />
-<#local fieldClass = ( cssClass!'' )?string />
+<#local fieldClass = cssClass!'' />
 <#local fieldParams><#if ariaDescribedby??> aria-describedby="${ariaDescribedby!}"</#if></#local>
 <#local hasFiles = ( nbFiles gt 0 )?then( 'true', 'false' ) />
 <@cInputDropFiles name=fieldName handler=handler type=type nbFiles=nbMaxFiles! nbUplodadedFiles=nbFiles! maxFileSize=maxFileSize! label=label formSubmitButtonName=submitBtnName disabled=disabled required=required multiple=multiple hasFiles=hasFiles?boolean helpMsg=helpMsg errorMsg=errorMsg class=fieldClass params=fieldParams >

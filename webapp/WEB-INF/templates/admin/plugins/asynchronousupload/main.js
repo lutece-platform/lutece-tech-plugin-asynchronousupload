@@ -10,9 +10,9 @@ const defaultImg = 'themes/shared/images/none.svg';
 const uppyInstances = new Map();
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.${handler_name}').forEach(initUppy);
+    document.querySelectorAll('.${handler_name?js_string}').forEach(initUppy);
 
-    document.querySelectorAll('.${handler_name}').forEach(input => {
+    document.querySelectorAll('.${handler_name?js_string}').forEach(input => {
         input.addEventListener('click', () => {
             document.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
             document.querySelectorAll('.dropzone label').forEach(el => el.classList.remove('main-danger-color'));
@@ -57,7 +57,7 @@ function initUppy(inputElement) {
     });
 
     uppy.use(Uppy.XHRUpload, {
-        endpoint: '${base_url}${upload_url}',
+        endpoint: '${base_url?js_string}${upload_url?js_string}',
         fieldName: fieldName,
         formData: true,
         bundle: false,
@@ -72,7 +72,7 @@ function initUppy(inputElement) {
     uppy.on('file-added', (file) => {
         uppy.setFileMeta(file.id, {
             fieldname: fieldName,
-            'asynchronousupload.handler': '${handler_name}'
+            'asynchronousupload.handler': '${handler_name?js_string}'
         });
     });
 
@@ -104,10 +104,10 @@ function initUppy(inputElement) {
 
                 const jsonData = {
                     fieldname: fieldName,
-                    'asynchronousupload.handler': '${handler_name}',
+                    'asynchronousupload.handler': '${handler_name?js_string}',
                     nof: nof
                 };
-                formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
+                formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix?js_string}');
             }
         }
 
@@ -160,9 +160,9 @@ function initUppy(inputElement) {
 
     const jsonData = {
         fieldname: fieldName,
-        'asynchronousupload.handler': '${handler_name}'
+        'asynchronousupload.handler': '${handler_name?js_string}'
     };
-    formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
+    formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix?js_string}');
 }
 
 /**
@@ -233,7 +233,7 @@ function setupDragAndDrop(inputElement, uppy, fieldName) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('[id^="${submitPrefix}"]').forEach(btn => {
+    document.querySelectorAll('[id^="${submitPrefix?js_string}"]').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
     const params = new URLSearchParams(jsonData);
-    fetch('${base_url}jsp/admin/plugins/asynchronousupload/DoRemoveFile.jsp?' + params)
+    fetch('${base_url?js_string}jsp/admin/plugins/asynchronousupload/DoRemoveFile.jsp?' + params)
         .then(response => response.json())
         .then(data => {
             const fieldName = data.field_name;
@@ -282,7 +282,7 @@ function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
                         if (typeof imgContent === 'string' && imgContent.length > 0) {
                             imgTag = '<img src="' + imgContent + '" alt="" width="${previewMaxWidth}" height="${previewMaxHeight}" class="img-fluid img-thumbnail">';
                         }
-                        strContent += getTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgTag, '${handler_name}', '${base_url}', `#i18n{asynchronousupload.action.delete.name}`);
+                        strContent += getTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgTag, '${handler_name?js_string}', '${base_url?js_string}', `#i18n{asynchronousupload.action.delete.name}`);
                     }
 
                     sessionStorage.setItem(fieldName, JSON.stringify(data.files));
@@ -350,7 +350,7 @@ function deleteFile(ev) {
     item?.remove();
 
     const handlerName = target.getAttribute('handlername');
-    const inputElement = document.querySelector('.${handler_name}[name="' + fieldName + '"]');
+    const inputElement = document.querySelector('.${handler_name?js_string}[name="' + fieldName + '"]');
     const nof = parseInt(inputElement?.dataset.nof) || 1;
 
     const jsonData = {
@@ -359,7 +359,7 @@ function deleteFile(ev) {
         field_index: index,
         nof: nof
     };
-    formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
+    formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix?js_string}');
 }
 
 /**

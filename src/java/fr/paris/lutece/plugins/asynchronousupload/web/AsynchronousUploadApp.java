@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Instance;
@@ -99,6 +100,9 @@ public class AsynchronousUploadApp extends MVCApplication
     private static final String CONSTANT_COMA = ",";
     // filed name
     private static final String DEFAULT_FIELD_NAME = StringUtils.EMPTY;
+
+    /** a field or handler name written in the script: it is part of a function name, so only identifier characters */
+    private static final Pattern PATTERN_IDENTIFIER = Pattern.compile( "[A-Za-z0-9_]+" );
     
     @Inject
     private UploadCacheService _uploadCacheService;
@@ -172,9 +176,13 @@ public class AsynchronousUploadApp extends MVCApplication
             nMaxChunkSize = Integer.parseInt( strMaxChunkSize );
         }
 
-        if ( StringUtils.isEmpty( strFieldName ) )
+        if ( StringUtils.isEmpty( strFieldName ) || !PATTERN_IDENTIFIER.matcher( strFieldName ).matches( ) )
         {
             strFieldName = DEFAULT_FIELD_NAME;
+        }
+        if ( strHandlerName != null && !PATTERN_IDENTIFIER.matcher( strHandlerName ).matches( ) )
+        {
+            strHandlerName = null;
         }
 
         String strKey = ( Boolean.TRUE.equals( bContext ) ? "FO|" : "BO|" ) + getLocale( request ) + '|'
