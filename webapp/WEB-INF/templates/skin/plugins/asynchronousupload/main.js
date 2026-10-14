@@ -7,11 +7,11 @@
 /* This script may be included several times on the same page (explicit <script> in a page template
    and loader of addRequiredJsFiles in upload_commons.html). Document-level listeners must be
    bound once, otherwise one click on "delete" sends two removal requests and removes two files. */
-var asyncUploadFirstLoad = !window['__asyncUploadBound_${handler_name}'];
-window['__asyncUploadBound_${handler_name}'] = true;
+var asyncUploadFirstLoad = !window['__asyncUploadBound_${handler_name?js_string}'];
+window['__asyncUploadBound_${handler_name?js_string}'] = true;
 
 /** @type {Map<string, Uppy>} */
-var uppyInstances = window['__uppyInstances_${handler_name}'] || (window['__uppyInstances_${handler_name}'] = new Map());
+var uppyInstances = window['__uppyInstances_${handler_name?js_string}'] || (window['__uppyInstances_${handler_name?js_string}'] = new Map());
 
 /**
  * Runs a callback once the DOM is parsed. A script inserted dynamically (loader of addRequiredJsFiles)
@@ -45,7 +45,7 @@ if (asyncUploadFirstLoad) {
 onUppyReady(() => {
     document.querySelectorAll('.file-input-text-noscript').forEach(el => el.style.display = 'none');
     document.querySelectorAll('.file-input-text-js').forEach(el => el.style.display = 'inline');
-    document.querySelectorAll('.${handler_name}').forEach(initUppy);
+    document.querySelectorAll('.${handler_name?js_string}').forEach(initUppy);
 });
 
 document.addEventListener('click', (e) => {
@@ -91,7 +91,7 @@ function initUppy(inputElement) {
     // follows another one from the same IP within lutece.upload.dosguard.minInterval (2 s), so only
     // one file out of a multiple selection survived, and silently.
     uppy.use(Uppy.XHRUpload, {
-        endpoint: '${base_url}${upload_url}',
+        endpoint: '${base_url?js_string}${upload_url?js_string}',
         fieldName: fieldName,
         formData: true,
         bundle: true,
@@ -101,7 +101,7 @@ function initUppy(inputElement) {
     // bundled requests take their metadata from the global meta
     uppy.setMeta({
         fieldname: fieldName,
-        'asynchronousupload.handler': '${handler_name}'
+        'asynchronousupload.handler': '${handler_name?js_string}'
     });
 
     uppy.use(Uppy.ThumbnailGenerator, {
@@ -112,7 +112,7 @@ function initUppy(inputElement) {
     uppy.on('file-added', (file) => {
         uppy.setFileMeta(file.id, {
             fieldname: fieldName,
-            'asynchronousupload.handler': '${handler_name}'
+            'asynchronousupload.handler': '${handler_name?js_string}'
         });
     });
 
@@ -141,9 +141,9 @@ function initUppy(inputElement) {
             } else {
                 const jsonData = {
                     fieldname: fieldName,
-                    'asynchronousupload.handler': '${handler_name}'
+                    'asynchronousupload.handler': '${handler_name?js_string}'
                 };
-                const refresh = formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
+                const refresh = formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix?js_string}');
                 // keep the failure visible: the list refresh above resets the error box
                 if (failed > 0 && refresh && refresh.then) {
                     refresh.then(() => updateErrorBox(`#i18n{asynchronousupload.error.uploadFile}`, fieldName));
@@ -198,9 +198,9 @@ function initUppy(inputElement) {
 
     const jsonData = {
         fieldname: fieldName,
-        'asynchronousupload.handler': '${handler_name}'
+        'asynchronousupload.handler': '${handler_name?js_string}'
     };
-    formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
+    formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix?js_string}');
 }
 
 /**
@@ -253,7 +253,7 @@ function setupDragAndDrop(inputElement, uppy, fieldName) {
 
 if (asyncUploadFirstLoad) {
 onDomReady(() => {
-    document.querySelectorAll('[id^="${submitPrefix}"]').forEach(btn => {
+    document.querySelectorAll('[id^="${submitPrefix?js_string}"]').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -264,10 +264,10 @@ onDomReady(() => {
 });
 
 document.addEventListener('click', (e) => {
-    if (e.target.matches('[value^="${deletePrefix}"]') && !e.target.hasAttribute('nojs')) {
+    if (e.target.matches('[value^="${deletePrefix?js_string}"]') && !e.target.hasAttribute('nojs')) {
         e.preventDefault();
-        const fieldName = e.target.value.match('${deletePrefix}(.*)')[1];
-        removeFile${checkBoxPrefix}(fieldName, '${handler_name}', '${base_url}');
+        const fieldName = e.target.value.match('${deletePrefix?js_string}(.*)')[1];
+        removeFile${checkBoxPrefix}(fieldName, '${handler_name?js_string}', '${base_url?js_string}');
     }
 });
 }
@@ -279,7 +279,7 @@ document.addEventListener('click', (e) => {
  */
 function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
     const params = new URLSearchParams(jsonData);
-    return fetch('${base_url}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp?' + params)
+    return fetch('${base_url?js_string}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp?' + params)
         .then(response => response.json())
         .then(data => {
             const fieldName = data.field_name;
@@ -303,7 +303,7 @@ function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
                         if (typeof imgContent === 'string' && imgContent.length > 0) {
                             imgTag = " <img src='" + imgContent + "' alt='' width='${previewMaxWidth}' height='${previewMaxHeight}'/>";
                         }
-                        strContent += getTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgTag, '${handler_name}', `#i18n{asynchronousupload.action.delete.name}`);
+                        strContent += getTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgTag, '${handler_name?js_string}', `#i18n{asynchronousupload.action.delete.name}`);
                     }
 
                     const deletionContainer = document.getElementById('_file_deletion_' + fieldName);
@@ -325,7 +325,7 @@ function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
 function removeFile${checkBoxPrefix}(fieldName, handlerName, baseUrl) {
     let strIndexes = '';
     let indexesCount = 0;
-    const checkboxPrefix = '${checkBoxPrefix}' + fieldName;
+    const checkboxPrefix = '${checkBoxPrefix?js_string}' + fieldName;
 
     document.querySelectorAll('[name^="' + checkboxPrefix + '"]:checked').forEach(checkbox => {
         if (checkbox.checked) {
@@ -349,7 +349,7 @@ function removeFile${checkBoxPrefix}(fieldName, handlerName, baseUrl) {
         'asynchronousupload.handler': handlerName,
         field_index: strIndexes
     };
-    formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
+    formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix?js_string}');
 }
 
 if (asyncUploadFirstLoad) {
@@ -365,7 +365,7 @@ document.addEventListener('click', (event) => {
             'asynchronousupload.handler': handlerName,
             field_index: index
         };
-        formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix}');
+        formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix?js_string}');
     }
 });
 }
