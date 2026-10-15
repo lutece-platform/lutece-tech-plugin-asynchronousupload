@@ -177,10 +177,9 @@ public class AsynchronousUploadApp extends MVCApplication
             strFieldName = DEFAULT_FIELD_NAME;
         }
 
-        String strKey = StringUtils.defaultString( strHandlerName ) + strBaseUrl + StringUtils.defaultString( strMaxFileSize )
-                + StringUtils.defaultString( strImageMaxWidth ) + StringUtils.defaultString( strImageMaxHeight )
-                + StringUtils.defaultString( strPreviewMaxWidth ) + StringUtils.defaultString( strPreviewMaxHeight )
-                + StringUtils.defaultString( strMaxChunkSize ) + strFieldName;
+        String strKey = ( Boolean.TRUE.equals( bContext ) ? "FO|" : "BO|" ) + getLocale( request ) + '|'
+                + StringUtils.defaultString( strHandlerName ) + '|' + strBaseUrl + '|' + nMaxFileSize + '|' + nImageMaxWidth + '|'
+                + nImageMaxHeight + '|' + nPreviewMaxWidth + '|' + nPreviewMaxHeight + '|' + nMaxChunkSize + '|' + strFieldName;
 
         String strContent = _uploadCacheService.get( strKey );
 
