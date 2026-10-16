@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.asynchronousupload.service;
 
+import javax.cache.configuration.MutableConfiguration;
+
 import fr.paris.lutece.portal.service.cache.AbstractCacheableService;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -57,6 +59,8 @@ public class UploadCacheService extends AbstractCacheableService<String,String>
     @PostConstruct
     private void initUploadCacheService( )
     {
+        // Typed configuration: the scripts are Strings, which the core stores by reference (no copy on each read)
+        configuration = new MutableConfiguration<String, String>( ).setTypes( String.class, String.class );
         enableCache( true );
     }
     
