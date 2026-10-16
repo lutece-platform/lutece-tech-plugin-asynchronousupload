@@ -61,7 +61,8 @@ public class UploadCacheService extends AbstractCacheableService<String,String>
     {
         // Typed configuration: the scripts are Strings, which the core stores by reference (no copy on each read)
         configuration = new MutableConfiguration<String, String>( ).setTypes( String.class, String.class );
-        enableCache( true );
+        // Enabled by default: a status chosen in the back office is kept across restarts (enableCache would overwrite it)
+        initCache( CACHE_NAME, true );
     }
     
     /**
