@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.asynchronousupload.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -65,8 +64,11 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
     // Error messages
     private static final String ERROR_MESSAGE_UNKNOWN_ERROR = "asynchronousupload.message.unknownError";
 
-    /** contains uploaded file items */
-    private static Map<String, Map<String, List<MultipartItem>>> _mapAsynchronousUpload = new ConcurrentHashMap<>( );
+    /**
+     * Session attribute holding the uploaded files, by field name. The files are kept in the session, not in this instance: a
+     * replicated session brings them to the instance that handles the next request, and they go away with the session.
+     */
+    private static final String SESSION_ATTRIBUTE_UPLOADED_FILES = "asynchronousupload.asynchronousUploadedFiles";
 
     /**
      * Get the handler
@@ -92,8 +94,7 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
     {
         if ( StringUtils.isNotBlank( strFieldName ) )
         {
-            String sessionId = getCustomSessionId( request.getSession( ) );
-            initMap( sessionId, strFieldName );
+            getListUploadedFiles( strFieldName, request.getSession( ) );
 
             return null;
         }
@@ -108,14 +109,7 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
             throw new AppException( "id field name is not provided for the current file upload" );
         }
 
-        String sessionId = getCustomSessionId( session );
-
-        initMap( sessionId, strFieldName );
-
-        // find session-related files in the map
-        Map<String, List<MultipartItem>> mapFileItemsSession = _mapAsynchronousUpload.get( sessionId );
-
-        return mapFileItemsSession.get( strFieldName );
+        return getSessionFiles( session ).computeIfAbsent( strFieldName, s -> new SessionMultipartItemList( ) );
     }
 
     @Override
@@ -125,13 +119,16 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
         // the original name, but clean it to make it cross-platform.
         String strFileName = UploadUtil.cleanFileName( fileItem.getName( ).trim( ) );
 
-        String sessionId = getCustomSessionId( request.getSession( ) );
-        initMap( sessionId, strFieldName );
-
         // Check if this file has not already been uploaded
         List<MultipartItem> uploadedFiles = getListUploadedFiles( strFieldName, request.getSession( ) );
 
-        if ( uploadedFiles != null )
+        if ( uploadedFiles == null )
+        {
+            return;
+        }
+
+        // Concurrent uploads of the same session to this field on this instance share the list
+        synchronized( uploadedFiles )
         {
             boolean bNew = true;
 
@@ -163,38 +160,14 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
         return HANDLER_NAME;
     }
 
-    private void initMap( String strSessionId, String strFieldName )
-    {
-        // find session-related files in the map
-        Map<String, List<MultipartItem>> mapFileItemsSession = _mapAsynchronousUpload.get( strSessionId );
-
-        // create map if not exists
-        if ( mapFileItemsSession == null )
-        {
-            synchronized( this )
-            {
-                // Ignore double check locking error : assignation and instanciation of objects are separated.
-                mapFileItemsSession = _mapAsynchronousUpload.computeIfAbsent( strSessionId, s -> new ConcurrentHashMap<>( ) );
-            }
-        }
-
-        mapFileItemsSession.computeIfAbsent( strFieldName, s -> new ArrayList<>( ) );
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
     public void removeSessionFiles( HttpSession session )
     {
-        String sessionId = (String) session.getAttribute( PARAM_CUSTOM_SESSION_ID );
-
-        if( StringUtils.isBlank( sessionId) )
-        {
-            return;
-        }
-
-        Map<String, List<MultipartItem>> mapFileItemsSession = _mapAsynchronousUpload.get( sessionId );
+        @SuppressWarnings( "unchecked" )
+        Map<String, List<MultipartItem>> mapFileItemsSession = (Map<String, List<MultipartItem>>) session.getAttribute( SESSION_ATTRIBUTE_UPLOADED_FILES );
 
         if ( mapFileItemsSession == null )
         {
@@ -206,7 +179,7 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
             deleteFiles( fileItems );
         }
 
-        _mapAsynchronousUpload.remove( sessionId );
+        session.removeAttribute( SESSION_ATTRIBUTE_UPLOADED_FILES );
     }
 
     private void deleteFiles( List<MultipartItem> fileItems )
@@ -222,5 +195,35 @@ public class AsynchronousUploadHandler extends AbstractAsynchronousUploadHandler
                 AppLogService.error( "Unable to delete uploaded file " + fileItem.getName( ), e );
             }
         }
+    }
+
+    /**
+     * Gets the uploaded files of the session, by field name. The map is modified in place: the session must be written back
+     * after each request that reads it (OpenLiberty sessionCache writeContents=GET_AND_SET_ATTRIBUTES)
+     *
+     * @param session
+     *            the session
+     * @return the uploaded files, by field name
+     */
+    @SuppressWarnings( "unchecked" )
+    private Map<String, List<MultipartItem>> getSessionFiles( HttpSession session )
+    {
+        Map<String, List<MultipartItem>> mapFileItemsSession = (Map<String, List<MultipartItem>>) session.getAttribute( SESSION_ATTRIBUTE_UPLOADED_FILES );
+
+        if ( mapFileItemsSession == null )
+        {
+            // Concurrent uploads of the same session on this instance must share one map
+            synchronized( this )
+            {
+                mapFileItemsSession = (Map<String, List<MultipartItem>>) session.getAttribute( SESSION_ATTRIBUTE_UPLOADED_FILES );
+                if ( mapFileItemsSession == null )
+                {
+                    mapFileItemsSession = new ConcurrentHashMap<>( );
+                    session.setAttribute( SESSION_ATTRIBUTE_UPLOADED_FILES, mapFileItemsSession );
+                }
+            }
+        }
+
+        return mapFileItemsSession;
     }
 }
