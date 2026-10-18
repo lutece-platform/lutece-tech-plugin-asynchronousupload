@@ -231,6 +231,9 @@ function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
 
             if (fieldName != null) {
                 if (data.fileCount == 0) {
+                    const deletionContainer = document.getElementById('_file_deletion_' + fieldName);
+                    if (deletionContainer) deletionContainer.innerHTML = '';
+
                     const deletionLabel = document.getElementById('_file_deletion_label_' + fieldName);
                     if (deletionLabel) deletionLabel.style.display = 'none';
                 } else {
@@ -243,7 +246,7 @@ function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
                         if (typeof imgContent === 'string' && imgContent.length > 0) {
                             imgTag = " <img src='" + imgContent + "' alt='' width='${previewMaxWidth}' height='${previewMaxHeight}'/>";
                         }
-                        strContent += getTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgTag, '${handler_name}', '${base_url}');
+                        strContent += getTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgTag, '${handler_name}', `#i18n{asynchronousupload.action.delete.name}`);
                     }
 
                     const deletionContainer = document.getElementById('_file_deletion_' + fieldName);
