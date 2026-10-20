@@ -1,3 +1,13 @@
+/**
+ * Escapes a text for the HTML built by the templates of the uploaded files: a file name may hold quotes or tags.
+ *
+ * @param {string} text the text
+ * @returns {string} the escaped text
+ */
+function asyncUploadEscapeHtml( text ) {
+	return String( text ).replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' ).replace( /"/g, '&quot;' ).replace( /'/g, '&#39;' );
+}
+
 function getTemplateUploadedFile( fieldName, index, checkboxPrefix, jsonData, imgTag, handler, deleteLabel, unit='' ) {
 	let strCode='', sizeDisplay='', sizeTemp='', octetUnit='', octetNumber='', fileName='', fileDisplayName='', mimeType='', mimeTypeDisplay='';
 	if ( (typeof jsonData.files[index] != 'undefined' && jsonData.files[index].size != 'undefined' ) || (jsonData.files.size != 'undefined' ) ) {
@@ -51,12 +61,12 @@ function getTemplateUploadedFile( fieldName, index, checkboxPrefix, jsonData, im
 		   strCode = `<li class="files-item" id="_file_uploaded_${fieldName}${index}">
 			<label class="files-item-label ${labelClassName}" for="${checkboxPrefix}${index}">
 				${imgTag}
-				<a class="files-item-link" title="${fileName}" href="jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?fieldname=${fieldName}&field_index=${index}&fileName=${fileName}&asynchronousupload.handler=${handler}" data-type="${mimeTypeDisplay}" data-img="">
-					<span class="file-item-label">${fileDisplayName}</span>
+				<a class="files-item-link" title="${asyncUploadEscapeHtml( fileName )}" href="jsp/site/plugins/asynchronousupload/DoDownloadFile.jsp?fieldname=${fieldName}&field_index=${index}&fileName=${asyncUploadEscapeHtml( encodeURIComponent( fileName ) )}&asynchronousupload.handler=${handler}" data-type="${asyncUploadEscapeHtml( mimeTypeDisplay )}" data-img="">
+					<span class="file-item-label">${asyncUploadEscapeHtml( fileDisplayName )}</span>
 					<span class="file-item-info">${sizeDisplay}</span>
 				</a>
 			</label>
-			<button type="button" class="btn btn-link deleteSingleFile main-color p-0" data-item="#_file_uploaded_${fieldName}${index}" fieldname="${fieldName}" handlername="${handler}" index="${index}" title="${deleteLabel} ${fileDisplayName}" aria-label="${deleteLabel} ${fileDisplayName}"> 
+			<button type="button" class="btn btn-link deleteSingleFile main-color p-0" data-item="#_file_uploaded_${fieldName}${index}" fieldname="${fieldName}" handlername="${handler}" index="${index}" title="${deleteLabel} ${asyncUploadEscapeHtml( fileDisplayName )}" aria-label="${deleteLabel} ${asyncUploadEscapeHtml( fileDisplayName )}"> 
 				<svg class="paris-icon paris-icon-close" role="img" aria-labelledby="paris-icon-title-group" focusable="false">
 					<use xlink:href="#paris-icon-close"></use>
 				</svg> 
