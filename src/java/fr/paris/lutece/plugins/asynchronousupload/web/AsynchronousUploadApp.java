@@ -135,6 +135,11 @@ public class AsynchronousUploadApp extends MVCApplication
         String strMaxChunkSize = request.getParameter( PARAMETER_MAX_CHUNK_SIZE );
 
         IAsyncUploadHandler handler = getHandler( strHandlerName );
+        if ( handler == null )
+        {
+            AppLogService.debug( "No asynchronous upload handler named {}", strHandlerName );
+            return StringUtils.EMPTY;
+        }
 
         int nMaxFileSize = Integer.parseInt( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_MAX_FILE_SIZE ) );
         if ( StringUtils.isNumeric( strMaxFileSize ) )
@@ -303,6 +308,11 @@ public class AsynchronousUploadApp extends MVCApplication
     public void doRetrieveAsynchronousUploadedFile( HttpServletRequest request, HttpServletResponse response )
     {
         IAsyncUploadHandler handler = getHandler( request );
+        if ( handler == null )
+        {
+            response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
+            return;
+        }
         byte [ ] data = handler.doRetrieveUploadedFile( request );
         String strFieldName = request.getParameter( "fileName" );
 
