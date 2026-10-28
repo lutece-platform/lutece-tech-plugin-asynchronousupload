@@ -306,7 +306,7 @@ function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
                         const errMsg = document.getElementById('msg_' + fieldName);
                         if (!errMsg && jFieldName) {
                             jFieldName.setAttribute('aria-labelledby', 'msg_' + fieldName);
-                            const msgHtml = '<p id="msg_' + fieldName + '" class="group-file-info text-muted p-2 mt-1"><span class="ti ti-exclamation-circle text-warning"></span> ' + `#i18n{asynchronousupload.info.maxNumberOfFiles}` + '</p>';
+                            const msgHtml = '<p id="msg_' + fieldName + '" class="group-file-info text-muted p-2 mt-1"><span class="ti ti-exclamation-circle text-warning"></span> ' + `#i18n{asynchronousupload.info.maxNumberOfFiles}`.replace('{0}', jsonData.nof) + '</p>';
                             groupInfo?.insertAdjacentHTML('afterend', msgHtml);
                         }
                     } else {

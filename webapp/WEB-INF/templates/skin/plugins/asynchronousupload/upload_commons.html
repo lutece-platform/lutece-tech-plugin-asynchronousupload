@@ -4,14 +4,34 @@
  # Others macros are private.
  # Add required CSS and JavaScript files to use asynchronous uploads.
  # This is only needed in Back Office or in FO page not served by the portal service.
+ # Param "handlerName" (default: the forms handler): name of the upload handler whose main.js is also loaded,
+ # empty to load only uppy.min.js and config.js.
  -->
-<#macro addRequiredJsFiles>
-<script src="themes/shared/plugins/asynchronousupload/uppy/uppy.min.js"></script>
-<script src="themes/shared/plugins/asynchronousupload/config.js"></script>
+<#macro addRequiredJsFiles handlerName='formsAsynchronousUploadHandler'>
 <script>
-/* Maps to manage files field errors */
-var mapFileErrors = new Map();
-var mapFilesNumber = new Map();
+(function () {
+	/* Idempotent loader: entry templates are rendered separately, so the guard lives on the client */
+	if (window.luteceAsyncUploadLoaded) { return; }
+	window.luteceAsyncUploadLoaded = true;
+	/* Maps to manage files field errors */
+	window.mapFileErrors  = window.mapFileErrors  || new Map();
+	window.mapFilesNumber = window.mapFilesNumber || new Map();
+	window.labelFileSize  = '#i18n{portal.theme.labelFileSize}';
+	[
+		'themes/shared/plugins/asynchronousupload/uppy/uppy.min.js',
+		'themes/shared/plugins/asynchronousupload/config.js'<#if handlerName?has_content>,
+		'jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=${handlerName?url('UTF-8')}'</#if>
+	].forEach(function (src, index) {
+		var s = document.createElement('script');
+		s.src = src;
+		s.async = false; /* keep execution order: uppy.min.js, then config.js, then main.js */
+		if (index === 0) {
+			/* a main.js included by an explicit <script> runs before Uppy is loaded: it waits for this event */
+			s.onload = function () { window.dispatchEvent(new Event('luteceAsyncUploadReady')); };
+		}
+		document.head.appendChild(s);
+	});
+})();
 </script>
 </#macro>
 <#--
