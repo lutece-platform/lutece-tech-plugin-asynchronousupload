@@ -10,7 +10,7 @@
     <groupId>fr.paris.lutece.plugins</groupId>
     <artifactId>plugin-asynchronousupload</artifactId>
     <packaging>lutece-plugin</packaging>
-    <version>2.0.1-SNAPSHOT</version>
+    <version>2.0.1-beta-02</version>
     <name>Lutece Asynchronous Upload plugin</name>
 
     <repositories>
