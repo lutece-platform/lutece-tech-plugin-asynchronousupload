@@ -47,6 +47,7 @@ import java.io.ObjectOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -102,6 +103,32 @@ public class AsynchronousUploadHandlerTest
         assertFalse( Collections.list( session.getAttributeNames( ) ).stream( ).anyMatch( s -> s.startsWith( "asynchronousupload." ) ) );
     }
 
+    /**
+     * An index posted by a page rendered before another removal (other tab of the same session) is ignored: no other file is removed, no error
+     */
+    @Test
+    public void testRemoveWithStaleIndex( )
+    {
+        HttpSession session = new MockHttpSession( );
+        AsynchronousUploadHandler handler = new AsynchronousUploadHandler( );
+        handler.addFileItemToUploadedFilesList( new TestItem( "a.txt" ), FIELD_NAME, newRequest( session ) );
+        handler.addFileItemToUploadedFilesList( new TestItem( "b.txt" ), FIELD_NAME, newRequest( session ) );
+
+        // the third file was already removed from another tab: index 2 no longer exists
+        handler.doRemoveUploadedFile( newRequest( session ), FIELD_NAME, List.of( 2 ) );
+        assertEquals( List.of( "a.txt", "b.txt" ), names( handler.getListUploadedFiles( FIELD_NAME, session ) ) );
+
+        // the second file is removed from one tab, then the other tab asks again for index 1: a.txt stays
+        handler.doRemoveUploadedFile( newRequest( session ), FIELD_NAME, List.of( 1 ) );
+        handler.doRemoveUploadedFile( newRequest( session ), FIELD_NAME, List.of( 1 ) );
+        assertEquals( List.of( "a.txt" ), names( handler.getListUploadedFiles( FIELD_NAME, session ) ) );
+    }
+
+    private static List<String> names( List<MultipartItem> listFiles )
+    {
+        return listFiles.stream( ).map( MultipartItem::getName ).collect( Collectors.toList( ) );
+    }
+
     private static HttpSession replicate( HttpSession session ) throws IOException, ClassNotFoundException
     {
         HttpSession copy = new MockHttpSession( );
@@ -144,6 +171,17 @@ public class AsynchronousUploadHandlerTest
     private static class TestItem implements MultipartItem
     {
         private boolean _bDeleted;
+        private final String _strName;
+
+        TestItem( )
+        {
+            this( "file.txt" );
+        }
+
+        TestItem( String strName )
+        {
+            _strName = strName;
+        }
 
         @Override
         public String getFieldName( )
@@ -154,7 +192,7 @@ public class AsynchronousUploadHandlerTest
         @Override
         public String getName( )
         {
-            return "file.txt";
+            return _strName;
         }
 
         @Override

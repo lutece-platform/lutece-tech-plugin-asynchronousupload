@@ -260,12 +260,16 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
 
             List<MultipartItem> listItemsToRemove = new ArrayList<>( listIndexesFilesToRemove.size( ) );
 
+            int nPreviousIndex = -1;
             for ( int nFieldIndex : tabFieldIndex )
             {
-                if ( fileItemsSession.size( ) == 1 && nFieldIndex > 0 )
+                // An index posted by a page rendered before another removal (other tab, double click) may no longer exist:
+                // it is ignored rather than moved to another file, and the answer gives the current list of the files
+                if ( nFieldIndex < 0 || nFieldIndex >= fileItemsSession.size( ) || nFieldIndex == nPreviousIndex )
                 {
-                    nFieldIndex = nFieldIndex - 1;
+                    continue;
                 }
+                nPreviousIndex = nFieldIndex;
                 listItemsToRemove.add( fileItemsSession.get( nFieldIndex ) );
                 removeFileItem( strFieldName, request.getSession( ), nFieldIndex );
             }
