@@ -124,6 +124,42 @@ public class AsynchronousUploadHandlerTest
         assertEquals( List.of( "a.txt" ), names( handler.getListUploadedFiles( FIELD_NAME, session ) ) );
     }
 
+    /**
+     * A download link whose index no longer exists (file removed from another tab) gives no file, not an error
+     */
+    @Test
+    public void testDownloadWithStaleIndex( )
+    {
+        HttpSession session = new MockHttpSession( );
+        AsynchronousUploadHandler handler = new AsynchronousUploadHandler( );
+        handler.addFileItemToUploadedFilesList( new TestItem( "a.txt" ), FIELD_NAME, newRequest( session ) );
+
+        assertArrayEquals( CONTENT, handler.doRetrieveUploadedFile( newDownloadRequest( session, "0" ) ) );
+        assertEquals( 0, handler.doRetrieveUploadedFile( newDownloadRequest( session, "5" ) ).length );
+        assertEquals( 0, handler.doRetrieveUploadedFile( newDownloadRequest( session, "99999999999" ) ).length );
+    }
+
+    private static HttpServletRequest newDownloadRequest( HttpSession session, String strIndex )
+    {
+        MockHttpServletRequest request = new MockHttpServletRequest( );
+        request.addParameter( "fieldname", FIELD_NAME );
+        request.addParameter( "field_index", strIndex );
+        return new HttpServletRequestWrapper( request )
+        {
+            @Override
+            public HttpSession getSession( )
+            {
+                return session;
+            }
+
+            @Override
+            public HttpSession getSession( boolean bCreate )
+            {
+                return session;
+            }
+        };
+    }
+
     private static List<String> names( List<MultipartItem> listFiles )
     {
         return listFiles.stream( ).map( MultipartItem::getName ).collect( Collectors.toList( ) );

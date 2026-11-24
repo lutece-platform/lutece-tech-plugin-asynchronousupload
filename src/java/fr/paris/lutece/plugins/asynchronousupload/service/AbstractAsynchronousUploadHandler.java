@@ -52,6 +52,7 @@ import jakarta.servlet.http.HttpSession;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -374,9 +375,13 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
         MultipartItem itemToDownload = null;
         if ( StringUtils.isNotEmpty( strFieldIndex ) && StringUtils.isNumeric( strFieldIndex ) )
         {
-            intFieldIndex = Integer.parseInt( request.getParameter( PARAMETER_FIELD_INDEX ) );
+            intFieldIndex = NumberUtils.toInt( strFieldIndex, -1 );
             List<MultipartItem> fileItemsSession = getListUploadedFiles( strFieldName, request.getSession( ) );
-            itemToDownload = fileItemsSession.get( intFieldIndex );
+            // an index posted by a page rendered before a removal (other tab of the same session) may no longer exist
+            if ( intFieldIndex >= 0 && intFieldIndex < fileItemsSession.size( ) )
+            {
+                itemToDownload = fileItemsSession.get( intFieldIndex );
+            }
         }
         if ( itemToDownload == null )
         {
