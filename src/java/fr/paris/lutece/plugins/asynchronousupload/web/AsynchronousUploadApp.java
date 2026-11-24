@@ -48,6 +48,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
 import fr.paris.lutece.plugins.asynchronousupload.service.UploadCacheService;
@@ -146,40 +147,22 @@ public class AsynchronousUploadApp extends MVCApplication
         }
 
         int nMaxFileSize = Integer.parseInt( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_MAX_FILE_SIZE ) );
-        if ( StringUtils.isNumeric( strMaxFileSize ) )
-        {
-            nMaxFileSize = Integer.parseInt( strMaxFileSize );
-        }
+        nMaxFileSize = parseIntOption( strMaxFileSize, nMaxFileSize );
 
         int nImageMaxHeight = Integer.parseInt( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_IMAGE_MAX_HEIGHT ) );
-        if ( StringUtils.isNumeric( strImageMaxHeight ) )
-        {
-            nImageMaxHeight = Integer.parseInt( strImageMaxHeight );
-        }
+        nImageMaxHeight = parseIntOption( strImageMaxHeight, nImageMaxHeight );
 
         int nImageMaxWidth = Integer.parseInt( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_IMAGE_MAX_WIDTH ) );
-        if ( StringUtils.isNumeric( strImageMaxWidth ) )
-        {
-            nImageMaxWidth = Integer.parseInt( strImageMaxWidth );
-        }
+        nImageMaxWidth = parseIntOption( strImageMaxWidth, nImageMaxWidth );
 
         int nPreviewMaxWidth = Integer.parseInt( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_PREVIEW_MAX_WIDTH ) );
-        if ( StringUtils.isNumeric( strPreviewMaxWidth ) )
-        {
-            nPreviewMaxWidth = Integer.parseInt( strPreviewMaxWidth );
-        }
+        nPreviewMaxWidth = parseIntOption( strPreviewMaxWidth, nPreviewMaxWidth );
 
         int nPreviewMaxHeight = Integer.parseInt( AppPropertiesService.getProperty( PROPERTY_KEY_PREFIX + PARAMETER_PREVIEW_MAX_HEIGHT ) );
-        if ( StringUtils.isNumeric( strPreviewMaxHeight ) )
-        {
-            nPreviewMaxHeight = Integer.parseInt( strPreviewMaxHeight );
-        }
+        nPreviewMaxHeight = parseIntOption( strPreviewMaxHeight, nPreviewMaxHeight );
 
         int nMaxChunkSize = AppPropertiesService.getPropertyInt( PROPERTY_KEY_PREFIX + PARAMETER_MAX_CHUNK_SIZE, 0 );
-        if ( StringUtils.isNumeric( strMaxChunkSize ) )
-        {
-            nMaxChunkSize = Integer.parseInt( strMaxChunkSize );
-        }
+        nMaxChunkSize = parseIntOption( strMaxChunkSize, nMaxChunkSize );
 
         if ( StringUtils.isEmpty( strFieldName ) || !PATTERN_IDENTIFIER.matcher( strFieldName ).matches( ) )
         {
@@ -303,6 +286,24 @@ public class AsynchronousUploadApp extends MVCApplication
         }
 
         return null;
+    }
+
+    /**
+     * Read a numeric option of the script: a value that is not a number of the int range keeps the default
+     *
+     * @param strValue
+     *            the value of the request parameter
+     * @param nDefault
+     *            the default value
+     * @return the value of the option
+     */
+    private static int parseIntOption( String strValue, int nDefault )
+    {
+        if ( StringUtils.isNumeric( strValue ) )
+        {
+            return NumberUtils.toInt( strValue, nDefault );
+        }
+        return nDefault;
     }
 
     /**
