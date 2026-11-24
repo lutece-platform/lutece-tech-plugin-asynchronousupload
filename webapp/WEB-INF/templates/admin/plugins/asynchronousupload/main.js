@@ -26,7 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 function initUppy(inputElement) {
     const fieldName = inputElement.name;
-    const nof = parseInt(inputElement.dataset.nof) || 1;
+    /* maximum number of files: 0 or no data-nof (input of addFileBOInput) means no limit on the client, the handler checks it */
+    const nof = parseInt(inputElement.dataset.nof) || 0;
     const mfs = parseInt(inputElement.dataset.mfs) || 0;
     const atf = inputElement.dataset.atf || '';
     const nfu = parseInt(inputElement.dataset.nfu) || 0;
@@ -43,7 +44,7 @@ function initUppy(inputElement) {
         id: fieldName,
         autoProceed: true,
         restrictions: {
-            maxNumberOfFiles: nof,
+            maxNumberOfFiles: nof > 0 ? nof : null,
             maxFileSize: mfs > 0 ? mfs : null,
             allowedFileTypes: atf ? atf.split(',').map(t => t.trim()) : null
         },
@@ -153,7 +154,7 @@ function initUppy(inputElement) {
 
     setupDragAndDrop(inputElement, uppy, fieldName);
 
-    if (nfu >= nof) {
+    if (nof > 0 && nfu >= nof) {
         inputElement.disabled = true;
         inputElement.closest('.dropzone')?.classList.add('inactive');
     }
@@ -293,7 +294,7 @@ function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
                     const deletionLabel = document.getElementById('_file_deletion_label_' + fieldName);
                     if (deletionLabel) deletionLabel.style.display = 'block';
 
-                    if (data.fileCount >= jsonData.nof) {
+                    if (jsonData.nof > 0 && data.fileCount >= jsonData.nof) {
                         if (jFieldName) {
                             jFieldName.dataset.nfu = jsonData.nof;
                             jFieldName.dataset.nbuploadedfiles = jsonData.nof;
@@ -351,7 +352,7 @@ function deleteFile(ev) {
 
     const handlerName = target.getAttribute('handlername');
     const inputElement = document.querySelector('.${handler_name?js_string}[name="' + fieldName + '"]');
-    const nof = parseInt(inputElement?.dataset.nof) || 1;
+    const nof = parseInt(inputElement?.dataset.nof) || 0;
 
     const jsonData = {
         fieldname: fieldName,
