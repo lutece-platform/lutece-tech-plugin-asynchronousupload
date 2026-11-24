@@ -369,25 +369,33 @@ public abstract class AbstractAsynchronousUploadHandler implements IAsyncUploadH
     @Override
     public byte [ ] doRetrieveUploadedFile( HttpServletRequest request )
     {
-        String strFieldName = request.getParameter( PARAMETER_FIELD_NAME );
-        String strFieldIndex = request.getParameter( PARAMETER_FIELD_INDEX );
-        int intFieldIndex;
-        MultipartItem itemToDownload = null;
-        if ( StringUtils.isNotEmpty( strFieldIndex ) && StringUtils.isNumeric( strFieldIndex ) )
-        {
-            intFieldIndex = NumberUtils.toInt( strFieldIndex, -1 );
-            List<MultipartItem> fileItemsSession = getListUploadedFiles( strFieldName, request.getSession( ) );
-            // an index posted by a page rendered before a removal (other tab of the same session) may no longer exist
-            if ( intFieldIndex >= 0 && intFieldIndex < fileItemsSession.size( ) )
-            {
-                itemToDownload = fileItemsSession.get( intFieldIndex );
-            }
-        }
+        MultipartItem itemToDownload = getUploadedFileItem( request );
         if ( itemToDownload == null )
         {
             return new byte [ 0];
         }
         return itemToDownload.get( );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MultipartItem getUploadedFileItem( HttpServletRequest request )
+    {
+        String strFieldName = request.getParameter( PARAMETER_FIELD_NAME );
+        String strFieldIndex = request.getParameter( PARAMETER_FIELD_INDEX );
+        if ( StringUtils.isNotEmpty( strFieldIndex ) && StringUtils.isNumeric( strFieldIndex ) )
+        {
+            int intFieldIndex = NumberUtils.toInt( strFieldIndex, -1 );
+            List<MultipartItem> fileItemsSession = getListUploadedFiles( strFieldName, request.getSession( ) );
+            // an index posted by a page rendered before a removal (other tab of the same session) may no longer exist
+            if ( intFieldIndex >= 0 && intFieldIndex < fileItemsSession.size( ) )
+            {
+                return fileItemsSession.get( intFieldIndex );
+            }
+        }
+        return null;
     }
 
     /**

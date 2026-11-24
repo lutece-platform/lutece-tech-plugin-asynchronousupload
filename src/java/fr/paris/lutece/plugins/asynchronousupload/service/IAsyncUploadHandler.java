@@ -217,6 +217,18 @@ public interface IAsyncUploadHandler extends IAsynchronousUploadHandler2
     byte [ ] doRetrieveUploadedFile( HttpServletRequest request );
 
     /**
+     * Get the uploaded file that a download request designates, to give its name and its content type with its content.
+     * 
+     * @param request
+     *            The request
+     * @return The file, or null if the handler does not give it or if the request designates no file
+     */
+    default MultipartItem getUploadedFileItem( HttpServletRequest request )
+    {
+        return null;
+    }
+
+    /**
      * 
      * @return true if the handler manage partial content
      */

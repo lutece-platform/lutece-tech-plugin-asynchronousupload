@@ -34,10 +34,14 @@
 package fr.paris.lutece.plugins.asynchronousupload.web;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import jakarta.enterprise.context.RequestScoped;
@@ -52,6 +56,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
 import fr.paris.lutece.plugins.asynchronousupload.service.UploadCacheService;
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -69,6 +74,9 @@ public class AsynchronousUploadApp extends MVCApplication
     private static final long serialVersionUID = -2287035947644920508L;
 
     // Marks
+    private static final String PARAMETER_FILE_NAME = "fileName";
+    private static final String HEADER_CONTENT_DISPOSITION = "Content-Disposition";
+    private static final String CONTENT_TYPE_DEFAULT = "application/octet-stream";
     private static final String MARK_BASE_URL = "base_url";
     private static final String MARK_UPLOAD_URL = "upload_url";
     private static final String MARK_HANDLER_NAME = "handler_name";
@@ -323,10 +331,14 @@ public class AsynchronousUploadApp extends MVCApplication
             return;
         }
         byte [ ] data = handler.doRetrieveUploadedFile( request );
-        String strFieldName = request.getParameter( "fileName" );
+        // the name and the type of the stored file, not the ones of the link: the request parameter is only a fallback
+        MultipartItem item = handler.getUploadedFileItem( request );
+        String strFileName = ( item != null && StringUtils.isNotEmpty( item.getName( ) ) ) ? item.getName( ) : request.getParameter( PARAMETER_FILE_NAME );
+        String strContentType = ( item != null && StringUtils.isNotEmpty( item.getContentType( ) ) ) ? item.getContentType( ) : CONTENT_TYPE_DEFAULT;
 
+        response.setContentType( strContentType );
         response.setHeader( "Content-length", Integer.toString( data.length ) );
-        response.setHeader( "Content-Disposition", "attachment;;filename=" + strFieldName );
+        response.setHeader( HEADER_CONTENT_DISPOSITION, buildContentDisposition( strFileName ) );
         try
         {
             response.getOutputStream( ).write( data, 0, data.length );
@@ -336,5 +348,21 @@ public class AsynchronousUploadApp extends MVCApplication
         {
             AppLogService.error( e );
         }
+    }
+
+    /**
+     * Build the Content-Disposition header of a download (RFC 6266): a quoted ASCII name for the old clients and the UTF-8 name encoded as in RFC
+     * 5987
+     *
+     * @param strFileName
+     *            the name of the file, may be null
+     * @return the value of the header
+     */
+    private static String buildContentDisposition( String strFileName )
+    {
+        String strName = Objects.toString( strFileName, StringUtils.EMPTY ).replaceAll( "[\\r\\n\"\\\\]", "" );
+        String strAsciiName = Normalizer.normalize( strName, Normalizer.Form.NFD ).replaceAll( "\\p{M}", "" ).replaceAll( "[^\\x20-\\x7E]", "_" );
+        String strEncodedName = URLEncoder.encode( strName, StandardCharsets.UTF_8 ).replace( "+", "%20" ).replace( "*", "%2A" );
+        return "attachment; filename=\"" + strAsciiName + "\"; filename*=UTF-8''" + strEncodedName;
     }
 }
