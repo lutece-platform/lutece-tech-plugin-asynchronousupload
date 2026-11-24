@@ -41,11 +41,14 @@ function onUppyReady(callback) {
     });
 }
 
+/* initUppy is redefined by the main.js of another handler loaded on the same page: keep the one of this handler */
+window['__initUppy_${handler_name?js_string}'] = window['__initUppy_${handler_name?js_string}'] || initUppy;
+
 if (asyncUploadFirstLoad) {
 onUppyReady(() => {
     document.querySelectorAll('.file-input-text-noscript').forEach(el => el.style.display = 'none');
     document.querySelectorAll('.file-input-text-js').forEach(el => el.style.display = 'inline');
-    document.querySelectorAll('.${handler_name?js_string}').forEach(initUppy);
+    document.querySelectorAll('.${handler_name?js_string}').forEach(window['__initUppy_${handler_name?js_string}']);
 });
 
 document.addEventListener('click', (e) => {
@@ -278,6 +281,8 @@ document.addEventListener('click', (e) => {
  * @param {string} cbPrefix - Checkbox prefix for file selection
  */
 function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
+    /* the handler of the request, not the one of the script that defined this function last */
+    const handlerName = jsonData['asynchronousupload.handler'] || '${handler_name?js_string}';
     const params = new URLSearchParams(jsonData);
     return fetch('${base_url?js_string}jsp/site/plugins/asynchronousupload/DoRemoveFile.jsp?' + params)
         .then(response => response.json())
@@ -303,7 +308,7 @@ function formDisplayUploadedFiles${fieldname}(jsonData, cbPrefix) {
                         if (typeof imgContent === 'string' && imgContent.length > 0) {
                             imgTag = " <img src='" + imgContent + "' alt='' width='${previewMaxWidth}' height='${previewMaxHeight}'/>";
                         }
-                        strContent += getTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgTag, '${handler_name?js_string}', `#i18n{asynchronousupload.action.delete.name}`);
+                        strContent += getTemplateUploadedFile(fieldName, index, checkboxPrefix, data, imgTag, handlerName, `#i18n{asynchronousupload.action.delete.name}`);
                     }
 
                     const deletionContainer = document.getElementById('_file_deletion_' + fieldName);
@@ -352,7 +357,10 @@ function removeFile${checkBoxPrefix}(fieldName, handlerName, baseUrl) {
     formDisplayUploadedFiles${fieldname}(jsonData, '${checkBoxPrefix?js_string}');
 }
 
-if (asyncUploadFirstLoad) {
+/* The item gives its own handler: bound once per page whatever the handler, otherwise the main.js of two handlers
+   loaded on the same page send two removal requests for one click */
+if (!window.__asyncUploadDeleteBound) {
+window.__asyncUploadDeleteBound = true;
 document.addEventListener('click', (event) => {
     if (event.target.closest('.deleteSingleFile')) {
         event.preventDefault();
