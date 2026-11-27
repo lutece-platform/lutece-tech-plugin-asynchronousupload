@@ -57,12 +57,22 @@ function initUppy(inputElement) {
         }
     });
 
+    // Files selected together are sent in ONE request. Sent one request per file
+    // (bundle:false, 5 in parallel by default) the core DosGuardFilter rejects every upload that
+    // follows another one from the same IP within lutece.upload.dosguard.minInterval (2 s), so only
+    // one file out of a multiple selection survived (HTTP 500 on the others).
     uppy.use(Uppy.XHRUpload, {
         endpoint: '${base_url?js_string}${upload_url?js_string}',
         fieldName: fieldName,
         formData: true,
-        bundle: false,
+        bundle: true,
+        limit: 1,
         allowedMetaFields: ['fieldname', 'asynchronousupload.handler']
+    });
+    // bundled requests take their metadata from the global meta
+    uppy.setMeta({
+        fieldname: fieldName,
+        'asynchronousupload.handler': '${handler_name?js_string}'
     });
 
     uppy.use(Uppy.ThumbnailGenerator, {
